@@ -1,0 +1,2 @@
+set solib-search-path /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a
+directory /Users/azhdanov/work/android-ndk-r6/platforms/android-9/arch-arm/usr/include /Users/azhdanov/work/android-ndk-r6/sources/android/cpufeatures /Users/azhdanov/Documents/workspace/intelligencyNative/jni /Users/azhdanov/work/android-ndk-r6/sources/cxx-stl/system
