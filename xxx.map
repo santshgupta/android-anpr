@@ -1,0 +1,495 @@
+Archive member included because of file (symbol)
+
+/Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/libcpufeatures.a(cpu-features.o)
+                              /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/objs-debug/ndkfoo/ndkfoo.o (android_getCpuFamily)
+
+Discarded input sections
+
+ .note.GNU-stack
+                0x00000000        0x0 /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/objs-debug/ndkfoo/ndkfoo.o
+ .note.GNU-stack
+                0x00000000        0x0 /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/libcpufeatures.a(cpu-features.o)
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+*default*        0x00000000         0xffffffff
+
+Linker script and memory map
+
+LOAD /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/objs-debug/ndkfoo/ndkfoo.o
+LOAD /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/libcpufeatures.a
+LOAD /Users/azhdanov/work/android-ndk-r6/platforms/android-9/arch-arm/usr/lib/liblog.so
+LOAD /Users/azhdanov/work/android-ndk-r6/platforms/android-9/arch-arm/usr/lib/libjnigraphics.so
+LOAD /Users/azhdanov/work/android-ndk-r6/platforms/android-9/arch-arm/usr/lib/libm.so
+LOAD /Users/azhdanov/work/android-ndk-r6/toolchains/arm-linux-androideabi-4.4.3/prebuilt/darwin-x86/bin/../lib/gcc/arm-linux-androideabi/4.4.3/../../../../arm-linux-androideabi/lib/libsupc++.a
+LOAD /Users/azhdanov/work/android-ndk-r6/platforms/android-9/arch-arm/usr/lib/libstdc++.so
+LOAD /Users/azhdanov/work/android-ndk-r6/platforms/android-9/arch-arm/usr/lib/libm.so
+LOAD /Users/azhdanov/work/android-ndk-r6/platforms/android-9/arch-arm/usr/lib/libc.so
+LOAD /Users/azhdanov/work/android-ndk-r6/toolchains/arm-linux-androideabi-4.4.3/prebuilt/darwin-x86/bin/../lib/gcc/arm-linux-androideabi/4.4.3/libgcc.a
+LOAD /Users/azhdanov/work/android-ndk-r6/platforms/android-9/arch-arm/usr/lib/libc.so
+LOAD /Users/azhdanov/work/android-ndk-r6/platforms/android-9/arch-arm/usr/lib/libdl.so
+LOAD /Users/azhdanov/work/android-ndk-r6/toolchains/arm-linux-androideabi-4.4.3/prebuilt/darwin-x86/bin/../lib/gcc/arm-linux-androideabi/4.4.3/libgcc.a
+                0x000000d4                . = (0x0 + SIZEOF_HEADERS)
+
+.note.gnu.build-id
+ *(.note.gnu.build-id)
+
+.hash           0x000000d4      0x170
+ *(.hash)
+ .hash          0x000000d4      0x170 /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/objs-debug/ndkfoo/ndkfoo.o
+
+.gnu.hash
+ *(.gnu.hash)
+
+.dynsym         0x00000244      0x350
+ *(.dynsym)
+ .dynsym        0x00000244      0x350 /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/objs-debug/ndkfoo/ndkfoo.o
+
+.dynstr         0x00000594      0x399
+ *(.dynstr)
+ .dynstr        0x00000594      0x399 /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/objs-debug/ndkfoo/ndkfoo.o
+
+.gnu.version    0x0000092e        0x0 load address 0x0000092d
+ *(.gnu.version)
+ .gnu.version   0x00000000        0x0 /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/objs-debug/ndkfoo/ndkfoo.o
+
+.gnu.version_d  0x00000930        0x0 load address 0x0000092d
+ *(.gnu.version_d)
+ .gnu.version_d
+                0x00000000        0x0 /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/objs-debug/ndkfoo/ndkfoo.o
+
+.gnu.version_r  0x00000930        0x0 load address 0x0000092d
+ *(.gnu.version_r)
+ .gnu.version_r
+                0x00000000        0x0 /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/objs-debug/ndkfoo/ndkfoo.o
+
+.rel.dyn        0x00000930       0x10
+ *(.rel.init)
+ *(.rel.text .rel.text.* .rel.gnu.linkonce.t.*)
+ *(.rel.fini)
+ *(.rel.rodata .rel.rodata.* .rel.gnu.linkonce.r.*)
+ *(.rel.data.rel.ro* .rel.gnu.linkonce.d.rel.ro.*)
+ *(.rel.data .rel.data.* .rel.gnu.linkonce.d.*)
+ *(.rel.tdata .rel.tdata.* .rel.gnu.linkonce.td.*)
+ *(.rel.tbss .rel.tbss.* .rel.gnu.linkonce.tb.*)
+ *(.rel.ctors)
+ *(.rel.dtors)
+ *(.rel.got)
+ .rel.got       0x00000930       0x10 /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/objs-debug/ndkfoo/ndkfoo.o
+ *(.rel.bss .rel.bss.* .rel.gnu.linkonce.b.*)
+ *(.rel.iplt)
+
+.rela.dyn
+ *(.rela.init)
+ *(.rela.text .rela.text.* .rela.gnu.linkonce.t.*)
+ *(.rela.fini)
+ *(.rela.rodata .rela.rodata.* .rela.gnu.linkonce.r.*)
+ *(.rela.data .rela.data.* .rela.gnu.linkonce.d.*)
+ *(.rela.tdata .rela.tdata.* .rela.gnu.linkonce.td.*)
+ *(.rela.tbss .rela.tbss.* .rela.gnu.linkonce.tb.*)
+ *(.rela.ctors)
+ *(.rela.dtors)
+ *(.rela.got)
+ *(.rela.bss .rela.bss.* .rela.gnu.linkonce.b.*)
+ *(.rela.iplt)
+
+.rel.plt        0x00000940       0xc8
+ *(.rel.plt)
+ .rel.plt       0x00000940       0xc8 /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/objs-debug/ndkfoo/ndkfoo.o
+
+.rela.plt
+ *(.rela.plt)
+
+.init
+ *(.init)
+
+.plt            0x00000a08      0x140
+ *(.plt)
+ .plt           0x00000a08      0x140 /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/objs-debug/ndkfoo/ndkfoo.o
+
+.iplt
+ *(.iplt)
+
+.text           0x00000b48     0x2874
+ *(.text.unlikely .text.*_unlikely)
+ *(.text .stub .text.* .gnu.linkonce.t.*)
+ .text          0x00000b48        0x0 /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/objs-debug/ndkfoo/ndkfoo.o
+ .text.abs      0x00000b48       0x14 /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/objs-debug/ndkfoo/ndkfoo.o
+ .text.sobelFilter
+                0x00000b5c      0x188 /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/objs-debug/ndkfoo/ndkfoo.o
+                0x00000b5c                sobelFilter
+ *fill*         0x00000ce4        0x4 00000000
+ .text.RGBtoHSV
+                0x00000ce8      0x198 /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/objs-debug/ndkfoo/ndkfoo.o
+                0x00000ce8                RGBtoHSV
+ .text.now_ms   0x00000e80       0x50 /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/objs-debug/ndkfoo/ndkfoo.o
+ .text.Java_com_intelligence_NativeGraphics_nativeConvolve
+                0x00000ed0      0xb48 /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/objs-debug/ndkfoo/ndkfoo.o
+                0x00000ed0                Java_com_intelligence_NativeGraphics_nativeConvolve
+ .text.Java_com_intelligence_NativeGraphics_nativeTreshold
+                0x00001a18      0x31c /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/objs-debug/ndkfoo/ndkfoo.o
+                0x00001a18                Java_com_intelligence_NativeGraphics_nativeTreshold
+ .text.Java_com_intelligence_NativeGraphics_nativeConvert565to8888
+                0x00001d34      0x29c /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/objs-debug/ndkfoo/ndkfoo.o
+                0x00001d34                Java_com_intelligence_NativeGraphics_nativeConvert565to8888
+ .text.Java_com_intelligence_NativeGraphics_nativeGetHSVBrightness
+                0x00001fd0      0x318 /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/objs-debug/ndkfoo/ndkfoo.o
+                0x00001fd0                Java_com_intelligence_NativeGraphics_nativeGetHSVBrightness
+ .text.Java_com_intelligence_NativeGraphics_nativeGetHSVBrightnessHorizontally
+                0x000022e8      0x330 /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/objs-debug/ndkfoo/ndkfoo.o
+                0x000022e8                Java_com_intelligence_NativeGraphics_nativeGetHSVBrightnessHorizontally
+ .text.Java_com_intelligence_NativeGraphics_nativeSobel
+                0x00002618      0x578 /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/objs-debug/ndkfoo/ndkfoo.o
+                0x00002618                Java_com_intelligence_NativeGraphics_nativeSobel
+ .text          0x00002b90        0x0 /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/libcpufeatures.a(cpu-features.o)
+ .text.read_file
+                0x00002b90       0x54 /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/libcpufeatures.a(cpu-features.o)
+ .text.extract_cpuinfo_field
+                0x00002be4      0x108 /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/libcpufeatures.a(cpu-features.o)
+ .text.count_cpuinfo_field
+                0x00002cec       0xbc /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/libcpufeatures.a(cpu-features.o)
+ .text.has_list_item
+                0x00002da8       0xa4 /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/libcpufeatures.a(cpu-features.o)
+ .text.android_cpuInit
+                0x00002e4c      0x4f4 /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/libcpufeatures.a(cpu-features.o)
+ .text.android_getCpuFamily
+                0x00003340       0x28 /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/libcpufeatures.a(cpu-features.o)
+                0x00003340                android_getCpuFamily
+ .text.android_getCpuFeatures
+                0x00003368       0x2c /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/libcpufeatures.a(cpu-features.o)
+                0x00003368                android_getCpuFeatures
+ .text.android_getCpuCount
+                0x00003394       0x28 /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/libcpufeatures.a(cpu-features.o)
+                0x00003394                android_getCpuCount
+ *(.gnu.warning)
+ *(.glue_7t)
+ .glue_7t       0x00000000        0x0 linker stubs
+ *(.glue_7)
+ .glue_7        0x00000000        0x0 linker stubs
+ *(.vfp11_veneer)
+ .vfp11_veneer  0x00000000        0x0 linker stubs
+ *(.v4_bx)
+ .v4_bx         0x00000000        0x0 linker stubs
+
+.fini
+ *(.fini)
+                0x000033bc                PROVIDE (__etext, .)
+                0x000033bc                PROVIDE (_etext, .)
+                0x000033bc                PROVIDE (etext, .)
+
+.rodata         0x000033bc      0x564
+ *(.rodata .rodata.* .gnu.linkonce.r.*)
+ .rodata        0x000033bc      0x448 /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/objs-debug/ndkfoo/ndkfoo.o
+ .rodata        0x00003804      0x11c /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/libcpufeatures.a(cpu-features.o)
+
+.rodata1
+ *(.rodata1)
+
+.ARM.extab      0x00003920       0x30
+ *(.ARM.extab* .gnu.linkonce.armextab.*)
+ .ARM.extab.text.abs
+                0x00003920        0x0 /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/objs-debug/ndkfoo/ndkfoo.o
+ .ARM.extab.text.sobelFilter
+                0x00003920        0x0 /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/objs-debug/ndkfoo/ndkfoo.o
+ .ARM.extab.text.RGBtoHSV
+                0x00003920        0x0 /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/objs-debug/ndkfoo/ndkfoo.o
+ .ARM.extab.text.now_ms
+                0x00003920        0x0 /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/objs-debug/ndkfoo/ndkfoo.o
+ .ARM.extab.text.Java_com_intelligence_NativeGraphics_nativeConvolve
+                0x00003920        0xc /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/objs-debug/ndkfoo/ndkfoo.o
+ .ARM.extab.text.Java_com_intelligence_NativeGraphics_nativeTreshold
+                0x0000392c        0x0 /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/objs-debug/ndkfoo/ndkfoo.o
+ .ARM.extab.text.Java_com_intelligence_NativeGraphics_nativeConvert565to8888
+                0x0000392c        0x0 /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/objs-debug/ndkfoo/ndkfoo.o
+ .ARM.extab.text.Java_com_intelligence_NativeGraphics_nativeGetHSVBrightness
+                0x0000392c        0xc /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/objs-debug/ndkfoo/ndkfoo.o
+ .ARM.extab.text.Java_com_intelligence_NativeGraphics_nativeGetHSVBrightnessHorizontally
+                0x00003938        0xc /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/objs-debug/ndkfoo/ndkfoo.o
+ .ARM.extab.text.Java_com_intelligence_NativeGraphics_nativeSobel
+                0x00003944        0x0 /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/objs-debug/ndkfoo/ndkfoo.o
+ .ARM.extab.text.read_file
+                0x00003944        0x0 /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/libcpufeatures.a(cpu-features.o)
+ .ARM.extab.text.extract_cpuinfo_field
+                0x00003944        0x0 /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/libcpufeatures.a(cpu-features.o)
+ .ARM.extab.text.count_cpuinfo_field
+                0x00003944        0x0 /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/libcpufeatures.a(cpu-features.o)
+ .ARM.extab.text.has_list_item
+                0x00003944        0x0 /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/libcpufeatures.a(cpu-features.o)
+ .ARM.extab.text.android_cpuInit
+                0x00003944        0xc /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/libcpufeatures.a(cpu-features.o)
+ .ARM.extab.text.android_getCpuFamily
+                0x00003950        0x0 /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/libcpufeatures.a(cpu-features.o)
+ .ARM.extab.text.android_getCpuFeatures
+                0x00003950        0x0 /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/libcpufeatures.a(cpu-features.o)
+ .ARM.extab.text.android_getCpuCount
+                0x00003950        0x0 /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/libcpufeatures.a(cpu-features.o)
+                0x00003950                __exidx_start = .
+
+.ARM.exidx      0x00003950       0x80
+ *(.ARM.exidx* .gnu.linkonce.armexidx.*)
+ .ARM.exidx.text.abs
+                0x00003950        0x8 /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/objs-debug/ndkfoo/ndkfoo.o
+ .ARM.exidx.text.sobelFilter
+                0x00003958        0x8 /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/objs-debug/ndkfoo/ndkfoo.o
+ .ARM.exidx.text.RGBtoHSV
+                0x00003960        0x8 /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/objs-debug/ndkfoo/ndkfoo.o
+ .ARM.exidx.text.now_ms
+                0x00003968        0x8 /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/objs-debug/ndkfoo/ndkfoo.o
+ .ARM.exidx.text.Java_com_intelligence_NativeGraphics_nativeConvolve
+                0x00003970        0x8 /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/objs-debug/ndkfoo/ndkfoo.o
+ .ARM.exidx.text.Java_com_intelligence_NativeGraphics_nativeTreshold
+                0x00003978        0x8 /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/objs-debug/ndkfoo/ndkfoo.o
+ .ARM.exidx.text.Java_com_intelligence_NativeGraphics_nativeConvert565to8888
+                0x00003980        0x0 /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/objs-debug/ndkfoo/ndkfoo.o
+                                  0x8 (size before relaxing)
+ .ARM.exidx.text.Java_com_intelligence_NativeGraphics_nativeGetHSVBrightness
+                0x00003980        0x8 /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/objs-debug/ndkfoo/ndkfoo.o
+ .ARM.exidx.text.Java_com_intelligence_NativeGraphics_nativeGetHSVBrightnessHorizontally
+                0x00003988        0x8 /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/objs-debug/ndkfoo/ndkfoo.o
+ .ARM.exidx.text.Java_com_intelligence_NativeGraphics_nativeSobel
+                0x00003990        0x8 /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/objs-debug/ndkfoo/ndkfoo.o
+ .ARM.exidx.text.read_file
+                0x00003998        0x8 /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/libcpufeatures.a(cpu-features.o)
+ .ARM.exidx.text.extract_cpuinfo_field
+                0x000039a0        0x8 /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/libcpufeatures.a(cpu-features.o)
+ .ARM.exidx.text.count_cpuinfo_field
+                0x000039a8        0x8 /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/libcpufeatures.a(cpu-features.o)
+ .ARM.exidx.text.has_list_item
+                0x000039b0        0x8 /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/libcpufeatures.a(cpu-features.o)
+ .ARM.exidx.text.android_cpuInit
+                0x000039b8        0x8 /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/libcpufeatures.a(cpu-features.o)
+ .ARM.exidx.text.android_getCpuFamily
+                0x000039c0        0x8 /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/libcpufeatures.a(cpu-features.o)
+ .ARM.exidx.text.android_getCpuFeatures
+                0x000039c8        0x0 /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/libcpufeatures.a(cpu-features.o)
+                                  0x8 (size before relaxing)
+ .ARM.exidx.text.android_getCpuCount
+                0x000039c8        0x8 /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/libcpufeatures.a(cpu-features.o)
+                0x000039d0                __exidx_end = .
+
+.eh_frame_hdr
+ *(.eh_frame_hdr)
+
+.eh_frame
+ *(.eh_frame)
+
+.gcc_except_table
+ *(.gcc_except_table .gcc_except_table.*)
+                0x000039d0                . = (ALIGN (0x8000) - ((0x8000 - .) & 0x7fff))
+                0x0000b9d0                . = (0x8000 DATA_SEGMENT_ALIGN 0x1000)
+
+.eh_frame
+ *(.eh_frame)
+
+.gcc_except_table
+ *(.gcc_except_table .gcc_except_table.*)
+
+.tdata
+ *(.tdata .tdata.* .gnu.linkonce.td.*)
+
+.tbss
+ *(.tbss .tbss.* .gnu.linkonce.tb.*)
+ *(.tcommon)
+
+.preinit_array
+ *(.preinit_array)
+
+.init_array
+ *(SORT(.init_array.*))
+ *(.init_array)
+
+.fini_array
+ *(.fini_array)
+ *(SORT(.fini_array.*))
+
+.ctors
+ *crtbegin.o(.ctors)
+ *crtbegin?.o(.ctors)
+ *(EXCLUDE_FILE(*crtend?.o *crtend.o) .ctors)
+ *(SORT(.ctors.*))
+ *(.ctors)
+
+.dtors
+ *crtbegin.o(.dtors)
+ *crtbegin?.o(.dtors)
+ *(EXCLUDE_FILE(*crtend?.o *crtend.o) .dtors)
+ *(SORT(.dtors.*))
+ *(.dtors)
+
+.jcr
+ *(.jcr)
+
+.data.rel.ro
+ *(.data.rel.ro.local* .gnu.linkonce.d.rel.ro.local.*)
+ *(.data.rel.ro* .gnu.linkonce.d.rel.ro.*)
+
+.dynamic        0x0000b9d0       0xd0
+ *(.dynamic)
+ .dynamic       0x0000b9d0       0xd0 /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/objs-debug/ndkfoo/ndkfoo.o
+                0x0000b9d0                _DYNAMIC
+                0x0000baa0                . = (. DATA_SEGMENT_RELRO_END 0x0)
+
+.got            0x0000baa0       0x78
+ *(.got.plt)
+ .got.plt       0x0000baa0       0x70 /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/objs-debug/ndkfoo/ndkfoo.o
+                0x0000baa0                _GLOBAL_OFFSET_TABLE_
+ *(.igot.plt)
+ *(.got)
+ .got           0x0000bb10        0x8 /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/objs-debug/ndkfoo/ndkfoo.o
+ *(.igot)
+
+.data           0x0000bb18        0x0
+                0x0000bb18                PROVIDE (__data_start, .)
+ *(.data .data.* .gnu.linkonce.d.*)
+ .data          0x0000bb18        0x0 /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/objs-debug/ndkfoo/ndkfoo.o
+ .data          0x0000bb18        0x0 /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/libcpufeatures.a(cpu-features.o)
+
+.data1
+ *(.data1)
+                0x0000bb18                _edata = .
+                0x0000bb18                PROVIDE (edata, .)
+                0x0000bb18                __bss_start = .
+                0x0000bb18                __bss_start__ = .
+
+.bss            0x0000bb18       0x18
+ *(.dynbss)
+ .dynbss        0x00000000        0x0 /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/objs-debug/ndkfoo/ndkfoo.o
+ *(.bss .bss.* .gnu.linkonce.b.*)
+ .bss           0x0000bb18        0x0 /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/objs-debug/ndkfoo/ndkfoo.o
+ .bss           0x0000bb18       0x18 /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/libcpufeatures.a(cpu-features.o)
+ *(COMMON)
+                0x0000bb30                . = ALIGN ((. != 0x0)?0x4:0x1)
+                0x0000bb30                _bss_end__ = .
+                0x0000bb30                __bss_end__ = .
+                0x0000bb30                . = ALIGN (0x4)
+                0x0000bb30                . = ALIGN (0x4)
+                0x0000bb30                __end__ = .
+                0x0000bb30                _end = .
+                0x0000bb30                PROVIDE (end, .)
+                0x0000bb30                . = DATA_SEGMENT_END (.)
+
+.stab
+ *(.stab)
+
+.stabstr
+ *(.stabstr)
+
+.stab.excl
+ *(.stab.excl)
+
+.stab.exclstr
+ *(.stab.exclstr)
+
+.stab.index
+ *(.stab.index)
+
+.stab.indexstr
+ *(.stab.indexstr)
+
+.ARM.attributes
+                0x00000000       0x33
+ .ARM.attributes
+                0x00000000       0x33 /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/objs-debug/ndkfoo/ndkfoo.o
+ .ARM.attributes
+                0x00000033       0x31 /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/libcpufeatures.a(cpu-features.o)
+
+.comment        0x00000000       0x11
+ *(.comment)
+ .comment       0x00000000       0x11 /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/objs-debug/ndkfoo/ndkfoo.o
+                                 0x12 (size before relaxing)
+ .comment       0x00000000       0x12 /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/libcpufeatures.a(cpu-features.o)
+
+.debug
+ *(.debug)
+
+.line
+ *(.line)
+
+.debug_srcinfo
+ *(.debug_srcinfo)
+
+.debug_sfnames
+ *(.debug_sfnames)
+
+.debug_aranges  0x00000000       0xc0
+ *(.debug_aranges)
+ .debug_aranges
+                0x00000000       0x68 /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/objs-debug/ndkfoo/ndkfoo.o
+ .debug_aranges
+                0x00000068       0x58 /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/libcpufeatures.a(cpu-features.o)
+
+.debug_pubnames
+                0x00000000      0x1fe
+ *(.debug_pubnames)
+ .debug_pubnames
+                0x00000000      0x1a0 /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/objs-debug/ndkfoo/ndkfoo.o
+ .debug_pubnames
+                0x000001a0       0x5e /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/libcpufeatures.a(cpu-features.o)
+
+.debug_info     0x00000000     0x45d5
+ *(.debug_info .gnu.linkonce.wi.*)
+ .debug_info    0x00000000     0x3ef0 /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/objs-debug/ndkfoo/ndkfoo.o
+ .debug_info    0x00003ef0      0x6e5 /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/libcpufeatures.a(cpu-features.o)
+
+.debug_abbrev   0x00000000      0x3cf
+ *(.debug_abbrev)
+ .debug_abbrev  0x00000000      0x240 /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/objs-debug/ndkfoo/ndkfoo.o
+ .debug_abbrev  0x00000240      0x18f /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/libcpufeatures.a(cpu-features.o)
+
+.debug_line     0x00000000      0xbd6
+ *(.debug_line)
+ .debug_line    0x00000000      0x76b /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/objs-debug/ndkfoo/ndkfoo.o
+ .debug_line    0x0000076b      0x46b /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/libcpufeatures.a(cpu-features.o)
+
+.debug_frame    0x00000000      0x2a0
+ *(.debug_frame)
+ .debug_frame   0x00000000      0x1a0 /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/objs-debug/ndkfoo/ndkfoo.o
+ .debug_frame   0x000001a0      0x100 /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/libcpufeatures.a(cpu-features.o)
+
+.debug_str      0x00000000     0x1d9a
+ *(.debug_str)
+ .debug_str     0x00000000     0x1b2d /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/objs-debug/ndkfoo/ndkfoo.o
+                               0x1bf3 (size before relaxing)
+ .debug_str     0x00001b2d      0x26d /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/libcpufeatures.a(cpu-features.o)
+                                0x434 (size before relaxing)
+
+.debug_loc      0x00000000      0x349
+ *(.debug_loc)
+ .debug_loc     0x00000000      0x1ff /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/objs-debug/ndkfoo/ndkfoo.o
+ .debug_loc     0x000001ff      0x14a /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/libcpufeatures.a(cpu-features.o)
+
+.debug_macinfo
+ *(.debug_macinfo)
+
+.debug_weaknames
+ *(.debug_weaknames)
+
+.debug_funcnames
+ *(.debug_funcnames)
+
+.debug_typenames
+ *(.debug_typenames)
+
+.debug_varnames
+ *(.debug_varnames)
+
+.debug_pubtypes
+ *(.debug_pubtypes)
+
+.debug_ranges   0x00000000       0xc0
+ *(.debug_ranges)
+ .debug_ranges  0x00000000       0x58 /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/objs-debug/ndkfoo/ndkfoo.o
+ .debug_ranges  0x00000058       0x68 /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/libcpufeatures.a(cpu-features.o)
+
+.gnu.attributes
+ *(.gnu.attributes)
+
+.note.gnu.arm.ident
+ *(.note.gnu.arm.ident)
+
+/DISCARD/
+ *(.note.GNU-stack)
+ *(.gnu_debuglink)
+ *(.gnu.lto_*)
+OUTPUT(/Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi-v7a/libndkfoo.so elf32-littlearm)
