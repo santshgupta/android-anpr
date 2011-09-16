@@ -1,0 +1,20 @@
+#summary One-sentence summary of this page.
+#labels Android,anpr,graphics
+
+= Android ANPR =
+Система распознавания номерных знаков
+
+= Информация =
+На данный момент реализована нативная работа с графикой:
+  * ARMv7 Convolving
+  * Thresholding
+  * Sobel
+  * RGB->HCV convertor
+  * RGB565 -> ARGB convertor
+
+Текущая версия без knn-классификатора и наработанной базы для нейросети
+
+
+== Примеры работы приложения ==
+http://android-anpr.googlecode.com/files/deviceIntelligency1.png
+http://android-anpr.googlecode.com/files/deviceIntellygency2.png
