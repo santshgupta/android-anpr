@@ -9,7 +9,7 @@
   * ARMv7 Convolving
   * Thresholding
   * Sobel
-  * RGB->HCV convertor
+  * RGB->HSV convertor
   * RGB565 -> ARGB convertor
 
 Текущая версия без knn-классификатора и наработанной базы для нейросети
