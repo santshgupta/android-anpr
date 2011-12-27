@@ -1,4 +1,5 @@
-obj/local/armeabi-v7a/objs-debug/ndkfoo/ndkfoo.o: jni/ndkfoo.c \
+obj/local/armeabi-v7a/objs-debug/com_graphics_NativeGraphics/graphics_core.o: \
+ jni/graphics_core.cpp jni/graphics_core.h \
  /Users/azhdanov/work/android-ndk-r7/platforms/android-14/arch-arm/usr/include/string.h \
  /Users/azhdanov/work/android-ndk-r7/platforms/android-14/arch-arm/usr/include/sys/cdefs.h \
  /Users/azhdanov/work/android-ndk-r7/platforms/android-14/arch-arm/usr/include/sys/cdefs_elf.h \
@@ -9,6 +10,7 @@ obj/local/armeabi-v7a/objs-debug/ndkfoo/ndkfoo.o: jni/ndkfoo.c \
  /Users/azhdanov/work/android-ndk-r7/platforms/android-14/arch-arm/usr/include/stdint.h \
  /Users/azhdanov/work/android-ndk-r7/platforms/android-14/arch-arm/usr/include/sys/_types.h \
  /Users/azhdanov/work/android-ndk-r7/platforms/android-14/arch-arm/usr/include/machine/_types.h \
+ /Users/azhdanov/work/android-ndk-r7/sources/android/cpufeatures/cpu-features.h \
  /Users/azhdanov/work/android-ndk-r7/platforms/android-14/arch-arm/usr/include/math.h \
  /Users/azhdanov/work/android-ndk-r7/platforms/android-14/arch-arm/usr/include/sys/types.h \
  /Users/azhdanov/work/android-ndk-r7/platforms/android-14/arch-arm/usr/include/linux/posix_types.h \
@@ -35,8 +37,9 @@ obj/local/armeabi-v7a/objs-debug/ndkfoo/ndkfoo.o: jni/ndkfoo.c \
  /Users/azhdanov/work/android-ndk-r7/platforms/android-14/arch-arm/usr/include/alloca.h \
  /Users/azhdanov/work/android-ndk-r7/platforms/android-14/arch-arm/usr/include/strings.h \
  /Users/azhdanov/work/android-ndk-r7/platforms/android-14/arch-arm/usr/include/memory.h \
- /Users/azhdanov/work/android-ndk-r7/sources/android/cpufeatures/cpu-features.h \
- jni/graphics.h
+ jni/logger.h
+
+jni/graphics_core.h:
 
 /Users/azhdanov/work/android-ndk-r7/platforms/android-14/arch-arm/usr/include/string.h:
 
@@ -57,6 +60,8 @@ obj/local/armeabi-v7a/objs-debug/ndkfoo/ndkfoo.o: jni/ndkfoo.c \
 /Users/azhdanov/work/android-ndk-r7/platforms/android-14/arch-arm/usr/include/sys/_types.h:
 
 /Users/azhdanov/work/android-ndk-r7/platforms/android-14/arch-arm/usr/include/machine/_types.h:
+
+/Users/azhdanov/work/android-ndk-r7/sources/android/cpufeatures/cpu-features.h:
 
 /Users/azhdanov/work/android-ndk-r7/platforms/android-14/arch-arm/usr/include/math.h:
 
@@ -110,6 +115,4 @@ obj/local/armeabi-v7a/objs-debug/ndkfoo/ndkfoo.o: jni/ndkfoo.c \
 
 /Users/azhdanov/work/android-ndk-r7/platforms/android-14/arch-arm/usr/include/memory.h:
 
-/Users/azhdanov/work/android-ndk-r7/sources/android/cpufeatures/cpu-features.h:
-
-jni/graphics.h:
+jni/logger.h:

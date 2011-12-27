@@ -120,7 +120,7 @@ public abstract class CharacterRecognizer {
                 return this.cost;
             }
         }
-        public class PatternComparer implements Comparator {
+        public class PatternComparer implements Comparator<Object> {
             int direction;
             public PatternComparer(int direction) {
                 this.direction = direction;

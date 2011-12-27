@@ -68,9 +68,7 @@ for more info about JavaANPR.
 
 package intelligence.imageanalysis;
 
-//import java.util.Collections;
-//import java.util.Comparator;
-import java.util.Vector;
+import java.util.ArrayList;
 import intelligence.intelligence.Intelligence;
 
 
@@ -87,35 +85,36 @@ public class PlateHorizontalGraph extends Graph {
     }
     
     public float derivation(int index1, int index2) {
-        return this.yValues.elementAt(index1) - this.yValues.elementAt(index2);
+        return this.yValues.get(index1) - this.yValues.get(index2);
     }
     
-    public Vector<Peak> findPeak(int count) {
-        if (horizontalDetectionType==1) return findPeak_edgedetection(count);
+    public ArrayList<Peak> findPeak(int count) {
+        if (horizontalDetectionType == 1) 
+        	return findPeak_edgedetection(count);
         return findPeak_derivate(count); 
     }
     
-    public Vector<Peak> findPeak_derivate(int count) {  // RIESENIE DERIVACIOU
+    public ArrayList<Peak> findPeak_derivate(int count) {  // RIESENIE DERIVACIOU
         int a,b;
         float maxVal = this.getMaxValue();
         
         for (a=2; -derivation(a,a+4) < maxVal*0.2 && a < this.yValues.size()-2-2-4; a++);
         for (b=this.yValues.size()-1-2; derivation(b-4,b) < maxVal*0.2 && b>a+2; b--);
 
-        Vector<Peak> outPeaks = new Vector<Peak>();
+        ArrayList<Peak> outPeaks = new ArrayList<Peak>();
        
         outPeaks.add(new Peak(a,b));
         super.peaks = outPeaks;
         return outPeaks;
     }
     
-    public Vector<Peak> findPeak_edgedetection (int count) {
+    public ArrayList<Peak> findPeak_edgedetection (int count) {
         float average = this.getAverageValue();
         int a,b;
-        for (a=0; this.yValues.elementAt(a) < average; a++);
-        for (b=this.yValues.size()-1; this.yValues.elementAt(b) < average; b--);
+        for (a=0; this.yValues.get(a) < average; a++);
+        for (b=this.yValues.size()-1; this.yValues.get(b) < average; b--);
         
-        Vector<Peak> outPeaks = new Vector<Peak>();
+        ArrayList<Peak> outPeaks = new ArrayList<Peak>();
         a = Math.max(a-5,0);
         b = Math.min(b+5,this.yValues.size());
         

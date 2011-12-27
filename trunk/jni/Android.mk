@@ -12,9 +12,9 @@ LOCAL_PATH := $(call my-dir)
 include $(CLEAR_VARS)
 
 # Module classes
-LOCAL_MODULE    := ndkfoo
-LOCAL_SRC_FILES := ndkfoo.c
-
+LOCAL_MODULE    := com_graphics_NativeGraphics
+LOCAL_SRC_FILES := com_graphics_NativeGraphics.cpp
+LOCAL_SRC_FILES += graphics_core.cpp
 #arm neon support
 ifeq ($(TARGET_ARCH_ABI),armeabi-v7a)   
 	LOCAL_ARM_NEON := true
@@ -33,12 +33,15 @@ LOCAL_LDFLAGS   := -Wl,-Map,xxx.map
 LOCAL_CFLAGS    := -g
 
 # We have using new C syntaxis
-LOCAL_CFLAGS    += -std=c99
+#LOCAL_CFLAGS    += -std=c99
 
 # -----  ---- only for emulator! ---- ----- -
 # Is set the __ARM_NEON__ flag to true
 LOCAL_CFLAGS    += -march=armv7-a -mfloat-abi=softfp -mfpu=neon
 # ---- ----- ----- ----- ----- ----- ----- --
+LOCAL_CPPFLAGS += -fexceptions
+
+
 include $(BUILD_SHARED_LIBRARY)
 
 # Manualy define cpu validate futures

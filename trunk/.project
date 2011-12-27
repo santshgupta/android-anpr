@@ -27,7 +27,7 @@
 				</dictionary>
 				<dictionary>
 					<key>org.eclipse.cdt.make.core.buildCommand</key>
-					<value>/Users/azhdanov/work/android-ndk-r6/ndk-build</value>
+					<value>/Users/azhdanov/work/android-ndk-r7/ndk-build</value>
 				</dictionary>
 				<dictionary>
 					<key>org.eclipse.cdt.make.core.buildLocation</key>

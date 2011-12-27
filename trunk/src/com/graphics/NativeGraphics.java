@@ -1,27 +1,24 @@
 /**
  * Andrey Zhdanov/2011/Native graphics/zdanchik@gmail.com
  */
-package com.intelligence;
+package com.graphics;
 
 import android.graphics.Bitmap;
 
 public class NativeGraphics {
 
 	static {
-		System.loadLibrary("ndkfoo");
+		System.loadLibrary("com_graphics_NativeGraphics");
 	}
 	
 	private native static void nativeConvert565to8888(Bitmap sourceBitmap, Bitmap destinationBitmap);
 	private native static void nativeTreshold(Bitmap sourceBitmap, Bitmap destinationBitmap, int cnt);
+	private native static void nativeAdaptiveTreshold(Bitmap sourceBitmap, Bitmap destinationBitmap);
 	private native static void nativeConvolve(Bitmap sourceBitmap, Bitmap destinationBitmap, int[] template, int kernelCountRows, int kernelCountCols, int filterDiv, int offset);
 	private native static void nativeGetHSVBrightness(Bitmap sourceBitmap, float[] peaks);
 	private native static void nativeGetHSVBrightnessHorizontally(Bitmap sourceBitmap, float[] peaks);
 	private native static void nativeSobel(Bitmap sourceBitmap, Bitmap destBitmap, int[] template);
-	//private native static void nativeCalcBitmapBrithness(Bitmap sourceBitmap1, Bitmap sourceBitmap2, Bitmap destBitmap);
-	//public static void calcBitmapBrithness(Bitmap src1, Bitmap src2, Bitmap dst) {
-	//	nativeCalcBitmapBrithness(src1, src2, dst);
-	//}
-	
+	private native static void nativeFullEdgeDetector(Bitmap source, Bitmap destBitmap);
 	
 	/**
 	 * Sobel - http://en.wikipedia.org/wiki/Sobel_operator
@@ -67,10 +64,22 @@ public class NativeGraphics {
 		nativeTreshold(src, destBitmap, cnt);
 		return destBitmap;
 	}
-	
+	public static Bitmap adaptiveTreshold(Bitmap src) {
+		Bitmap destBitmap = Bitmap.createBitmap(src.getWidth(), src.getHeight(), Bitmap.Config.ARGB_8888);
+		nativeAdaptiveTreshold(src, destBitmap);
+		return destBitmap;
+	}
 	public static Bitmap convolve(Bitmap src, int[] template, int kernelCountRows, int kernelCountCols, int filterDiv, int offset) {
 		Bitmap destBitmap = Bitmap.createBitmap(src.getWidth(), src.getHeight(), Bitmap.Config.ARGB_8888);
 		nativeConvolve(src, destBitmap, template, kernelCountRows, kernelCountCols, filterDiv, offset);
 		return destBitmap;
 	}
+	
+	public static Bitmap fullEdgeDetector(Bitmap source) {
+		Bitmap destBitmap = Bitmap.createBitmap(source.getWidth(), source.getHeight(), Bitmap.Config.ARGB_8888);
+		nativeFullEdgeDetector(source, destBitmap);
+		return destBitmap;
+	}
 }
+
+

@@ -11,7 +11,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import com.intelligence.NativeGraphics;
+import com.graphics.NativeGraphics;
 
 import intelligence.intelligence.Intelligence;
 import jjil.android.RgbImageAndroid;
@@ -315,53 +315,8 @@ public class Photo {
         }
     }
     
-    /**ADAPTIVE THRESHOLDING CEZ GETNEIGHBORHOOD - deprecated*/
     public void adaptiveThresholding() { // 	
-        Statistics stat = new Statistics(this);
-        int radius = Intelligence.configurator.getIntProperty("photo_adaptivethresholdingradius");
-        if (radius == 0) {
-            plainThresholding(stat);
-            return;
-        }
-        
-        int w = this.getWidth();
-        int h = this.getHeight();
-
-        float[][] sourceArray = this.bitmapImageToArray(this.image,w,h);
-        float[][] destinationArray = this.bitmapImageToArray(this.image,w,h);
-
-        int count;
-        float neighborhood;
-        
-        for (int x=0; x<w; x++) {
-            for (int y=0; y<h; y++) {
-                // compute neighborhood
-                count = 0;
-                neighborhood = 0;
-                for (int ix = x-radius; ix <=x+radius; ix++) {
-                    for (int iy = y-radius; iy <=y+radius; iy++) {
-                        if (ix >= 0 && iy >=0 && ix < w && iy < h) {
-                            neighborhood += sourceArray[ix][iy];
-                            count++;
-                        } 
-                        /********/
-//                        else {
-//                            neighborhood += stat.average;
-//                            count++;
-//                        }
-                        /********/
-                    }
-                }
-                neighborhood /= count;
-                //
-                if (destinationArray[x][y] < neighborhood) {
-                    destinationArray[x][y] = 0f;
-                }  else {
-                    destinationArray[x][y] = 1f;
-                }
-            }
-        }
-        this.image = arrayToBitmapImage(destinationArray,w,h);
+        this.image = NativeGraphics.adaptiveTreshold(this.image);
     }
     
     public float[][] bitmapImageToArrayWithBounds(Bitmap image, int w, int h) {
