@@ -68,9 +68,9 @@ for more info about JavaANPR.
 
 package intelligence.imageanalysis;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Vector;
 import intelligence.intelligence.Intelligence;
 
 
@@ -84,7 +84,7 @@ public class PlateVerticalGraph extends Graph {
         this.handle = handle;
     }
     
-    public class PeakComparer implements Comparator {
+    public class PeakComparer implements Comparator<Object> {
         PlateVerticalGraph graphHandle = null;
         
         public PeakComparer(PlateVerticalGraph graph) {
@@ -92,17 +92,7 @@ public class PlateVerticalGraph extends Graph {
         }
         
         private float getPeakValue(Object peak) {
-            // heuristika : aky vysoky (siroky na gragfe) je kandidat na pismeno
-            // preferuju sa vyssie
-            //return ((Peak)peak).getDiff();
-            
-            // vyska peaku
-            return this.graphHandle.yValues.elementAt(((Peak)peak).getCenter());
-            
-            // heuristika : 
-            // ako daleko od stredu je kandidat
-//            int peakCenter = (  ((Peak)peak).getRight() + ((Peak)peak).getLeft()  )/2;
-//            return Math.abs(peakCenter - this.graphHandle.yValues.size()/2);
+            return this.graphHandle.yValues.get(((Peak)peak).getCenter());
         }
         
         public int compare(Object peak1, Object peak2) { // Peak
@@ -113,28 +103,23 @@ public class PlateVerticalGraph extends Graph {
         }
     }
     
-    public Vector<Peak> findPeak(int count) {
-        
-        // znizime peak
+    public ArrayList<Peak> findPeak(int count) {
         for (int i=0; i<this.yValues.size();i++)
-            this.yValues.set(i,this.yValues.elementAt(i) - this.getMinValue());
-        
-        Vector<Peak> outPeaks = new Vector<Peak>();
-        
-        for (int c=0; c<count; c++) { // for count
+            this.yValues.set(i,this.yValues.get(i) - this.getMinValue());
+        ArrayList<Peak> outPeaks = new ArrayList<Peak>();
+        for (int c=0; c<count; c++) {
             float maxValue = 0.0f;
             int maxIndex = 0;
-            for (int i=0; i<this.yValues.size(); i++) { // zlava doprava
-                if (allowedInterval(outPeaks, i)) { // ak potencialny vrchol sa nachadza vo "volnom" intervale, ktory nespada pod ine vrcholy
-                    if (this.yValues.elementAt(i) >= maxValue) {
-                        maxValue = this.yValues.elementAt(i);
+            for (int i=0; i<this.yValues.size(); i++) {
+                if (allowedInterval(outPeaks, i)) {
+                    if (this.yValues.get(i) >= maxValue) {
+                        maxValue = this.yValues.get(i);
                         maxIndex = i;
                     }
                 }
-            } // end for int 0->max
-            // nasli sme najvacsi peak
+            }
             
-            if (yValues.elementAt(maxIndex) < 0.05 * super.getMaxValue()) break;//0.4
+            if (yValues.get(maxIndex) < 0.05 * super.getMaxValue()) break;//0.4
             
             int leftIndex = indexOfLeftPeakRel(maxIndex,peakFootConstant);
             int rightIndex = indexOfRightPeakRel(maxIndex,peakFootConstant);
@@ -150,9 +135,5 @@ public class PlateVerticalGraph extends Graph {
                                    new PeakComparer(this));
         super.peaks = outPeaks;
         return outPeaks;
-    }
-    
-    
-
-    
+    }    
 }

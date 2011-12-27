@@ -67,23 +67,13 @@ for more info about JavaANPR.
 
 
 package intelligence.imageanalysis;
-
-//import java.io.IOException;
-import java.util.Vector;
-
-import com.intelligence.NativeGraphics;
-
-import jjil.android.RgbImageAndroid;
-import jjil.core.RgbImage;
-
+import java.util.ArrayList;
+import com.graphics.NativeGraphics;
 import android.graphics.Bitmap;
-import android.util.Log;
-
 import intelligence.intelligence.Intelligence;
-//import javaanpr.configurator.Configurator;
 
 public class Band extends Photo {
-    static public Graph.ProbabilityDistributor distributor = new Graph.ProbabilityDistributor(0,0,25,25);
+    static public Graph.ProbabilityDistributor distributor = new Graph.ProbabilityDistributor(0,0,10,10);
     static private int numberOfCandidates = Intelligence.configurator.getIntProperty("intelligence_numberOfPlates");
             
     private BandGraph graphHandle = null;
@@ -102,30 +92,30 @@ public class Band extends Photo {
         return graphHandle.renderHorizontally(this.getWidth() - 50, 100);
     }
     
-    private Vector<Graph.Peak> computeGraph() {
+    private ArrayList<Graph.Peak> computeGraph() {
+    	Intelligence.console.console("computeGraph!!!");
     	if (graphHandle != null) return graphHandle.peaks; // graf uz bol vypocitany
         Bitmap imageCopy = duplicateImage(this.image);
-        fullEdgeDetector(imageCopy);
+        
+        Intelligence.console.console("fullEdgeDetector");
+        imageCopy = fullEdgeDetector(imageCopy);
         
         graphHandle = histogram(imageCopy);
         graphHandle.rankFilter(image.getHeight());
         graphHandle.applyProbabilityDistributor(distributor);
         graphHandle.findPeaks(numberOfCandidates);
+        
+        Intelligence.console.consoleBitmap(imageCopy);
         Intelligence.console.consoleBitmap(graphHandle.renderHorizontally(this.getWidth() - 50, 100));
         imageCopy.recycle();
+        Intelligence.console.console("computeGraph - OK");
         return graphHandle.peaks;
     }
     
-    public Vector<Plate> getPlates() {
-        Vector<Plate> out = new Vector<Plate>();
-        
-        Vector<Graph.Peak> peaks = computeGraph();
-        //Intelligence.canvas.drawBitmap(renderGraph(), 0, 200, Intelligence.paint);
-        for (int i=0; i<peaks.size(); i++) {
-            // vyseknut z povodneho! obrazka znacky, a ulozit do vektora. POZOR !!!!!! Vysekavame z povodneho, takze
-            // na suradnice vypocitane z imageCopy musime uplatnit inverznu transformaciu
-            Graph.Peak p = peaks.elementAt(i);
-            Bitmap bi = Bitmap.createBitmap(image, p.getLeft(), 0, p.getDiff(), image.getHeight());
+    public ArrayList<Plate> getPlates() {
+    	ArrayList<Plate> out = new ArrayList<Plate>();
+        for (Graph.Peak p : computeGraph()) {
+    		Bitmap bi = Bitmap.createBitmap(image, p.getLeft(), 0, p.getDiff(), image.getHeight());
             out.add(new Plate(bi));
         }
         return out;
@@ -146,33 +136,7 @@ public class Band extends Photo {
     * TODO Џолностью переписать на нативный код
     * @param source
     */
-   public void fullEdgeDetector(Bitmap source) {
-        int[] verticalMatrix= { -1, 0, 1, 
-								  -2, 0, 2,
-								  -1, 0, 1};	
-	    Bitmap i1 = NativeGraphics.nativeSobel(source, verticalMatrix);
-   		//Intelligence.console.console("fullEdgeDetector");
-    	//Intelligence.console.consoleBitmap(i1);
-    	int horizontalMatrix[] = {
-    			-1,-2,-1,
-                0, 0, 0,
-                1, 2, 1
-        };
-    	Bitmap i2 = NativeGraphics.nativeSobel(source, horizontalMatrix);
-    	//Intelligence.console.console("fullEdgeDetector 2");
-    	//Intelligence.console.consoleBitmap(i2);
-        int w = source.getWidth();
-        int h = source.getHeight();
-        
-        for (int x=0; x < w; x++)
-            for (int y=0; y < h; y++) {
-	            float sum = 0.0f;
-	            sum += Photo.getBrightness(i1, x, y);
-	            sum += Photo.getBrightness(i2, x, y);
-	            Photo.setBrightness(source, x, y, Math.min(1.0f, sum));
-            }
-        i1.recycle();
-        i2.recycle();
-    }    
-    
+   public Bitmap fullEdgeDetector(Bitmap source) {
+	   return NativeGraphics.fullEdgeDetector(source);
+   }
 }

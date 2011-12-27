@@ -1,4 +1,4 @@
-set solib-search-path /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi
-directory /Users/azhdanov/work/android-ndk-r6/platforms/android-9/arch-arm/usr/include /Users/azhdanov/work/android-ndk-r6/sources/android/cpufeatures /Users/azhdanov/Documents/workspace/intelligencyNative/jni /Users/azhdanov/work/android-ndk-r6/sources/cxx-stl/system
-file /Users/azhdanov/Documents/workspace/intelligencyNative/obj/local/armeabi/app_process
+set solib-search-path ./obj/local/armeabi
+directory /Users/azhdanov/work/android-ndk-r7/platforms/android-14/arch-arm/usr/include /Users/azhdanov/work/android-ndk-r7/sources/android/cpufeatures /Users/azhdanov/work/android-ndk-r7/sources/cxx-stl/system/include jni
+file ./obj/local/armeabi/app_process
 target remote :5039

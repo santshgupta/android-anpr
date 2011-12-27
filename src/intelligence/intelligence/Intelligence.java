@@ -176,9 +176,8 @@ public class Intelligence {
         	console.console("Image height: "+carSnapshot.getHeight()+" px");
         }
         int p = 0;
+        console.console("getBands");
         for (Band b : carSnapshot.getBands()) { //doporucene 3
-        	console.consoleBitmap(b.image);
-        	
         	if (enableReportGeneration) {
         		console.console("Band width : "+b.getWidth()+" px");
         		console.console("Band height : "+b.getHeight()+" px");
@@ -193,6 +192,7 @@ public class Intelligence {
                 Plate notNormalizedCopy = null;
                 
                 HoughTransformation hough = null;
+                
                 if (skewDetectionMode != 0) {
                 	notNormalizedCopy = plate.clone();
                 	notNormalizedCopy.horizontalEdgeDetector(notNormalizedCopy.getBi());
@@ -211,7 +211,8 @@ public class Intelligence {
                     
                 }
                 plate.normalize();
-                
+                console.consoleBitmap(plate.image);
+                /*
                 float plateWHratio = (float)plate.getWidth() / (float)plate.getHeight();
                 console.console("plate w: " + plate.getWidth() + " plate h: " + plate.getHeight() + " plateWHratio: " + plateWHratio);
                 if (plateWHratio < Intelligence.configurator.getDoubleProperty("intelligence_minPlateWidthHeightRatio")
@@ -347,6 +348,9 @@ public class Intelligence {
                 }
                 
                 return parsedOutput;
+            	*/
+            	console.console("cicle - OK!");
+            	 
             } // end for each  plate
         }
         return null;

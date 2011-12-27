@@ -68,15 +68,12 @@ for more info about JavaANPR.
 
 package intelligence.imageanalysis;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Vector;
-
-import android.util.Log;
 import intelligence.intelligence.Intelligence;
 
 public class CarSnapshotGraph extends Graph {
-    // configuration for searching bands in image !
     private static double peakFootConstant = 
             Intelligence.configurator.getDoubleProperty("carsnapshotgraph_peakfootconstant"); //0.55
     private static double peakDiffMultiplicationConstant = 
@@ -88,16 +85,15 @@ public class CarSnapshotGraph extends Graph {
         this.handle = handle;
     }
     
-    public class PeakComparer implements Comparator {
-        Vector<Float> yValues = null;
+    public class PeakComparer implements Comparator<Object> {
+    	ArrayList<Float> yValues = null;
         
-        public PeakComparer(Vector<Float> yValues) {
+        public PeakComparer(ArrayList<Float> yValues) {
             this.yValues = yValues;
         }
         
         private float getPeakValue(Object peak) {
-            return this.yValues.elementAt( ((Peak)peak).getCenter()  ); // podla intenzity
-            //return ((Peak)peak).getDiff();
+            return this.yValues.get( ((Peak)peak).getCenter()  );
         }
         
         public int compare(Object peak1, Object peak2) { // Peak
@@ -108,33 +104,30 @@ public class CarSnapshotGraph extends Graph {
         }
     }
     
-    public Vector<Peak> findPeaks (int count) {
-        
-        Vector<Peak> outPeaks = new Vector<Peak>();
-        
-        for (int c = 0; c < count; c++) { // for count
+    public ArrayList<Peak> findPeaks (int count) {
+        ArrayList<Peak> outPeaks = new ArrayList<Peak>();
+        for (int c = 0; c < count; c++) {
             float maxValue = 0.0f;
             int maxIndex = 0;
-            for (int i = 0; i < this.yValues.size(); i++) { // zlava doprava
-                if (allowedInterval(outPeaks, i)) { // ak potencialny vrchol sa nachadza vo "volnom" intervale, ktory nespada pod ine vrcholy
-                    if (this.yValues.elementAt(i) >= maxValue) {
-                        maxValue = this.yValues.elementAt(i);
+            for (int i = 0; i < this.yValues.size(); i++) {
+                if (allowedInterval(outPeaks, i)) {
+                    if (this.yValues.get(i) >= maxValue) {
+                        maxValue = this.yValues.get(i);
                         maxIndex = i;
                     }
                 }
-            } // end for int 0->max
-            // nasli sme najvacsi peak
+            }
             int leftIndex = indexOfLeftPeakRel(maxIndex, peakFootConstant);
             int rightIndex = indexOfRightPeakRel(maxIndex, peakFootConstant);
             int diff = rightIndex - leftIndex;
-            leftIndex -= peakDiffMultiplicationConstant * diff;   /*CONSTANT*/
-            rightIndex+= peakDiffMultiplicationConstant * diff;   /*CONSTANT*/
+            leftIndex -= peakDiffMultiplicationConstant * diff;
+            rightIndex+= peakDiffMultiplicationConstant * diff;
             outPeaks.add(new Peak(
                 Math.max(0,leftIndex),
                 maxIndex,
                 Math.min(this.yValues.size()-1,rightIndex)
                 ));
-        } // end for count
+        }
         
         Collections.sort(outPeaks, (Comparator<? super Graph.Peak>)
                                    new PeakComparer(this.yValues));
@@ -142,22 +135,5 @@ public class CarSnapshotGraph extends Graph {
         super.peaks = outPeaks; 
         return outPeaks;
     }
-//    public int indexOfLeftPeak(int peak, double peakFootConstant) {
-//        int index=peak;
-//        for (int i=peak; i>=0; i--) {
-//            index = i;
-//            if (yValues.elementAt(index) < peakFootConstant*yValues.elementAt(peak) ) break;
-//        }
-//        return Math.max(0,index);
-//    }
-//    public int indexOfRightPeak(int peak, double peakFootConstant) {
-//        int index=peak;
-//        for (int i=peak; i<yValues.size(); i++) {
-//            index = i;
-//            if (yValues.elementAt(index) < peakFootConstant*yValues.elementAt(peak) ) break;
-//        }
-//        return Math.min(yValues.size(), index);
-//    }
-    
 }
 

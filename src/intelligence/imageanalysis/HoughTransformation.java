@@ -171,9 +171,6 @@ public class HoughTransformation {
                 	pixels[elmIdx] = Color.rgb(value, value, value);
                 } else {
                 	float hsv[] = {0.67f - ((float)value/255)*2/3, 1.0f, 1.0f};
-                	/**
-                	 * TODO попробовать заменить на setPixels
-                	 */
                 	pixels[elmIdx] = Color.HSVToColor(hsv);
                 }
                 elmIdx++;

@@ -69,9 +69,10 @@ for more info about JavaANPR.
 package intelligence.imageanalysis;
 
 //import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Vector;
 
-import com.intelligence.NativeGraphics;
+import com.graphics.NativeGraphics;
 
 import jjil.android.RgbImageAndroid;
 import jjil.core.RgbImage;
@@ -113,7 +114,7 @@ public class Plate extends Photo {
         return graphHandle.renderVertically(100, this.getHeight());
     }
     
-    private Vector<Graph.Peak> computeGraph() {
+    private ArrayList<Graph.Peak> computeGraph() {
         if (graphHandle != null) return graphHandle.peaks; // graf uz bol vypocitany
 
         graphHandle = histogram(plateCopy.getBi()); //PlateGraph graph = histogram(imageCopy); 
@@ -125,13 +126,10 @@ public class Plate extends Photo {
     
     public Vector<Char> getChars() {
         Vector<Char> out = new Vector<Char>();
-
-        Vector<Graph.Peak> peaks = computeGraph();
-        
-        for (int i=0; i<peaks.size(); i++) {
+        for (Graph.Peak p : computeGraph()) {
             // vyseknut z povodneho! obrazka znacky, a ulozit do vektora. POZOR !!!!!! Vysekavame z povodneho, takze
             // na suradnice vypocitane z imageCopy musime uplatnit inverznu transformaciu
-            Graph.Peak p = peaks.elementAt(i);
+            //Graph.Peak p = peaks.elementAt(i);
             if (p.getDiff() <= 0) continue;
             out.add(new Char(
 	            		Bitmap.createBitmap(image, p.getLeft(), 0, p.getDiff(), image.getHeight())  ,
@@ -193,19 +191,20 @@ public class Plate extends Photo {
     }
     private Bitmap cutTopBottom(Bitmap origin, PlateVerticalGraph graph) {
         graph.applyProbabilityDistributor(new Graph.ProbabilityDistributor(0f,0f,2,2));
-        Graph.Peak p = graph.findPeak(3).elementAt(0);
+        Graph.Peak p = graph.findPeak(3).get(0);//.elementAt(0);
         
         Bitmap b = Bitmap.createBitmap(origin, 0, p.getLeft(), this.image.getWidth(), p.getDiff());
         origin.recycle();
         return b;
         //return origin.getSubimage(0,p.getLeft(),this.image.getWidth(),p.getDiff());
     }
+    
     private Bitmap cutLeftRight(Bitmap origin, PlateHorizontalGraph graph) {
         graph.applyProbabilityDistributor(new Graph.ProbabilityDistributor(0f,0f,2,10));
-        Vector<Graph.Peak> peaks = graph.findPeak(3);
+        ArrayList<Graph.Peak> peaks = graph.findPeak(3);
         
         if (peaks.size()!=0) {
-            Graph.Peak p = peaks.elementAt(0);
+            Graph.Peak p = peaks.get(0);
             Bitmap b = Bitmap.createBitmap(origin, p.getLeft(), 0, p.getDiff(), image.getHeight());
             origin.recycle();
             return b;

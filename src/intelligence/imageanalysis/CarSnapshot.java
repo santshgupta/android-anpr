@@ -71,20 +71,15 @@ package intelligence.imageanalysis;
 
 import intelligence.intelligence.Intelligence;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Vector;
+import java.util.ArrayList;
 
-import com.intelligence.NativeGraphics;
-
-import jjil.android.RgbImageAndroid;
-import jjil.core.RgbImage;
+import com.graphics.NativeGraphics;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.util.Log;
 import intelligence.imageanalysis.CarSnapshotGraph;
 
 public class CarSnapshot extends Photo {
@@ -129,70 +124,38 @@ public class CarSnapshot extends Photo {
         return graphHandle.renderVertically(100, this.getHeight() - 100);
     }    
     
-    private Vector<Graph.Peak> computeGraph() {
-    	if (graphHandle != null) return graphHandle.peaks; // graf uz bol vypocitany
-    	Intelligence.console.console("Start computing graph!");
-        Bitmap imageCopy = Photo.duplicateImage(this.image);
-       // Bitmap imageCopy = Bitmap.createBitmap(this.image, 200, 0, 20, this.image.getHeight());
-        verticalEdgeBi(imageCopy); 
-        
-        NativeGraphics.treshold(imageCopy, 100);
-        
-        
-        //long t1 = System.currentTimeMillis();
-        //long t2 = System.currentTimeMillis();
-        /**
-         * TODO Need to optimize
-         */
-        graphHandle = this.histogram(imageCopy);
-        
-        
-        //long t_result = t2 - t1;
-        //Log.i("intelligence_info", "computeGraph: " + Long.toString(t_result) + " ms;" );
-        /**
-         * Нативная версия тресхолдинга
-         */
-        
+    private ArrayList<Graph.Peak> computeGraph() {
+    	if (graphHandle != null) 
+    		return graphHandle.peaks;
+    	Bitmap imageCopy = Photo.duplicateImage(this.image);
+    	imageCopy = verticalEdgeBi(imageCopy); 
+    	graphHandle = this.histogram(imageCopy);
         graphHandle.rankFilter(carsnapshot_graphrankfilter);
         graphHandle.applyProbabilityDistributor(distributor);
         graphHandle.findPeaks(numberOfCandidates); //sort by height
-        
-        /**
-         * debug graph..
-         */
-        Intelligence.console.consoleBitmap(graphHandle.renderVertically(100, this.getHeight() - 100));
-        
         imageCopy.recycle();
         return graphHandle.peaks;
     }
         
-    public Vector<Band> getBands() {
-        Vector<Band> out = new Vector<Band>();
-        //long t1 = System.currentTimeMillis();
-        Vector<Graph.Peak> peaks = computeGraph();
-        //long t2 = System.currentTimeMillis();
-        //long t_result = t2 - t1;
-        //Log.i("intelligence_info", "computeGraph: " + Long.toString(t_result) + " ms;" );
-        for (int i=0; i<peaks.size(); i++) {
-        	Graph.Peak p = peaks.elementAt(i);
-            Bitmap gradCover 	= Bitmap.createBitmap(image.getWidth(), (int) (p.getDiff()), Bitmap.Config.ARGB_8888);
-            Bitmap bi = Bitmap.createBitmap(image, 0, (int) (p.getLeft()), image.getWidth(), (int) (p.getDiff()));
+    /**
+     * Optimized!
+     */
+    public ArrayList<Band> getBands() {
+    	ArrayList<Band> out = new ArrayList<Band>();
+        for (Graph.Peak p : computeGraph()) {
+        	Bitmap bi = Bitmap.createBitmap(image, 0, (int) (p.getLeft()), image.getWidth(), (int) (p.getDiff()));
             out.add(new Band(bi));
-            gradCover.recycle();
         }
         return out;
-        
     }
     
-    public void verticalEdgeBi(Bitmap source) {
-    	Log.d("RECOGNIZE", "verticalEdgeBi");
+    public Bitmap verticalEdgeBi(Bitmap source) {
         int template[] = {
            -1, 0, 1,
            -1, 0, 1,
            -1, 0, 1
         };
-        source = NativeGraphics.convolve(source, template, 3, 3, 1, 0);
-        Intelligence.console.consoleBitmap(source);
+        return NativeGraphics.convolve(source, template, 3, 3, 1, 0);
     }
 
     public CarSnapshotGraph histogram(Bitmap bi) {
