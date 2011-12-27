@@ -16,5 +16,4 @@
 
 
 == Примеры работы приложения ==
-http://android-anpr.googlecode.com/files/deviceIntelligency1.png
-http://android-anpr.googlecode.com/files/deviceIntellygency2.png
+http://android-anpr.googlecode.com/files/2011-12-27_20-20-25.jpg
