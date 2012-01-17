@@ -1,6 +1,6 @@
 #include <jni.h>
 #include "graphics_core.h"
-
+#include "HoughTransformation.h"
 #ifdef __ARM_NEON__
 	#include <arm_neon.h>
 #endif
@@ -27,6 +27,10 @@ JNIEXPORT void JNICALL Java_com_graphics_NativeGraphics_nativeConvert565to8888
  */
 JNIEXPORT void JNICALL Java_com_graphics_NativeGraphics_nativeTreshold
   (JNIEnv *, jclass, jobject, jobject, uint8_t);
+
+
+JNIEXPORT jfloat JNICALL Java_com_graphics_NativeGraphics_nativeHoughTransform
+  (JNIEnv *, jclass, jobject);
 
 
 JNIEXPORT void JNICALL Java_com_graphics_NativeGraphics_nativeAdaptiveTreshold

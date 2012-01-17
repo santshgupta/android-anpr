@@ -69,7 +69,6 @@ for more info about JavaANPR.
 package intelligence.intelligence;
 
 import intelligence.configurator.Configurator;
-import intelligence.imageanalysis.HoughTransformation;
 import intelligence.imageanalysis.Photo;
 
 import java.io.ByteArrayOutputStream;
@@ -80,6 +79,7 @@ import java.util.Vector;
 import jjil.android.RgbImageAndroid;
 import jjil.core.RgbImage;
 
+import com.graphics.NativeGraphics;
 import com.intelligence.Console;
 import com.intelligence.DrawCanvasView;
 import com.intelligence.intelligencyActivity;
@@ -178,6 +178,7 @@ public class Intelligence {
         int p = 0;
         console.console("getBands");
         for (Band b : carSnapshot.getBands()) { //doporucene 3
+        	console.consoleBitmap(b.image);
         	if (enableReportGeneration) {
         		console.console("Band width : "+b.getWidth()+" px");
         		console.console("Band height : "+b.getHeight()+" px");
@@ -188,27 +189,26 @@ public class Intelligence {
             		console.console("Plate height : "+plate.getHeight()+" px");
                 }                                
             	
-                // SKEW-RELATED
                 Plate notNormalizedCopy = null;
-                
-                HoughTransformation hough = null;
-                
                 if (skewDetectionMode != 0) {
+                	console.console("A");
                 	notNormalizedCopy = plate.clone();
-                	notNormalizedCopy.horizontalEdgeDetector(notNormalizedCopy.getBi());
-                    hough = notNormalizedCopy.getHoughTransformation(); 
-                    hough.render(HoughTransformation.RENDER_ALL, HoughTransformation.COLOR_BW);
-                    
-                    Bitmap source = plate.getBi();
+                	console.console("B");
+                	notNormalizedCopy.image = notNormalizedCopy.horizontalEdgeDetector(notNormalizedCopy.getBi());
+                	console.console("C");
+                	float houghSkew = NativeGraphics.houghTransform(notNormalizedCopy.image);
+                	console.console("D");
+                	Bitmap source = plate.getBi();
+                	console.console("E");
                 	Matrix m = new Matrix();
+                	console.console("F");
                 	if (enableReportGeneration) {
-                		console.console("skew : " + Float.toString(-(float)hough.dy / hough.dx)+" px");
+                		console.console("skew : " + houghSkew + " px");
                 	}
-                	m.setSkew(0, -(float)hough.dy / hough.dx);
+                	m.setSkew(0, houghSkew);
                     Bitmap core = Bitmap.createBitmap (source, 0, 0, source.getWidth(), source.getHeight(), m, false);
                     plate = new Plate(core);
                     source.recycle();
-                    
                 }
                 plate.normalize();
                 console.consoleBitmap(plate.image);

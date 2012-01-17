@@ -358,17 +358,6 @@ public class Photo {
         }
         return bi;
     }    
-    
-    public HoughTransformation getHoughTransformation() {
-        HoughTransformation hough = new HoughTransformation(this.getWidth(), this.getHeight());
-        for (int x=0; x<this.getWidth();x++) {
-            for (int y=0; y<this.getHeight(); y++) {
-                hough.addLine(x,y,this.getBrightness(x,y));
-            }
-        }
-        return hough;
-    }
-	
 }
 
 	

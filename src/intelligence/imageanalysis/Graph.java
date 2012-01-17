@@ -164,8 +164,10 @@ public class Graph {
         this.actualMinimumValue = false;
     }
     
-    // generic
-    // methods for searching bands in image !
+    /**
+     * €щем следующий максимум в пиках. 
+     * true - пик в корректном диапазоне, false - пик в некорректном диапазоне
+     */
     boolean allowedInterval(ArrayList<Peak> peaks, int xPosition) {
         for (Peak peak : peaks)
             if (peak.left <= xPosition && xPosition <= peak.right) return false;
@@ -191,44 +193,6 @@ public class Graph {
         this.deActualizeFlags();
     }
     
-//    public class PeakComparer implements Comparator {
-//        int sortBy; // 0 = podla sirky, 1 = podla velkosti, 2 = z lava do prava
-//        Vector<Float> yValues = null;
-//        
-//        public PeakComparer(Vector<Float> yValues, int sortBy) {
-//            this.yValues = yValues;
-//            this.sortBy = sortBy;
-//        }
-//        
-//        private float getPeakValue(Object peak) {
-//            if (this.sortBy == 0) {
-//                return ((Peak)peak).diff();
-//            } else if (this.sortBy == 1) {
-//                return this.yValues.elementAt( ((Peak)peak).center()  );
-//            } else if (this.sortBy == 2) {
-//                return ((Peak)peak).center();
-//            }
-//            return 0;
-//        }
-//        
-//        public int compare(Object peak1, Object peak2) { // Peak
-//            double comparison = this.getPeakValue(peak2) - this.getPeakValue(peak1);
-//            if (comparison < 0) return -1;
-//            if (comparison > 0) return 1;
-//            return 0;
-//        }
-//    }
-    
-//    float getAverageValue() {
-//        if (!this.actualAverageValue) {
-//            float sum = 0.0f;
-//            for (Float peak : this.yValues) sum += peak;
-//            this.averageValue = sum/this.yValues.size();
-//            this.actualAverageValue = true;
-//        }
-//        return this.averageValue;
-//    }
-//    
     
     float getAverageValue() {
         if (!this.actualAverageValue) {
@@ -244,17 +208,6 @@ public class Graph {
         return sum/this.yValues.size();
     }
     
-
-//    float getMaxValue() {
-//        if (!this.actualMaximumValue) {
-//            float maxValue = 0.0f;
-//            for (int i=0; i<yValues.size(); i++)
-//                maxValue = Math.max(maxValue, yValues.elementAt(i));
-//            this.maximumValue = maxValue;
-//            this.actualMaximumValue = true;
-//        }
-//        return this.maximumValue;
-//    }
 
     float getMaxValue() {
         if (!this.actualMaximumValue) {
@@ -286,19 +239,7 @@ public class Graph {
         }
         return maxIndex;    
     }    
-    
-//    float getMinValue() {
-//        if (!this.actualMinimumValue) {
-//            float minValue = Float.POSITIVE_INFINITY;
-//            for (int i=0; i<yValues.size(); i++)
-//                minValue = Math.min(minValue, yValues.elementAt(i));
-//            
-//            this.minimumValue = minValue;
-//            this.actualMinimumValue = true;
-//        }
-//        return this.minimumValue;
-//    }
-
+ 
     float getMinValue() {
         if (!this.actualMinimumValue) {
             this.minimumValue = this.getMinValue(0, this.yValues.size());
@@ -459,19 +400,55 @@ public class Graph {
         
     }
     
-    public int indexOfLeftPeakRel(int peak, double peakFootConstantRel) {
+    public int indexOfLeftPeakRel(int peak, ArrayList<Graph.Peak> outPeaks, double peakFootConstantRel) {
         int index=peak;
-        for (int i=peak; i>=0; i--) {
-            index = i;
-            if (yValues.get(index) < peakFootConstantRel*yValues.get(peak) ) break;
+        int koef = 6;
+        int endl = 0;
+        float averageIndex = 0;
+        for (Peak p : outPeaks) {
+            if ((p.right < index) && (endl < p.right)) {
+        		endl = p.right;
+            }
         }
-        return Math.max(0,index);
-    }
-    public int indexOfRightPeakRel(int peak, double peakFootConstantRel) {
-        int index=peak;
-        for (int i=peak; i<yValues.size(); i++) {
+        for (int i=peak; i >= endl; i -= koef) {
+        	if (i >= endl+koef) {
+        		for (int i2 = i; i2 >= i-koef; i2--) {
+        			averageIndex += yValues.get(i2);
+        		}
+        	} else {
+        		for (int i2 = i; i2 >= endl; i2--) {
+        			averageIndex += yValues.get(i2);
+        		}
+        	}
+        	averageIndex /= koef;
             index = i;
-            if (yValues.get(index) < peakFootConstantRel*yValues.get(peak) ) break;
+            if (averageIndex < peakFootConstantRel * yValues.get(peak) ) break;
+        }
+        return Math.max(0, index);
+    }
+    public int indexOfRightPeakRel(int peak, ArrayList<Graph.Peak> outPeaks, double peakFootConstantRel) {
+        int index=peak;
+        int koef = 6;
+        int endl = yValues.size();
+        float averageIndex = 0;
+        for (Peak p : outPeaks) {
+            if ((p.left > index) && (endl > p.left)) {
+        		endl = p.left;
+            }
+        }
+        for (int i = peak; i < endl; i += koef) {
+        	if (i <= endl - koef) {
+        		for (int i2 = i; i2 < i+koef; i2++) {
+        			averageIndex += yValues.get(i2);
+        		}
+        	} else {
+        		for (int i2 = i; i2 < endl; i2++) {
+        			averageIndex += yValues.get(i2);
+        		}
+        	}
+        	averageIndex /= koef;
+            index = i;
+            if (averageIndex < peakFootConstantRel * yValues.get(peak) ) break;
         }
         return Math.min(yValues.size(), index);
     }

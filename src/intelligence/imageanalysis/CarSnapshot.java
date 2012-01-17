@@ -129,14 +129,20 @@ public class CarSnapshot extends Photo {
     		return graphHandle.peaks;
     	Bitmap imageCopy = Photo.duplicateImage(this.image);
     	imageCopy = verticalEdgeBi(imageCopy); 
+    	/**
+    	 * Зачищаем плашку от больших белых пятен
+    	 */
+    	imageCopy = NativeGraphics.treshold(imageCopy, 136);
     	graphHandle = this.histogram(imageCopy);
         graphHandle.rankFilter(carsnapshot_graphrankfilter);
         graphHandle.applyProbabilityDistributor(distributor);
-        graphHandle.findPeaks(numberOfCandidates); //sort by height
+        graphHandle.findPeaks(numberOfCandidates); 
+        Intelligence.console.consoleBitmap(imageCopy);
+        Intelligence.console.consoleBitmap(graphHandle.renderVertically(100, 300));
         imageCopy.recycle();
         return graphHandle.peaks;
     }
-        
+    
     /**
      * Optimized!
      */

@@ -255,13 +255,13 @@ public class Plate extends Photo {
         source = NativeGraphics.convolve(source, template, 3, 3, 1, 0);
     } 
     
-    public void horizontalEdgeDetector(Bitmap source) {
+    public Bitmap horizontalEdgeDetector(Bitmap source) {
        int template[] = {
     		 -1,-2,-1,
              0,0,0,
              1,2,1
         };
-        source = NativeGraphics.convolve(source, template, 3, 3, 1, 0);
+        return NativeGraphics.convolve(source, template, 3, 3, 1, 0);
     }    
     
     public float getCharsWidthDispersion(Vector<Char> chars) {

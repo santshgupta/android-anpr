@@ -15,6 +15,7 @@ include $(CLEAR_VARS)
 LOCAL_MODULE    := com_graphics_NativeGraphics
 LOCAL_SRC_FILES := com_graphics_NativeGraphics.cpp
 LOCAL_SRC_FILES += graphics_core.cpp
+LOCAL_SRC_FILES += HoughTransformation.cpp
 #arm neon support
 ifeq ($(TARGET_ARCH_ABI),armeabi-v7a)   
 	LOCAL_ARM_NEON := true

@@ -3,7 +3,6 @@
 
 #include <string.h>
 #include <jni.h>
-#include <android/log.h>
 #include <android/bitmap.h>
 #include <cpu-features.h>
 #include <math.h>
@@ -11,6 +10,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "logger.h"
+#include <vector>
 
 #ifdef __ARM_NEON__
 	#include <arm_neon.h>
@@ -26,7 +26,7 @@
  */
 
 namespace GraphicsCoreNS {
-		class GraphicsCore {
+	class GraphicsCore {
 
 		public:
 			GraphicsCore();

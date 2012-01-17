@@ -22,7 +22,7 @@ N - adaptive thresholding with radius N (must be greater or equal than 1)
 
 <!-- PLATE CANDIDATES SEARCH -->
 
-<entry key="intelligence_numberOfBands">2</entry> <!-- how many bands from image should be extracted from image vertical graph -->
+<entry key="intelligence_numberOfBands">3</entry> <!-- how many bands from image should be extracted from image vertical graph -->
 <entry key="intelligence_numberOfPlates">2</entry> <!-- how many plates from band should be extracted from band horizontal graph -->
 <entry key="intelligence_numberOfChars">20</entry> <!-- maximum number of chars extracted from plate's horizontal graph -->
 

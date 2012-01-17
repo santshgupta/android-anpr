@@ -6,7 +6,6 @@ obj/local/armeabi/objs-debug/com_graphics_NativeGraphics/com_graphics_NativeGrap
  /Users/azhdanov/work/android-ndk-r7/platforms/android-14/arch-arm/usr/include/sys/cdefs.h \
  /Users/azhdanov/work/android-ndk-r7/platforms/android-14/arch-arm/usr/include/sys/cdefs_elf.h \
  /Users/azhdanov/work/android-ndk-r7/platforms/android-14/arch-arm/usr/include/malloc.h \
- /Users/azhdanov/work/android-ndk-r7/platforms/android-14/arch-arm/usr/include/android/log.h \
  /Users/azhdanov/work/android-ndk-r7/platforms/android-14/arch-arm/usr/include/android/bitmap.h \
  /Users/azhdanov/work/android-ndk-r7/platforms/android-14/arch-arm/usr/include/stdint.h \
  /Users/azhdanov/work/android-ndk-r7/platforms/android-14/arch-arm/usr/include/sys/_types.h \
@@ -38,7 +37,10 @@ obj/local/armeabi/objs-debug/com_graphics_NativeGraphics/com_graphics_NativeGrap
  /Users/azhdanov/work/android-ndk-r7/platforms/android-14/arch-arm/usr/include/alloca.h \
  /Users/azhdanov/work/android-ndk-r7/platforms/android-14/arch-arm/usr/include/strings.h \
  /Users/azhdanov/work/android-ndk-r7/platforms/android-14/arch-arm/usr/include/memory.h \
- jni/logger.h
+ jni/logger.h \
+ /Users/azhdanov/work/android-ndk-r7/platforms/android-14/arch-arm/usr/include/android/log.h \
+ /Users/azhdanov/work/android-ndk-r7/sources/cxx-stl/gnu-libstdc++/include/vector \
+ jni/HoughTransformation.h
 
 jni/com_graphics_NativeGraphics.h:
 
@@ -53,8 +55,6 @@ jni/graphics_core.h:
 /Users/azhdanov/work/android-ndk-r7/platforms/android-14/arch-arm/usr/include/sys/cdefs_elf.h:
 
 /Users/azhdanov/work/android-ndk-r7/platforms/android-14/arch-arm/usr/include/malloc.h:
-
-/Users/azhdanov/work/android-ndk-r7/platforms/android-14/arch-arm/usr/include/android/log.h:
 
 /Users/azhdanov/work/android-ndk-r7/platforms/android-14/arch-arm/usr/include/android/bitmap.h:
 
@@ -119,3 +119,9 @@ jni/graphics_core.h:
 /Users/azhdanov/work/android-ndk-r7/platforms/android-14/arch-arm/usr/include/memory.h:
 
 jni/logger.h:
+
+/Users/azhdanov/work/android-ndk-r7/platforms/android-14/arch-arm/usr/include/android/log.h:
+
+/Users/azhdanov/work/android-ndk-r7/sources/cxx-stl/gnu-libstdc++/include/vector:
+
+jni/HoughTransformation.h:

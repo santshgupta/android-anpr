@@ -22,7 +22,12 @@ void JNICALL Java_com_graphics_NativeGraphics_nativeTreshold (JNIEnv *env,
 		jclass javaThis, jobject bitmapcolor, jobject bitmapgray, uint8_t tresh) {
 	GraphicsCoreNS :: GraphicsCore core;
 	core.treshold(env, javaThis, bitmapcolor, bitmapgray, tresh);
+}
 
+jfloat JNICALL Java_com_graphics_NativeGraphics_nativeHoughTransform (JNIEnv *env,
+		jclass javaThis, jobject bitmapcolor) {
+	GraphicsCoreNS::HoughTransformation hough (env, javaThis, bitmapcolor);
+	return hough.transform();
 }
 
 

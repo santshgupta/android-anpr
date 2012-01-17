@@ -117,8 +117,8 @@ public class CarSnapshotGraph extends Graph {
                     }
                 }
             }
-            int leftIndex = indexOfLeftPeakRel(maxIndex, peakFootConstant);
-            int rightIndex = indexOfRightPeakRel(maxIndex, peakFootConstant);
+            int leftIndex = indexOfLeftPeakRel(maxIndex, outPeaks, peakFootConstant);
+            int rightIndex = indexOfRightPeakRel(maxIndex, outPeaks, peakFootConstant);
             int diff = rightIndex - leftIndex;
             leftIndex -= peakDiffMultiplicationConstant * diff;
             rightIndex+= peakDiffMultiplicationConstant * diff;
