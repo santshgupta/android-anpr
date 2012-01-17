@@ -19,6 +19,7 @@ public class NativeGraphics {
 	private native static void nativeGetHSVBrightnessHorizontally(Bitmap sourceBitmap, float[] peaks);
 	private native static void nativeSobel(Bitmap sourceBitmap, Bitmap destBitmap, int[] template);
 	private native static void nativeFullEdgeDetector(Bitmap source, Bitmap destBitmap);
+	private native static float nativeHoughTransform(Bitmap source);
 	
 	/**
 	 * Sobel - http://en.wikipedia.org/wiki/Sobel_operator
@@ -79,6 +80,10 @@ public class NativeGraphics {
 		Bitmap destBitmap = Bitmap.createBitmap(source.getWidth(), source.getHeight(), Bitmap.Config.ARGB_8888);
 		nativeFullEdgeDetector(source, destBitmap);
 		return destBitmap;
+	}
+	
+	public static float houghTransform(Bitmap source) {
+		return nativeHoughTransform(source);
 	}
 }
 

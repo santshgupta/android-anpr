@@ -130,8 +130,8 @@ public class PlateGraph extends Graph {
                 }
                 if (yValues.get(maxIndex) < plategraph_rel_minpeaksize * this.getMaxValue()) break;
                 
-                int leftIndex = indexOfLeftPeakRel(maxIndex, peakFootConstant);
-                int rightIndex = indexOfRightPeakRel(maxIndex, peakFootConstant);
+                int leftIndex = indexOfLeftPeakRel(maxIndex, spacesTemp, peakFootConstant);
+                int rightIndex = indexOfRightPeakRel(maxIndex, spacesTemp, peakFootConstant);
                 
                 spacesTemp.add(new Peak(
                         Math.max(0,leftIndex),

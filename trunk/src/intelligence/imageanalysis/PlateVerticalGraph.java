@@ -121,8 +121,8 @@ public class PlateVerticalGraph extends Graph {
             
             if (yValues.get(maxIndex) < 0.05 * super.getMaxValue()) break;//0.4
             
-            int leftIndex = indexOfLeftPeakRel(maxIndex,peakFootConstant);
-            int rightIndex = indexOfRightPeakRel(maxIndex,peakFootConstant);
+            int leftIndex = indexOfLeftPeakRel(maxIndex, outPeaks, peakFootConstant);
+            int rightIndex = indexOfRightPeakRel(maxIndex, outPeaks, peakFootConstant);
             
             outPeaks.add(new Peak(
                     Math.max(0,leftIndex),

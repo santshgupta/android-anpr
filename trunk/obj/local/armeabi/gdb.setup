@@ -1,4 +1,4 @@
 set solib-search-path ./obj/local/armeabi
-directory /Users/azhdanov/work/android-ndk-r7/platforms/android-14/arch-arm/usr/include /Users/azhdanov/work/android-ndk-r7/sources/android/cpufeatures /Users/azhdanov/work/android-ndk-r7/sources/cxx-stl/system/include jni
+directory /Users/azhdanov/work/android-ndk-r7/platforms/android-14/arch-arm/usr/include /Users/azhdanov/work/android-ndk-r7/sources/android/cpufeatures /Users/azhdanov/work/android-ndk-r7/sources/cxx-stl/gnu-libstdc++/include /Users/azhdanov/work/android-ndk-r7/sources/cxx-stl/gnu-libstdc++/libs/armeabi/include jni
 file ./obj/local/armeabi/app_process
 target remote :5039

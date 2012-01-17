@@ -59,9 +59,6 @@ void GraphicsCore :: fullEdgeDetector(JNIEnv* env, jclass javaThis, jobject bitm
 	uint32_t *rgbData = (uint32_t *) pixelscolor;
 	uint32_t *destData = (uint32_t *) pixelsgray;
 
-	uint32_t destArr[infocolor.width * infocolor.height];
-	uint32_t destArrNew[infocolor.width * infocolor.height];
-
 	jint matrix[9] = { -1,	0, 	1,
 					   -2,	0, 	2,
 					   -1, 	0, 	1};
@@ -79,6 +76,8 @@ void GraphicsCore :: fullEdgeDetector(JNIEnv* env, jclass javaThis, jobject bitm
 	int max2  	= 0;
 	int width 	= infocolor.width;
 	int height 	= infocolor.height;
+	std::vector<int> destArr(width * height);
+	std::vector<int> destArrNew(width * height);
 
 	for ( int x = (templateSize - 1) / 2; x < width - (templateSize + 1) / 2; x++) {
 		for (int y = (templateSize - 1) / 2; y < height - (templateSize + 1) / 2; y++) {
@@ -106,17 +105,21 @@ void GraphicsCore :: fullEdgeDetector(JNIEnv* env, jclass javaThis, jobject bitm
 					sumX2 += value2;
 				}
 			}
-			destArr[y * width + x] = (int)sqrt(sumX * sumX + sumY * sumY);
-			destArrNew[y * width + x] = (int)sqrt(sumX2 * sumX2 + sumY2 * sumY2);
+			int p1 = (int)sqrt(sumX * sumX + sumY * sumY);
+			int p2 = (int)sqrt(sumX2 * sumX2 + sumY2 * sumY2);
+			destArr[y * width + x] = p1;
+			destArrNew[y * width + x] = p2;
 
-			if(max < destArr[ y * width + x])
-				max = destArr[y * width + x];
-			if(max2 < destArrNew[ y * width + x])
-				max2 = destArrNew[y * width + x];
+			if(max < p1)
+				max = p1;
+			if(max2 < p2)
+				max2 = p2;
 		}
 	}
+
 	float ratio = (float)max / 255;
 	float ratio2 = (float)max2 / 255;
+
 	for ( int x = (templateSize - 1) / 2; x < width - (templateSize + 1) / 2; x++) {
 		for (int y = (templateSize - 1) / 2; y < height - (templateSize + 1) / 2; y++) {
 			sumX = (int)(destArr[y * width + x] / ratio);
@@ -125,6 +128,7 @@ void GraphicsCore :: fullEdgeDetector(JNIEnv* env, jclass javaThis, jobject bitm
 			destData[y * width + x] = 0xff000000 | ((int)m << 16 | (int)m << 8 | (int)m);
 		}
 	}
+
 	LOGI("unlocking pixels");
 	AndroidBitmap_unlockPixels(env, bitmapcolor);
 	AndroidBitmap_unlockPixels(env, bitmapgray);
@@ -357,12 +361,9 @@ void GraphicsCore :: adaptiveTreshold (JNIEnv *env, jclass javaThis, jobject bit
 	}
 	uint32_t *rgbData = (uint32_t *) pixelscolor;
 	uint32_t *destData = (uint32_t *) pixelsgray;
-	int radius = 8;//Intelligence.configurator.getIntProperty("photo_adaptivethresholdingradius");
+	int radius = 8;
 	int w = infocolor.width;
 	int h = infocolor.height;
-
-	//float[][] sourceArray = this.bitmapImageToArray(this.image,w,h);
-	//float[][] destinationArray = this.bitmapImageToArray(this.image,w,h);
 
 	int count;
 	float neighborhood;
@@ -413,9 +414,8 @@ void GraphicsCore :: treshold (JNIEnv *env, jclass javaThis, jobject bitmapcolor
 	}
 
 	LOGI("color image :: width is %d; height is %d; stride is %d; format is %d;flags is%d",infocolor.width,infocolor.height,infocolor.stride,infocolor.format,infocolor.flags);
-	if ((infocolor.format != ANDROID_BITMAP_FORMAT_RGB_565)
-			&& (infocolor.format != ANDROID_BITMAP_FORMAT_RGBA_8888)) {
-		LOGE("Bitmap format must be RGB_565 or RGBA_8888, format = %d", infocolor.format);
+	if (infocolor.format != ANDROID_BITMAP_FORMAT_RGBA_8888) {
+		LOGE("Bitmap format must be RGBA_8888, format = %d", infocolor.format);
 		return;
 	}
 
@@ -432,40 +432,25 @@ void GraphicsCore :: treshold (JNIEnv *env, jclass javaThis, jobject bitmapcolor
 	if ((ret = AndroidBitmap_lockPixels(env, bitmapgray, &pixelsgray)) < 0) {
 		LOGE("AndroidBitmap_lockPixels() failed ! error=%d", ret);
 	}
+	uint32_t *rgbData = (uint32_t *) pixelscolor;
+	uint32_t *destData = (uint32_t *) pixelsgray;
+	int w = infocolor.width;
+	int h = infocolor.height;
 
-	for (y = 0; y < infocolor.height; y++) {
-		uint16_t *line = (uint16_t*) pixelscolor;
-		uint32_t *grayline = (uint32_t *) pixelsgray;
-		for (x = 0; x < infocolor.width; x++) {
-			if (infocolor.format == ANDROID_BITMAP_FORMAT_RGB_565) {
-
-				redColor = (uint8_t) (((line[x] & 0xF800) >> 11) << 3);
-				greenColor = (uint8_t) (((line[x] & 0x07E0) >> 5) << 2);
-				blueColor = (uint8_t) ((line[x] & 0x001F) << 3);
-
-			} else if (infocolor.format == ANDROID_BITMAP_FORMAT_RGBA_8888) {
-
-				redColor = (uint8_t) ((line[x] >> 16) & 0xFF);
-				greenColor = (uint8_t) ((line[x] >> 8) & 0xFF);
-				blueColor = (uint8_t) ((line[x]) & 0xFF);
-
-			}
-			if (redColor <= tresh) {
+	for (int x = 0; x < w; x++) {
+		for (int y = 0; y < h; y++) {
+			redColor = (uint8_t) ((rgbData[y * w + x] >> 16) & 0xFF);
+			greenColor = (uint8_t) ((rgbData[y * w + x] >> 8) & 0xFF);
+			blueColor = (uint8_t) ((rgbData[y * w + x]) & 0xFF);
+			if (redColor <= tresh || greenColor <= tresh || blueColor <= tresh) {
 				redColor = 0;
-			}
-			if (greenColor <= tresh) {
 				greenColor = 0;
-			}
-			if (blueColor <= tresh) {
 				blueColor = 0;
 			}
-			grayline[x] = 0xff000000 | (redColor) | (greenColor << 8)
-					| (blueColor << 16);
+			destData[y * w + x] = 0xff000000 | (redColor) | (greenColor << 8)
+								| (blueColor << 16);
 		}
-		pixelscolor = (char *) pixelscolor + infocolor.stride;
-		pixelsgray = (char *) pixelsgray + infogray.stride;
 	}
-
 	LOGI("unlocking pixels");
 	AndroidBitmap_unlockPixels(env, bitmapcolor);
 	AndroidBitmap_unlockPixels(env, bitmapgray);

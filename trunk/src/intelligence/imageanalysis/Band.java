@@ -92,7 +92,7 @@ public class Band extends Photo {
         return graphHandle.renderHorizontally(this.getWidth() - 50, 100);
     }
     
-    private ArrayList<Graph.Peak> computeGraph() {
+    private synchronized ArrayList<Graph.Peak> computeGraph() {
     	Intelligence.console.console("computeGraph!!!");
     	if (graphHandle != null) return graphHandle.peaks; // graf uz bol vypocitany
         Bitmap imageCopy = duplicateImage(this.image);
@@ -106,7 +106,7 @@ public class Band extends Photo {
         graphHandle.findPeaks(numberOfCandidates);
         
         Intelligence.console.consoleBitmap(imageCopy);
-        Intelligence.console.consoleBitmap(graphHandle.renderHorizontally(this.getWidth() - 50, 100));
+        Intelligence.console.consoleBitmap(graphHandle.renderHorizontally(300, 100));
         imageCopy.recycle();
         Intelligence.console.console("computeGraph - OK");
         return graphHandle.peaks;

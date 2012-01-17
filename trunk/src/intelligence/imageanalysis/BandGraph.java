@@ -41,7 +41,7 @@ import intelligence.intelligence.Intelligence;
         public ArrayList<Peak> findPeaks(int count) {
         	ArrayList<Graph.Peak> outPeaks = new ArrayList<Peak>();
             
-            for (int c=0; c<count; c++) {
+            for (int c = 0; c < count; c++) {
                 float maxValue = 0.0f;
                 int maxIndex = 0;
                 for (int i=0; i<this.yValues.size(); i++) {
@@ -53,24 +53,42 @@ import intelligence.intelligence.Intelligence;
                         }
                     }
                 } 
-                int leftIndex = indexOfLeftPeakRel(maxIndex,peakFootConstant);
-                int rightIndex = indexOfRightPeakRel(maxIndex,peakFootConstant);
+                int leftIndex = indexOfLeftPeakRel(maxIndex, outPeaks, peakFootConstant);
+                int rightIndex = indexOfRightPeakRel(maxIndex, outPeaks, peakFootConstant);
                 int diff = rightIndex - leftIndex;
-                leftIndex -= peakDiffMultiplicationConstant * diff;   /*CONSTANT*/
-                rightIndex+= peakDiffMultiplicationConstant * diff;   /*CONSTANT*/
+               // leftIndex  -= peakDiffMultiplicationConstant * diff;   // смещение слева
+               // rightIndex += peakDiffMultiplicationConstant * diff;   // смещение справа
                 
                 outPeaks.add(new Peak(
                         Math.max(0,leftIndex),
                         maxIndex,
-                        Math.min(this.yValues.size()-1,rightIndex)
+                        Math.min(this.yValues.size() - 1, rightIndex)
                         ));
             }
             
             ArrayList<Peak> outPeaksFiltered = new ArrayList<Peak>();
+            
+            /////////////////// TODO REMOVE!!! ////////////////////////////
+            super.peaks = outPeaks;
+            Intelligence.console.consoleBitmap(renderHorizontally(300, 100));
+            //////////////////////////////////////////////////////////////
             for (Peak p : outPeaks) {
-                if (p.getDiff() > 2 * this.handle.getHeight() &&
-                    p.getDiff() < 15 * this.handle.getHeight()) 
-                	outPeaksFiltered.add(p);
+            	float aspectRatio = 0;
+            	if (p.left < p.right) {
+            		aspectRatio = (float)p.left / (float)p.right;
+            	} else {
+            		aspectRatio = (float)p.right / (float)p.left;
+            	}
+            	/**
+            	 * Љоэфициенты пропорции
+            	 */
+                if ((p.getDiff() > 3 * this.handle.getHeight()) &&
+                    (p.getDiff() < 8 * this.handle.getHeight()) &&
+                    aspectRatio > 0.3)  {
+            		outPeaksFiltered.add(p);
+                } else {
+                	Intelligence.console.console("broken peak: " + p.center);
+                }
             }
             
             Collections.sort(outPeaksFiltered, (Comparator<? super Graph.Peak>)
