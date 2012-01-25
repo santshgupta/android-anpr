@@ -134,6 +134,107 @@ void GraphicsCore :: fullEdgeDetector(JNIEnv* env, jclass javaThis, jobject bitm
 	AndroidBitmap_unlockPixels(env, bitmapgray);
 }
 
+
+
+
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////W I N E R     T R A N S F O R M A T I O N ///////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+void GraphicsCore :: wienerTransformation(JNIEnv* env, jclass javaThis, jobject bitmapcolor, jobject bitmapgray) {
+	AndroidBitmapInfo infocolor;
+	void* pixelscolor;
+	AndroidBitmapInfo infogray;
+	void* pixelsgray;
+	uint8_t redColor, greenColor, blueColor;
+	int ret, y, x;
+
+	LOGI("GraphicsCore::WinerTransformation");
+	if ((ret = AndroidBitmap_getInfo(env, bitmapcolor, &infocolor)) < 0) {
+		LOGE("AndroidBitmap_getInfo() failed 1 ! error=%d", ret);
+		return;
+	}
+
+	if ((ret = AndroidBitmap_getInfo(env, bitmapgray, &infogray)) < 0) {
+		LOGE("AndroidBitmap_getInfo() failed 2 ! error=%d", ret);
+		return;
+	}
+
+	LOGI("color image :: width is %d; height is %d; stride is %d; format is %d;flags is%d",infocolor.width,infocolor.height,infocolor.stride,infocolor.format,infocolor.flags);
+	if (infocolor.format != ANDROID_BITMAP_FORMAT_RGBA_8888) {
+		LOGE("Bitmap input format must be RGBA_8888, format = %d", infocolor.format);
+		return;
+	}
+
+	LOGI("gray image :: width is %d; height is %d; stride is %d; format is %d;flags is%d",infogray.width,infogray.height,infogray.stride,infogray.format,infogray.flags);
+	if (infogray.format != ANDROID_BITMAP_FORMAT_RGBA_8888) {
+		LOGE("Bitmap output format is not RGBA_8888 4 ! format=%d", infogray.format);
+		return;
+	}
+
+	if ((ret = AndroidBitmap_lockPixels(env, bitmapcolor, &pixelscolor)) < 0) {
+		LOGE("AndroidBitmap_lockPixels() failed ! error=%d", ret);
+	}
+
+	if ((ret = AndroidBitmap_lockPixels(env, bitmapgray, &pixelsgray)) < 0) {
+		LOGE("AndroidBitmap_lockPixels() failed ! error=%d", ret);
+	}
+
+	uint32_t *rgbData = (uint32_t *) pixelscolor;
+	uint32_t *destData = (uint32_t *) pixelsgray;
+
+	int width 	= infocolor.width;
+	int height 	= infocolor.height;
+
+	IplImage *tmp = loadPixels(rgbData, width, height);
+	IplImage *tmp2 = cvCreateImage(cvSize(tmp->width, tmp->height), IPL_DEPTH_8U, 1);
+	cvCvtColor(tmp, tmp2, CV_RGB2GRAY);
+	deNoise(tmp2,tmp2);
+	//openCVWienerFilter(tmp2, tmp2, 3, 3);
+
+	for ( int y = 0; y < height; y++ ) {
+			for (int x = 0; x < width; x++ ){
+
+				char color = tmp2->imageData[y*width+x];
+				destData[y * width + x] = 0xff000000 | (color) | (color << 8)
+											| (color << 16);
+			}
+		}
+	/**
+	 * 3 channels images processing
+	 *
+	for ( int y = 0; y < height; y++ ) {
+		for (int x = 0; x < width; x++ ){
+			char colorR = tmp2->imageData[3*(y*width+x)];
+			char colorG = tmp2->imageData[3*(y*width+x)+1];
+			char colorB = tmp2->imageData[3*(y*width+x)+2];
+			destData[y * width + x] = 0xff000000 | (colorR) | (colorG << 8)
+										| (colorB << 16);
+		}
+	}
+	*/
+	LOGI("unlocking pixels");
+	AndroidBitmap_unlockPixels(env, bitmapcolor);
+	AndroidBitmap_unlockPixels(env, bitmapgray);
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+
+
+
 void GraphicsCore::HSVBrightnessHorizontally(JNIEnv* env, jclass javaThis, jobject bitmapSource, jfloatArray arr) {
 	AndroidBitmapInfo infoSource;
 	void* pixelscolor;
@@ -608,22 +709,14 @@ void GraphicsCore :: convolve (JNIEnv *env, jobject bitmapSource, jobject bitmap
 	#endif
 	if (android_getCpuFamily() != ANDROID_CPU_FAMILY_ARM) {
 		LOGI("Not an ARM CPU");
-		//goto EXIT;
 	}
 	features = android_getCpuFeatures();
 	if ((features & ANDROID_CPU_ARM_FEATURE_ARMv7) == 0) {
 		LOGI("Not an ARMv7 CPU");
-		//goto EXIT;
 	}
 
 	uint16_t kernelData[9] = { };
-	//uint16_t *kernelDataPtr = kernelData;
-
 	uint32_t data[9] = { };
-	//uint32_t *dataPtr = data;
-
-	//int kernelWidth = 2;
-	//int kernelHeight = 2;
 	int pixelPosX, pixelPosY;
 	for (int32_t j = 0; j < kernelCountRows; j++) {
 		for (int32_t i = 0; i < kernelCountCols; i++) {
@@ -632,17 +725,12 @@ void GraphicsCore :: convolve (JNIEnv *env, jobject bitmapSource, jobject bitmap
 		}
 	}
 
-	// get timer
-
-	//calculate
 	//t0 = now_ms();
-	for (int y = 1; y < height - 1; y++) {
-		uint32_t *destline = (uint32_t *) pixelDestination;
-		for (int x = 1; x < width - 1; x++) {
+	uint32_t *destline = (uint32_t *) pixelDestination;
+	for (int x = 1; x < width - 1; x++) {
+		for (int y = 1; y < height - 1; y++) {
 			int8_t emptyPtr = 0;
 			int16_t rSum = 0, gSum = 0, bSum = 0;
-
-
 
 #ifdef __ARM_NEON__
 
@@ -771,41 +859,44 @@ void GraphicsCore :: convolve (JNIEnv *env, jobject bitmapSource, jobject bitmap
 
 #else
 
-			for (int32_t j = 0; j <= kernelHeight; j++) {
-				for (int32_t i = 0; i <= kernelWidth; i++) {
-					int pixelPosX = x + (i - 1);
-					int pixelPosY = y + (j - 1);
+			for (int32_t j = 0; j < kernelCountRows; j++) {
+				for (int32_t i = 0; i < kernelCountCols; i++) {
+					pixelPosX = x + (i - 1);
+					pixelPosY = y + (j - 1);
 					if ((pixelPosX < 0) || (pixelPosX >= width) || (pixelPosY
-							< 0) || (pixelPosY >= height))
-						continue;
+									< 0) || (pixelPosY >= height))
+					continue;
 
 					int posPix = width * pixelPosY + pixelPosX;
-					int kernelVal = kernel[i][j];
-
 					uint8_t r = (uint8_t) ((rgbData[posPix] >> 16) & 0xFF);
 					uint8_t g = (uint8_t) ((rgbData[posPix] >> 8) & 0xFF);
 					uint8_t b = (uint8_t) ((rgbData[posPix]) & 0xFF);
+
+
+					uint16_t kernelVal = kernelData[j * kernelCountCols + i];
+
 					rSum += r * kernelVal;
 					gSum += g * kernelVal;
 					bSum += b * kernelVal;
 				}
 			}
+
 #endif
+			rSum = (rSum / filterDiv) + offset;
+			gSum = (gSum / filterDiv) + offset;
+			bSum = (bSum / filterDiv) + offset;
+
 			rSum = (rSum > 255) ? 255 : ((rSum < 0) ? 0 : rSum);
 			gSum = (gSum > 255) ? 255 : ((gSum < 0) ? 0 : gSum);
 			bSum = (bSum > 255) ? 255 : ((bSum < 0) ? 0 : bSum);
 
-			destline[x] = 0xff000000 | ((int) rSum << 16 | (int) gSum << 8
-					| (int) bSum);
+			destline[y * width + x] = 0xff000000 | ((int) rSum  | (int) gSum << 8
+					| (int) bSum << 16);
 		}
-		pixelDestination = (char *) pixelDestination + infoDestination.stride;
 	}
 	//t1 = now_ms();
-
-	EXIT: {
-		LOGI("finish");
-	}
-//	time_c = t1 - t0;
+	LOGI("finish");
+	//	time_c = t1 - t0;
 	//LOGI("FIR Filter benchmark:C version: %g ms\n", time_c);
 
 	AndroidBitmap_unlockPixels(env, bitmapSource);
@@ -873,4 +964,175 @@ void GraphicsCore :: sobelFilterTexas (uint32_t *input, int width, int height, u
                 output[i + 1] = 0xff000000 | ((int) O << 16 | (int) O << 8 | (int) O);
         }
 }
+
+
+void GraphicsCore :: openCVWienerFilter (const void* srcArr, void* dstArr, int szWindowX, int szWindowY) {
+	CV_FUNCNAME( "cvWiener2" );
+	int nRows;
+	int nCols;
+	CvMat *p_kernel = NULL;
+	CvMat srcStub, *srcMat = NULL;
+	CvMat *p_tmpMat1, *p_tmpMat2, *p_tmpMat3, *p_tmpMat4;
+	double noise_power;
+
+	__BEGIN__;
+
+	//// DO CHECKING ////
+
+	if ( srcArr == NULL) {
+		CV_ERROR( CV_StsNullPtr, "Source array null" );
+	}
+	if ( dstArr == NULL) {
+		CV_ERROR( CV_StsNullPtr, "Dest. array null" );
+	}
+
+	nRows = szWindowY;
+	nCols = szWindowX;
+
+
+	p_kernel = cvCreateMat( nRows, nCols, CV_32F );
+	CV_CALL( cvSet( p_kernel, cvScalar( 1.0 / (double) (nRows * nCols)) ) );
+
+	//Convert to matrices
+	srcMat = (CvMat*) srcArr;
+
+	if ( !CV_IS_MAT(srcArr) ) {
+		CV_CALL ( srcMat = cvGetMat(srcMat, &srcStub, 0, 1) ) ;
+	}
+
+	//Now create a temporary holding matrix
+	p_tmpMat1 = cvCreateMat(srcMat->rows, srcMat->cols, CV_MAT_TYPE(srcMat->type));
+	p_tmpMat2 = cvCreateMat(srcMat->rows, srcMat->cols, CV_MAT_TYPE(srcMat->type));
+	p_tmpMat3 = cvCreateMat(srcMat->rows, srcMat->cols, CV_MAT_TYPE(srcMat->type));
+	p_tmpMat4 = cvCreateMat(srcMat->rows, srcMat->cols, CV_MAT_TYPE(srcMat->type));
+
+	//Local mean of input
+	cvFilter2D( srcMat, p_tmpMat1, p_kernel, cvPoint(nCols/2, nRows/2)); //localMean
+
+	//Local variance of input
+	cvMul( srcMat, srcMat, p_tmpMat2);	//in^2
+	cvFilter2D( p_tmpMat2, p_tmpMat3, p_kernel, cvPoint(nCols/2, nRows/2));
+
+	//Subtract off local_mean^2 from local variance
+	cvMul( p_tmpMat1, p_tmpMat1, p_tmpMat4 ); //localMean^2
+	cvSub( p_tmpMat3, p_tmpMat4, p_tmpMat3 ); //filter(in^2) - localMean^2 ==> localVariance
+
+	//Estimate noise power
+	noise_power = cvMean(p_tmpMat3, 0);
+
+	// result = local_mean  + ( max(0, localVar - noise) ./ max(localVar, noise)) .* (in - local_mean)
+
+	cvSub ( srcMat, p_tmpMat1, dstArr);		     //in - local_mean
+	cvMaxS( p_tmpMat3, noise_power, p_tmpMat2 ); //max(localVar, noise)
+
+	cvAddS( p_tmpMat3, cvScalar(-noise_power), p_tmpMat3 ); //localVar - noise
+	cvMaxS( p_tmpMat3, 0, p_tmpMat3 ); // max(0, localVar - noise)
+
+	cvDiv ( p_tmpMat3, p_tmpMat2, p_tmpMat3 );  //max(0, localVar-noise) / max(localVar, noise)
+
+	cvMul ( p_tmpMat3, dstArr, dstArr );
+	cvAdd ( dstArr, p_tmpMat1, dstArr );
+
+	cvReleaseMat( &p_kernel  );
+	cvReleaseMat( &p_tmpMat1 );
+	cvReleaseMat( &p_tmpMat2 );
+	cvReleaseMat( &p_tmpMat3 );
+	cvReleaseMat( &p_tmpMat4 );
+
+	__END__;
+
+
+}
+
+
+IplImage* GraphicsCore :: loadPixels(uint32_t* pixels, int width, int height) {
+	int x, y;
+	IplImage *img = cvCreateImage(cvSize(width, height), IPL_DEPTH_8U, 3);
+
+	for ( y = 0; y < height; y++ ) {
+        for ( x = 0; x < width; x++ ) {
+            // blue
+            IMAGE( img, x, y, 0 ) = pixels[x+y*width] & 0xFF;
+            // green
+            IMAGE( img, x, y, 1 ) = pixels[x+y*width] >> 8 & 0xFF;
+            // red
+            IMAGE( img, x, y, 2 ) = pixels[x+y*width] >> 16 & 0xFF;
+        }
+    }
+
+	return img;
+}
+
+
+
+void GraphicsCore :: deNoise(IplImage* src, IplImage* dst)
+{
+	CvMat* src1,*dst1,*f;
+	CvMat Km,*localMean=NULL,*localVar=NULL;
+    float k[25];
+	int i,j;
+	double temp,tempLocalMean,t1,prod,mean2;
+    int row,col;
+	uchar* ptr;
+	row=src->height;
+	col=src->width;
+	src1=cvCreateMat(row,col,CV_32F);
+	cvConvert(src,src1);
+    dst1=cvCreateMat(row,col,CV_32F);
+	for (i=0;i<25;i++)
+	{
+		k[i]=1;
+	}
+    Km = cvMat( 5, 5, CV_32F, k);
+   localMean=cvCreateMat(row,col,CV_32F);
+   localVar=cvCreateMat(row,col,CV_32F);
+   f=cvCreateMat(row,col,CV_32F);
+   cvFilter2D(src1, dst1, &Km, cvPoint(-1,-1));
+   prod=5*5;
+ 	for (i=0;i<row;i++)
+ 	{
+ 		for (j=0;j<col;j++)
+ 		{
+ 			temp=cvmGet(dst1,i,j);
+			cvmSet(dst1,i,j,cvmGet(src1,i,j)*cvmGet(src1,i,j));
+ 			cvmSet(localMean,i,j,temp/prod);
+ 			cvmSet(f,i,j,cvmGet(src1,i,j)-temp/prod);//f = g - localMean;
+ 		}
+   	}
+ 	cvFilter2D( dst1, localVar, &Km, cvPoint(-1,-1));
+ 	mean2=0;
+ 	for (i=0;i<localVar->rows;i++)
+ 	{
+ 		for (j=0;j<localVar->cols;j++)
+ 		{
+ 			temp=cvmGet(localVar,i,j);
+            tempLocalMean=cvmGet(localMean,i,j);
+			tempLocalMean=temp/prod-tempLocalMean*tempLocalMean;
+ 			mean2=mean2+tempLocalMean;
+ 			cvmSet(localVar,i,j,tempLocalMean);
+ 		}
+    }
+    mean2=mean2/localVar->cols/localVar->rows;
+    for (i=0;i<localVar->rows;i++)
+ 	{
+		ptr = (uchar*)dst->imageData + i * dst->widthStep;
+		for (j=0;j<localVar->cols;j++)
+		{
+			temp=cvmGet(localVar,i,j);
+			tempLocalMean=temp>=mean2?temp:mean2;//localVar = max(localVar, noise);
+			temp=temp-mean2;//g = localVar - noise;
+			temp=temp>=0?temp:0;//g = max(g, 0);
+            t1=cvmGet(f,i,j)/tempLocalMean*temp+cvmGet(localMean,i,j);
+			t1=cvCeil(t1)>255?255:cvCeil(t1);
+			ptr[j]=(uchar)t1;
+			//cvmSet(dst1,i,j,t1/*cvmGet(f,i,j)/tempLocalMean*temp+cvmGet(localMean,i,j)*/);
+		}
+    }
+    cvReleaseMat(&src1);
+	cvReleaseMat(&dst1);
+    cvReleaseMat(&f);
+	cvReleaseMat(&localMean);
+	cvReleaseMat(&localVar);
+}
+
 

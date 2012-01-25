@@ -1,9 +1,12 @@
 #include <jni.h>
 #include "graphics_core.h"
 #include "HoughTransformation.h"
+
+// NEON
 #ifdef __ARM_NEON__
 	#include <arm_neon.h>
 #endif
+
 
 /* Header for class com_graphics_NativeGraphics */
 
@@ -72,6 +75,9 @@ JNIEXPORT void JNICALL Java_com_graphics_NativeGraphics_nativeSobel
 JNIEXPORT void JNICALL Java_com_graphics_NativeGraphics_nativeFullEdgeDetector
   (JNIEnv *, jclass, jobject, jobject);
 
+
+void JNICALL Java_com_graphics_NativeGraphics_nativeWiener (JNIEnv* ,
+		jclass , jobject , jobject );
 
 #ifdef __cplusplus
 }

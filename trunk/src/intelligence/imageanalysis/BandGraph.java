@@ -73,18 +73,11 @@ import intelligence.intelligence.Intelligence;
             Intelligence.console.consoleBitmap(renderHorizontally(300, 100));
             //////////////////////////////////////////////////////////////
             for (Peak p : outPeaks) {
-            	float aspectRatio = 0;
-            	if (p.left < p.right) {
-            		aspectRatio = (float)p.left / (float)p.right;
-            	} else {
-            		aspectRatio = (float)p.right / (float)p.left;
-            	}
             	/**
             	 * Љоэфициенты пропорции
             	 */
                 if ((p.getDiff() > 3 * this.handle.getHeight()) &&
-                    (p.getDiff() < 8 * this.handle.getHeight()) &&
-                    aspectRatio > 0.3)  {
+                    (p.getDiff() < 8 * this.handle.getHeight()))  {
             		outPeaksFiltered.add(p);
                 } else {
                 	Intelligence.console.console("broken peak: " + p.center);

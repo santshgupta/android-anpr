@@ -40,6 +40,12 @@ public class Console {
     	cHeight += bmp.getHeight() + 10;
         redrawMainView();
 	}
+    synchronized public void consoleBitmap(Bitmap bmp, Bitmap bmp2) {
+		this.canvas.drawBitmap(bmp, cWidth, cHeight, this.paint);
+		this.canvas.drawBitmap(bmp2, cWidth + bmp.getWidth() + cWidth, cHeight, this.paint);
+    	cHeight += bmp.getHeight() + 10;
+        redrawMainView();
+	}
     
     private void redrawMainView() {
     	((Activity)(mainView.getContext())).runOnUiThread(new Runnable() {

@@ -1,2 +1,2 @@
 set solib-search-path ./obj/local/armeabi-v7a
-directory /Users/azhdanov/work/android-ndk-r7/platforms/android-14/arch-arm/usr/include /Users/azhdanov/work/android-ndk-r7/sources/android/cpufeatures /Users/azhdanov/work/android-ndk-r7/sources/cxx-stl/gnu-libstdc++/include /Users/azhdanov/work/android-ndk-r7/sources/cxx-stl/gnu-libstdc++/libs/armeabi-v7a/include jni
+directory /Users/azhdanov/work/android-ndk-r7/platforms/android-14/arch-arm/usr/include jni/cv/src jni/cv/include jni/cxcore/include /Users/azhdanov/work/android-ndk-r7/sources/android/cpufeatures /Users/azhdanov/work/android-ndk-r7/sources/cxx-stl/gnu-libstdc++/include /Users/azhdanov/work/android-ndk-r7/sources/cxx-stl/gnu-libstdc++/libs/armeabi-v7a/include jni/cxcore/src

@@ -12,9 +12,18 @@
 #include "logger.h"
 #include <vector>
 
+
+// OpenCV
+#include "cxcore.h"
+#include "cv.h"
+
 #ifdef __ARM_NEON__
 	#include <arm_neon.h>
 #endif
+
+#define IMAGE( i, x, y, n )   *(( unsigned char * )(( i )->imageData      \
+                                    + ( x ) * sizeof( unsigned char ) * 3 \
+                                    + ( y ) * ( i )->widthStep ) + ( n ))
 
 /*
  *  core.h
@@ -30,6 +39,10 @@ namespace GraphicsCoreNS {
 
 		public:
 			GraphicsCore();
+			void wienerTransformation (JNIEnv *, jclass,	jobject, jobject				);
+			void deNoise(IplImage* , IplImage* );
+			void openCVWienerFilter	(const void* srcArr, void* dstArr, int szWindowX = 3, int szWindowY = 3);
+			IplImage* loadPixels	(uint32_t* , int , int 								);
 			void processSobelArr (jint* , int, int, uint32_t *, uint32_t *				);
 			void convert565to8888 	(JNIEnv *, jobject, jobject							);
 			void HSVBrightness 		(JNIEnv *, jclass, 	jobject, jfloatArray			);
@@ -43,4 +56,6 @@ namespace GraphicsCoreNS {
 			void sobelFilterTexas 	(uint32_t *, int, int, uint32_t *, int);
 	};
 };
+
 #endif
+

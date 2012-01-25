@@ -204,7 +204,7 @@ public class Photo {
     	}
     }
     */
-    
+    /*
     public static void sobel(RgbImage i, float [] template) {
 	    int templateSize=3;
 	    int[] rgbData = i.getData();
@@ -254,7 +254,7 @@ public class Photo {
 			i.getWidth() * i.getHeight());
     }
 
-
+	*/
     
     public void verticalEdgeDetector(Bitmap source) {
     	int[] template={	-1, 0, 1,
@@ -272,9 +272,14 @@ public class Photo {
             int width_tmp = bmp.getWidth();
             int height_tmp = bmp.getHeight();
             if (width_tmp > 640 || height_tmp > 480) {
-            	double averageImg = (double)width_tmp / (double)height_tmp;    
-            	width_tmp = 640;
-            	height_tmp = (int)((double)width_tmp / averageImg);
+            	double averageImg = (double)width_tmp / (double)height_tmp; 
+            	if (averageImg > 1) {
+            		width_tmp = 640;
+                	height_tmp = (int)((double)width_tmp / averageImg);
+            	} else {
+            		height_tmp = 480;
+            		width_tmp = (int)((double)height_tmp * averageImg);
+            	}
             }
             this.image = averageResizeBi(bmp, width_tmp, height_tmp);
             bmp.recycle();
