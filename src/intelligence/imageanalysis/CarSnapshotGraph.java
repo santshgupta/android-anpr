@@ -109,19 +109,25 @@ public class CarSnapshotGraph extends Graph {
         for (int c = 0; c < count; c++) {
             float maxValue = 0.0f;
             int maxIndex = 0;
+            boolean found = false;
             for (int i = 0; i < this.yValues.size(); i++) {
                 if (allowedInterval(outPeaks, i)) {
-                    if (this.yValues.get(i) >= maxValue) {
+                    if (this.yValues.get(i) > maxValue) {
                         maxValue = this.yValues.get(i);
                         maxIndex = i;
+                        found = true;
                     }
                 }
             }
+            
+            if (!found)
+            	continue;
+            
             int leftIndex = indexOfLeftPeakRel(maxIndex, outPeaks, peakFootConstant);
             int rightIndex = indexOfRightPeakRel(maxIndex, outPeaks, peakFootConstant);
             int diff = rightIndex - leftIndex;
-            leftIndex -= peakDiffMultiplicationConstant * diff;
-            rightIndex+= peakDiffMultiplicationConstant * diff;
+           // leftIndex -= peakDiffMultiplicationConstant * diff;
+           // rightIndex+= peakDiffMultiplicationConstant * diff;
             outPeaks.add(new Peak(
                 Math.max(0,leftIndex),
                 maxIndex,

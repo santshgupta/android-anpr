@@ -79,3 +79,12 @@ void JNICALL Java_com_graphics_NativeGraphics_nativeFullEdgeDetector (JNIEnv* en
 	core.fullEdgeDetector(env, javaThis, bitmapSource, bitmapDest);
 }
 
+void JNICALL Java_com_graphics_NativeGraphics_nativeWiener (JNIEnv* env,
+		jclass javaThis, jobject bitmapSource, jobject bitmapDest)
+{
+	GraphicsCoreNS :: GraphicsCore core;
+	core.wienerTransformation(env, javaThis, bitmapSource, bitmapDest);
+}
+
+
+
