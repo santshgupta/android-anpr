@@ -146,7 +146,7 @@ public class Intelligence {
     	console.console("Processing was started! Please wait few minutes...");
     	if (classification_method == 0) {
     		/**
-    		 * ќто тормоз!
+    		 * пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ!
     		 */
             chrRecog = new KnnPatternClassificator();
     		console.console("KNN classificator has created!");
@@ -178,7 +178,6 @@ public class Intelligence {
         int p = 0;
         console.console("getBands");
         for (Band b : carSnapshot.getBands()) { //doporucene 3
-        	console.consoleBitmap(b.image);
         	if (enableReportGeneration) {
         		console.console("Band width : "+b.getWidth()+" px");
         		console.console("Band height : "+b.getHeight()+" px");
@@ -191,17 +190,11 @@ public class Intelligence {
             	
                 Plate notNormalizedCopy = null;
                 if (skewDetectionMode != 0) {
-                	console.console("A");
                 	notNormalizedCopy = plate.clone();
-                	console.console("B");
                 	notNormalizedCopy.image = notNormalizedCopy.horizontalEdgeDetector(notNormalizedCopy.getBi());
-                	console.console("C");
                 	float houghSkew = NativeGraphics.houghTransform(notNormalizedCopy.image);
-                	console.console("D");
                 	Bitmap source = plate.getBi();
-                	console.console("E");
                 	Matrix m = new Matrix();
-                	console.console("F");
                 	if (enableReportGeneration) {
                 		console.console("skew : " + houghSkew + " px");
                 	}

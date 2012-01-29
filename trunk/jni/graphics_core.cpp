@@ -2,12 +2,11 @@
  *  RssBegun.cpp
  *  AWeb
  *
- *  Created by †данов Ђндрей on 15.06.11.
+ *  Created by пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ on 15.06.11.
  *  Copyright 2011 Begun. All rights reserved.
  *
  */
 #include "graphics_core.h"
-
 
 using namespace GraphicsCoreNS;
 
@@ -78,7 +77,6 @@ void GraphicsCore :: fullEdgeDetector(JNIEnv* env, jclass javaThis, jobject bitm
 	int height 	= infocolor.height;
 	std::vector<int> destArr(width * height);
 	std::vector<int> destArrNew(width * height);
-
 	for ( int x = (templateSize - 1) / 2; x < width - (templateSize + 1) / 2; x++) {
 		for (int y = (templateSize - 1) / 2; y < height - (templateSize + 1) / 2; y++) {
 			sumY = 0;
@@ -194,8 +192,7 @@ void GraphicsCore :: wienerTransformation(JNIEnv* env, jclass javaThis, jobject 
 	IplImage *tmp = loadPixels(rgbData, width, height);
 	IplImage *tmp2 = cvCreateImage(cvSize(tmp->width, tmp->height), IPL_DEPTH_8U, 1);
 	cvCvtColor(tmp, tmp2, CV_RGB2GRAY);
-	deNoise(tmp2,tmp2);
-	//openCVWienerFilter(tmp2, tmp2, 3, 3);
+	openCVWienerFilter(tmp2, tmp2, 3, 3);
 
 	for ( int y = 0; y < height; y++ ) {
 			for (int x = 0; x < width; x++ ){
@@ -774,17 +771,17 @@ void GraphicsCore :: convolve (JNIEnv *env, jobject bitmapSource, jobject bitmap
 					"vld4.8 		{d0[6], d1[6], d2[6], d3[6]}, [%[x]]! \n\t"
 
 					// Load kernel matrix (First block)
-					// ‚от это пидерастничество надо загрузить обЯзательно в 16bit режиме иначе ничего не получиццо
-					"vld1.16 		{d4[0]}, [%[kData]]! \n\t" // 1 пиксель
-					"vld1.16 		{d4[1]}, [%[kData]]! \n\t" // 2 пиксель
-					"vld1.16 		{d4[2]}, [%[kData]]! \n\t" // 3 пиксель
-					"vld1.16 		{d4[3]}, [%[kData]]! \n\t" // 4 пиксель
+					// пїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ 16bit пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+					"vld1.16 		{d4[0]}, [%[kData]]! \n\t" // 1 пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+					"vld1.16 		{d4[1]}, [%[kData]]! \n\t" // 2 пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+					"vld1.16 		{d4[2]}, [%[kData]]! \n\t" // 3 пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+					"vld1.16 		{d4[3]}, [%[kData]]! \n\t" // 4 пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 
 					// Multiply data
 					"vmul.i16    	d8, d0, d4 \n\t"
 					"vmul.i16    	d9, d1, d4 \n\t"
 					"vmul.i16    	d10, d2, d4 \n\t"
-					//"vmul.i16    	d11, d3, d4 \n\t" // ќтот регистр отвечает за альфу. Ћбрабатывать его не будем
+					//"vmul.i16    	d11, d3, d4 \n\t" // пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ. пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
 
 					// Addition
 					// see http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.dui0489c/CJAJIIGG.html
@@ -1062,77 +1059,3 @@ IplImage* GraphicsCore :: loadPixels(uint32_t* pixels, int width, int height) {
 
 	return img;
 }
-
-
-
-void GraphicsCore :: deNoise(IplImage* src, IplImage* dst)
-{
-	CvMat* src1,*dst1,*f;
-	CvMat Km,*localMean=NULL,*localVar=NULL;
-    float k[25];
-	int i,j;
-	double temp,tempLocalMean,t1,prod,mean2;
-    int row,col;
-	uchar* ptr;
-	row=src->height;
-	col=src->width;
-	src1=cvCreateMat(row,col,CV_32F);
-	cvConvert(src,src1);
-    dst1=cvCreateMat(row,col,CV_32F);
-	for (i=0;i<25;i++)
-	{
-		k[i]=1;
-	}
-    Km = cvMat( 5, 5, CV_32F, k);
-   localMean=cvCreateMat(row,col,CV_32F);
-   localVar=cvCreateMat(row,col,CV_32F);
-   f=cvCreateMat(row,col,CV_32F);
-   cvFilter2D(src1, dst1, &Km, cvPoint(-1,-1));
-   prod=5*5;
- 	for (i=0;i<row;i++)
- 	{
- 		for (j=0;j<col;j++)
- 		{
- 			temp=cvmGet(dst1,i,j);
-			cvmSet(dst1,i,j,cvmGet(src1,i,j)*cvmGet(src1,i,j));
- 			cvmSet(localMean,i,j,temp/prod);
- 			cvmSet(f,i,j,cvmGet(src1,i,j)-temp/prod);//f = g - localMean;
- 		}
-   	}
- 	cvFilter2D( dst1, localVar, &Km, cvPoint(-1,-1));
- 	mean2=0;
- 	for (i=0;i<localVar->rows;i++)
- 	{
- 		for (j=0;j<localVar->cols;j++)
- 		{
- 			temp=cvmGet(localVar,i,j);
-            tempLocalMean=cvmGet(localMean,i,j);
-			tempLocalMean=temp/prod-tempLocalMean*tempLocalMean;
- 			mean2=mean2+tempLocalMean;
- 			cvmSet(localVar,i,j,tempLocalMean);
- 		}
-    }
-    mean2=mean2/localVar->cols/localVar->rows;
-    for (i=0;i<localVar->rows;i++)
- 	{
-		ptr = (uchar*)dst->imageData + i * dst->widthStep;
-		for (j=0;j<localVar->cols;j++)
-		{
-			temp=cvmGet(localVar,i,j);
-			tempLocalMean=temp>=mean2?temp:mean2;//localVar = max(localVar, noise);
-			temp=temp-mean2;//g = localVar - noise;
-			temp=temp>=0?temp:0;//g = max(g, 0);
-            t1=cvmGet(f,i,j)/tempLocalMean*temp+cvmGet(localMean,i,j);
-			t1=cvCeil(t1)>255?255:cvCeil(t1);
-			ptr[j]=(uchar)t1;
-			//cvmSet(dst1,i,j,t1/*cvmGet(f,i,j)/tempLocalMean*temp+cvmGet(localMean,i,j)*/);
-		}
-    }
-    cvReleaseMat(&src1);
-	cvReleaseMat(&dst1);
-    cvReleaseMat(&f);
-	cvReleaseMat(&localMean);
-	cvReleaseMat(&localVar);
-}
-
-

@@ -119,7 +119,7 @@ public class Plate extends Photo {
 
         graphHandle = histogram(plateCopy.getBi()); //PlateGraph graph = histogram(imageCopy); 
         graphHandle.applyProbabilityDistributor(distributor);
-        graphHandle.findPeaks(numberOfCandidates);        
+        graphHandle.findPeaks(numberOfCandidates, 6);        
         
         return graphHandle.peaks;
     }    
@@ -191,16 +191,15 @@ public class Plate extends Photo {
     }
     private Bitmap cutTopBottom(Bitmap origin, PlateVerticalGraph graph) {
         graph.applyProbabilityDistributor(new Graph.ProbabilityDistributor(0f,0f,2,2));
-        Graph.Peak p = graph.findPeak(3).get(0);//.elementAt(0);
+        Graph.Peak p = graph.findPeak(3).get(0);
         
         Bitmap b = Bitmap.createBitmap(origin, 0, p.getLeft(), this.image.getWidth(), p.getDiff());
         origin.recycle();
         return b;
-        //return origin.getSubimage(0,p.getLeft(),this.image.getWidth(),p.getDiff());
     }
     
     private Bitmap cutLeftRight(Bitmap origin, PlateHorizontalGraph graph) {
-        graph.applyProbabilityDistributor(new Graph.ProbabilityDistributor(0f,0f,2,10));
+        graph.applyProbabilityDistributor(new Graph.ProbabilityDistributor(0f,0f,2,2));
         ArrayList<Graph.Peak> peaks = graph.findPeak(3);
         
         if (peaks.size()!=0) {

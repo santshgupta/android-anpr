@@ -115,8 +115,8 @@ public class PlateHorizontalGraph extends Graph {
         for (b=this.yValues.size()-1; this.yValues.get(b) < average; b--);
         
         ArrayList<Peak> outPeaks = new ArrayList<Peak>();
-        a = Math.max(a-5,0);
-        b = Math.min(b+5,this.yValues.size());
+        a = Math.max(a-5, 0);
+        b = Math.min(b+5, this.yValues.size());
         
         outPeaks.add(new Peak(a,b));
         super.peaks = outPeaks;

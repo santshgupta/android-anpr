@@ -104,10 +104,10 @@ public class CarSnapshotGraph extends Graph {
         }
     }
     
-    public ArrayList<Peak> findPeaks (int count) {
+    public ArrayList<Peak> findPeaks (int count, int useNearValue, float coef) {
         ArrayList<Peak> outPeaks = new ArrayList<Peak>();
         for (int c = 0; c < count; c++) {
-            float maxValue = 0.0f;
+            float maxValue = .3f;
             int maxIndex = 0;
             boolean found = false;
             for (int i = 0; i < this.yValues.size(); i++) {
@@ -123,11 +123,8 @@ public class CarSnapshotGraph extends Graph {
             if (!found)
             	continue;
             
-            int leftIndex = indexOfLeftPeakRel(maxIndex, outPeaks, peakFootConstant);
-            int rightIndex = indexOfRightPeakRel(maxIndex, outPeaks, peakFootConstant);
-            int diff = rightIndex - leftIndex;
-           // leftIndex -= peakDiffMultiplicationConstant * diff;
-           // rightIndex+= peakDiffMultiplicationConstant * diff;
+            int leftIndex = indexOfLeftPeakRel(maxIndex, outPeaks, coef, useNearValue);
+            int rightIndex = indexOfRightPeakRel(maxIndex, outPeaks, coef, useNearValue);
             outPeaks.add(new Peak(
                 Math.max(0,leftIndex),
                 maxIndex,

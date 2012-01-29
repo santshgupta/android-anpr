@@ -2,62 +2,72 @@ package intelligence.imageanalysis;
 
 import intelligence.imageanalysis.Graph.Peak;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 
 /**
- * Претендент
  * @author azhdanov
  */
 public class Challenger {
 	
-	/**
-	 * Тут хранятся значения пиков.
-	 * По сути нам надо знать лишь количество пиков и последний элемент. 
-	 * Для этого как нельзя кстати подходит LinkedList
-	 */
-	public LinkedList<Integer> elems = new LinkedList<Integer>();
-	public LinkedList<Integer> ids = new LinkedList<Integer>();
+
+	public ArrayList< ArrayList<Integer> > elems = new ArrayList< ArrayList<Integer> >();
+	public ArrayList<Integer> steps = new ArrayList<Integer>();
 	
 	public int minX;
 	public int maxX;
 	
 	public int minY;
 	public int maxY;
+	public int delta;
 	
-	//public int id;
-	
-	/**
-	 * Это коэфициент смещения в пикселях, в пределах которого пики будут добавляться к челенджеру
-	 */
+
 	public final int COEF = 15;
 	
-	public Challenger(Peak p, int id, int startPosX, int endPosX) { 
-		elems.add(p.getCenter());
-		ids.add(id);
-		minX = startPosX;
-		maxX = endPosX;
+	public Challenger(Peak p, int step, int delta) { 
+		
+		ArrayList<Integer> l = new ArrayList<Integer>();
+		l.add(p.getCenter());
+		elems.add(l);
+		steps.add(step);
+		minX = step;
+		maxX = step + this.delta;
 		minY = p.left;
-		maxY = p.right;		
+		maxY = p.right;	
+		this.delta = delta;
 	}
 	
 	
-	public int getId() {
-		return ids.getLast();
+	public int getStep() {
+		return steps.get(steps.size() - 1);
 	}
 
 
-	public boolean addPeak(Peak p, int id, int endPos) {
-		int lastPoint = elems.getLast();
-		if (Math.abs(lastPoint - p.center) <= COEF) {
-			/**
-			 * id претендента
-			 */
-			ids.add(id);
-			elems.add(p.getCenter());
-			maxX = Math.max(maxX, endPos);
-			minY = Math.min(minY, p.left);
-			maxY = Math.max(maxY, p.right);	
-			return true;
+	public boolean addPeak(Peak p, int step) {
+		ArrayList<Integer> lastPoints = elems.get(elems.size() - 1);
+		if (getStep() == (step - this.delta)) {
+			for (int lastPoint : lastPoints) {
+				if (Math.abs(lastPoint - p.center) <= COEF) {
+					steps.add(step);
+					ArrayList<Integer> l = new ArrayList<Integer>();
+					l.add(p.getCenter());
+					elems.add(l);
+					maxX = Math.max(maxX, step + this.delta);
+					minY = Math.min(minY, p.left);
+					maxY = Math.max(maxY, p.right);	
+					return true;
+				}
+			}
+		} else if (getStep() == step && elems.size() > 1) {
+			ArrayList<Integer> prevPoints = elems.get(elems.size() - 2);
+			for (int prevPoint : prevPoints) {
+				if (Math.abs(prevPoint - p.center) <= COEF) {
+					lastPoints.add(p.getCenter());
+					maxX = Math.max(maxX, step + this.delta);
+					minY = Math.min(minY, p.left);
+					maxY = Math.max(maxY, p.right);	
+					return true;
+				}
+			}
 		}
 		return false;
 	}

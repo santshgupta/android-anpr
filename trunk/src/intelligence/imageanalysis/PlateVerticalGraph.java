@@ -108,21 +108,26 @@ public class PlateVerticalGraph extends Graph {
             this.yValues.set(i,this.yValues.get(i) - this.getMinValue());
         ArrayList<Peak> outPeaks = new ArrayList<Peak>();
         for (int c=0; c<count; c++) {
-            float maxValue = 0.0f;
+            float maxValue = .2f;
             int maxIndex = 0;
+            boolean found = false;
             for (int i=0; i<this.yValues.size(); i++) {
                 if (allowedInterval(outPeaks, i)) {
                     if (this.yValues.get(i) >= maxValue) {
                         maxValue = this.yValues.get(i);
                         maxIndex = i;
+                        found = true;
                     }
                 }
             }
             
+            if (!found)
+            	continue;
+            
             if (yValues.get(maxIndex) < 0.05 * super.getMaxValue()) break;//0.4
             
-            int leftIndex = indexOfLeftPeakRel(maxIndex, outPeaks, peakFootConstant);
-            int rightIndex = indexOfRightPeakRel(maxIndex, outPeaks, peakFootConstant);
+            int leftIndex = indexOfLeftPeakRel(maxIndex, outPeaks, peakFootConstant, 3);
+            int rightIndex = indexOfRightPeakRel(maxIndex, outPeaks, peakFootConstant, 3);
             
             outPeaks.add(new Peak(
                     Math.max(0,leftIndex),
