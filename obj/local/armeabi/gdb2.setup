@@ -1,3 +1,0 @@
-set solib-search-path ./obj/local/armeabi
-directory /Users/azhdanov/work/android-ndk-r7/platforms/android-14/arch-arm/usr/include /Users/azhdanov/work/android-ndk-r7/sources/android/cpufeatures jni /Users/azhdanov/work/android-ndk-r7/sources/cxx-stl/system
-file ./obj/local/armeabi/app_process
