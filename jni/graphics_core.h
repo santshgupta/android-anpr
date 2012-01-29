@@ -29,7 +29,7 @@
  *  core.h
  *  intelligencyNative
  *
- *  Created by †данов Ђндрей on 15.06.11.
+ *  Created by пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ on 15.06.11.
  *  Copyright 2011 Begun. All rights reserved.
  *
  */
@@ -40,7 +40,6 @@ namespace GraphicsCoreNS {
 		public:
 			GraphicsCore();
 			void wienerTransformation (JNIEnv *, jclass,	jobject, jobject				);
-			void deNoise(IplImage* , IplImage* );
 			void openCVWienerFilter	(const void* srcArr, void* dstArr, int szWindowX = 3, int szWindowY = 3);
 			IplImage* loadPixels	(uint32_t* , int , int 								);
 			void processSobelArr (jint* , int, int, uint32_t *, uint32_t *				);

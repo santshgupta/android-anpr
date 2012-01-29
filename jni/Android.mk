@@ -151,13 +151,11 @@ ifeq ($(TARGET_ARCH_ABI),armeabi-v7a)
 	#LOCAL_CFLAGS    += -march=armv7-a -mfloat-abi=softfp -mfpu=neon                                                                                                                                                                                                                      
 endif    
 
-# declare cpufeatures
-LOCAL_STATIC_LIBRARIES := cxcore cv cpufeatures
 
 # We are used logger, graphics and other librarys 
 #LOCAL_LDLIBS := -L$(SYSROOT)/usr/lib -ldl -llog -lm -ljnigraphics \
 #                -L$(TARGET_OUT) -lcxcore -lcv
-LOCAL_LDLIBS    := -lm -llog -ljnigraphics -L$(TARGET_OUT) -lcxcore -lcv
+LOCAL_LDLIBS    := -L$(SYSROOT)/usr/lib -lm -llog -ljnigraphics -L$(TARGET_OUT) -lcxcore -lcv
 
 # debug options
 LOCAL_LDFLAGS   := -Wl,-Map,xxx.map
@@ -171,8 +169,9 @@ LOCAL_CFLAGS    := -g
 LOCAL_CFLAGS    += -march=armv7-a -mfloat-abi=softfp -mfpu=neon
 # ---- ----- ----- ----- ----- ----- ----- --
 LOCAL_CPPFLAGS += -fexceptions
-
+# declare cpufeatures
+LOCAL_STATIC_LIBRARIES := cxcore cv cpufeatures
 include $(BUILD_SHARED_LIBRARY)
 #################################################################
 # Manualy define cpu validate futures
-$(call import-module,android/cpufeatures) 
+$(call import-module,android/cpufeatures)

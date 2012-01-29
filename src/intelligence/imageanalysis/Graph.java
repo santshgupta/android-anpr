@@ -164,10 +164,6 @@ public class Graph {
         this.actualMinimumValue = false;
     }
     
-    /**
-     * €щем следующий максимум в пиках. 
-     * true - пик в корректном диапазоне, false - пик в некорректном диапазоне
-     */
     boolean allowedInterval(ArrayList<Peak> peaks, int xPosition) {
         for (Peak peak : peaks)
             if (peak.left <= xPosition && xPosition <= peak.right) return false;
@@ -400,23 +396,22 @@ public class Graph {
         
     }
     
-    public int indexOfLeftPeakRel(int peak, ArrayList<Graph.Peak> outPeaks, double peakFootConstantRel) {
-        int index=peak;
-        int koef = 6;
+    public int indexOfLeftPeakRel(int peak, ArrayList<Graph.Peak> outPeaks, double peakFootConstantRel, int koef) {
+        int index = peak;
         int endl = 0;
-        float averageIndex = 0;
         for (Peak p : outPeaks) {
             if ((p.right < index) && (endl < p.right)) {
         		endl = p.right;
             }
         }
-        for (int i=peak; i >= endl; i -= koef) {
-        	if (i >= endl+koef) {
-        		for (int i2 = i; i2 >= i-koef; i2--) {
+        for (int i=peak; i > endl; i -= koef) {
+        	float averageIndex = 0;
+        	if (i >= endl + koef) {
+        		for (int i2 = i; i2 > i-koef; i2--) {
         			averageIndex += yValues.get(i2);
         		}
         	} else {
-        		for (int i2 = i; i2 >= endl; i2--) {
+        		for (int i2 = i; i2 > endl; i2--) {
         			averageIndex += yValues.get(i2);
         		}
         	}
@@ -426,17 +421,16 @@ public class Graph {
         }
         return Math.max(0, index);
     }
-    public int indexOfRightPeakRel(int peak, ArrayList<Graph.Peak> outPeaks, double peakFootConstantRel) {
+    public int indexOfRightPeakRel(int peak, ArrayList<Graph.Peak> outPeaks, double peakFootConstantRel, int koef) {
         int index=peak;
-        int koef = 6;
         int endl = yValues.size();
-        float averageIndex = 0;
         for (Peak p : outPeaks) {
             if ((p.left > index) && (endl > p.left)) {
         		endl = p.left;
             }
         }
         for (int i = peak; i < endl; i += koef) {
+        	float averageIndex = 0;
         	if (i <= endl - koef) {
         		for (int i2 = i; i2 < i+koef; i2++) {
         			averageIndex += yValues.get(i2);
@@ -448,7 +442,8 @@ public class Graph {
         	}
         	averageIndex /= koef;
             index = i;
-            if (averageIndex < peakFootConstantRel * yValues.get(peak) ) break;
+            if (averageIndex < peakFootConstantRel * yValues.get(peak))
+        		break;
         }
         return Math.min(yValues.size(), index);
     }

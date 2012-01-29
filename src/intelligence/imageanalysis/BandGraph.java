@@ -38,27 +38,32 @@ import intelligence.intelligence.Intelligence;
             }
         }
         
-        public ArrayList<Peak> findPeaks(int count) {
+        public ArrayList<Peak> findPeaks(int count, int useNearValue) {
         	ArrayList<Graph.Peak> outPeaks = new ArrayList<Peak>();
             
             for (int c = 0; c < count; c++) {
-                float maxValue = 0.0f;
+                float maxValue = .3f;
                 int maxIndex = 0;
+                boolean found = false;
                 for (int i=0; i<this.yValues.size(); i++) {
                     if (allowedInterval(outPeaks, i)) {
                     	Float p = this.yValues.get(i);
-                        if (p >= maxValue) {
+                        if (p > maxValue) {
                             maxValue = p;
                             maxIndex = i;
+                            found = true;
                         }
                     }
                 } 
-                int leftIndex = indexOfLeftPeakRel(maxIndex, outPeaks, peakFootConstant);
-                int rightIndex = indexOfRightPeakRel(maxIndex, outPeaks, peakFootConstant);
-                int diff = rightIndex - leftIndex;
-               // leftIndex  -= peakDiffMultiplicationConstant * diff;   // смещение слева
-               // rightIndex += peakDiffMultiplicationConstant * diff;   // смещение справа
                 
+                if (!found)
+                	continue;
+                
+                int leftIndex = indexOfLeftPeakRel(maxIndex, outPeaks, 0.20, 6);
+                int rightIndex = indexOfRightPeakRel(maxIndex, outPeaks, 0.20, 6);
+               
+                leftIndex  -= leftIndex * 0.1;
+                rightIndex += rightIndex * 0.1;
                 outPeaks.add(new Peak(
                         Math.max(0,leftIndex),
                         maxIndex,
@@ -68,19 +73,10 @@ import intelligence.intelligence.Intelligence;
             
             ArrayList<Peak> outPeaksFiltered = new ArrayList<Peak>();
             
-            /////////////////// TODO REMOVE!!! ////////////////////////////
-            super.peaks = outPeaks;
-            Intelligence.console.consoleBitmap(renderHorizontally(300, 100));
-            //////////////////////////////////////////////////////////////
             for (Peak p : outPeaks) {
-            	/**
-            	 * Љоэфициенты пропорции
-            	 */
-                if ((p.getDiff() > 3 * this.handle.getHeight()) &&
+            	if ((p.getDiff() > 2 * this.handle.getHeight()) &&
                     (p.getDiff() < 8 * this.handle.getHeight()))  {
             		outPeaksFiltered.add(p);
-                } else {
-                	Intelligence.console.console("broken peak: " + p.center);
                 }
             }
             

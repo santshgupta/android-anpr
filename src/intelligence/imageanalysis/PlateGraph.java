@@ -106,7 +106,7 @@ public class PlateGraph extends Graph {
             }
         }
         
-        public ArrayList<Peak> findPeaks(int count) {
+        public ArrayList<Peak> findPeaks(int count, int useNearValue) {
         	ArrayList<Peak> spacesTemp = new ArrayList<Peak>();
             float diffGVal = 2 * this.getAverageValue() - this.getMaxValue();
             ArrayList<Float> yValuesNew = new ArrayList<Float>();
@@ -116,11 +116,11 @@ public class PlateGraph extends Graph {
             this.yValues = yValuesNew;
             this.deActualizeFlags();
             
-            for (int c=0; c<count; c++) { // for count
+            for (int c = 0; c < count; c++) { // for count
                 float maxValue = 0.0f;
                 int maxIndex = 0;
-                for (int i=0; i<this.yValues.size(); i++) { // zlava doprava
-                    if (allowedInterval(spacesTemp, i)) { // ak potencialny vrchol sa nachadza vo "volnom" intervale, ktory nespada pod ine vrcholy
+                for (int i=0; i<this.yValues.size(); i++) { 
+                    if (allowedInterval(spacesTemp, i)) {
                         Float p = this.yValues.get(i);
                     	if (p >= maxValue) {
                             maxValue = p;
@@ -130,8 +130,8 @@ public class PlateGraph extends Graph {
                 }
                 if (yValues.get(maxIndex) < plategraph_rel_minpeaksize * this.getMaxValue()) break;
                 
-                int leftIndex = indexOfLeftPeakRel(maxIndex, spacesTemp, peakFootConstant);
-                int rightIndex = indexOfRightPeakRel(maxIndex, spacesTemp, peakFootConstant);
+                int leftIndex = indexOfLeftPeakRel(maxIndex, spacesTemp, peakFootConstant, useNearValue);
+                int rightIndex = indexOfRightPeakRel(maxIndex, spacesTemp, peakFootConstant, useNearValue);
                 
                 spacesTemp.add(new Peak(
                         Math.max(0,leftIndex),

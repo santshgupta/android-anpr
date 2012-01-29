@@ -77,6 +77,9 @@ import java.util.LinkedList;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.graphics.NativeGraphics;
+import com.intelligence.Console;
+import com.intelligence.ConsoleGraph;
+
 import intelligence.imageanalysis.Challenger;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -100,7 +103,7 @@ public class CarSnapshot extends Photo {
     static private int numberOfCandidates = Intelligence.configurator.getIntProperty("intelligence_numberOfBands");
     private CarSnapshotGraph graphHandle = null;
     
-    public static Graph.ProbabilityDistributor distributor = new Graph.ProbabilityDistributor(0,0,distributor_margins,distributor_margins);
+    public static Graph.ProbabilityDistributor distributor = new Graph.ProbabilityDistributor(0,0,2,2);
 	
     public CarSnapshot(Canvas canvas) {
     	cnv = canvas;
@@ -122,166 +125,125 @@ public class CarSnapshot extends Photo {
 		paint.setTextSize(40);
     }
 
-    public Bitmap renderGraph() {
-        this.computeGraph(this.image);
-        return graphHandle.renderVertically(100, this.getHeight() - 100);
-    }    
+    //public Bitmap renderGraph() {
+    //    this.computeGraph(this.image);
+    //    return graphHandle.renderVertically(100, this.getHeight() - 100);
+    //}    
     
     private ArrayList<Graph.Peak> computeGraph(Bitmap img) {
-    	if (graphHandle != null) 
-    		return graphHandle.peaks;
     	Bitmap imageCopy = Photo.duplicateImage(img);
-    	imageCopy = verticalEdgeBi(imageCopy); 
-    	Intelligence.console.consoleBitmap(imageCopy);
-    	/**
-    	 * Зачищаем плашку от больших белых пятен
-    	 */
-    	imageCopy = NativeGraphics.treshold(imageCopy, 150);
     	graphHandle = this.histogram(imageCopy);
         graphHandle.rankFilter(carsnapshot_graphrankfilter);
         graphHandle.applyProbabilityDistributor(distributor);
-        graphHandle.findPeaks(numberOfCandidates); 
-        Intelligence.console.consoleBitmap(imageCopy);
-        Intelligence.console.consoleBitmap(graphHandle.renderVertically(100, 300));
+        // We find two candidate
+        graphHandle.findPeaks(2, 2, .20f); 
         imageCopy.recycle();
         return graphHandle.peaks;
     }
     
-    /**
-     * Optimized!
-     */
+    
     public ArrayList<Band> getBands() {
     	ArrayList<Band> out = new ArrayList<Band>();
     	CopyOnWriteArrayList<Challenger> out2 = new CopyOnWriteArrayList<Challenger>();
     	
-    	/**
-    	 * Новая концепция определения плашки. Сегментирование. Делим изображение вертикально на равные отрезки
-    	 * по ширине равные 30 пикселям. 
-    	 */
     	int imageWidth 	= this.image.getWidth();
     	int step 		= 20;
     	int countPlates = 4;
+    	// Value in percents, show coincidence between two challenger-images
+    	float stickyCoef = 0.2f;
     	int imageWidthIteration = imageWidth / step;
     	int imageLength = imageWidthIteration * step;
     	
-    	Bitmap dest = NativeGraphics.convert565to8888(image);
-    	//dest = verticalEdgeBi(dest); 
-    	//dest = NativeGraphics.treshold(dest, 130);
-    	Intelligence.console.consoleBitmap(dest);
-    	dest = NativeGraphics.wiener(dest);
     	
-    	Intelligence.console.consoleBitmap(dest);
+    	//Preprocessing for source image
+    	Bitmap dest = NativeGraphics.convert565to8888(image);
+    	dest = verticalEdgeBi(dest); 
+    	dest = NativeGraphics.treshold(dest, 150);
+    	
+    	ConsoleGraph cGraph = Intelligence.console.createConsoleGraph(image);
+    	
 		for (int i = 0; i < imageLength - step; i += step) {
-    		Bitmap bi = Bitmap.createBitmap(dest, i, 0, step, dest.getHeight());
+    		
+			Bitmap bi = Bitmap.createBitmap(dest, i, 0, step, dest.getHeight());
     		
     		graphHandle = this.histogram(bi);
             graphHandle.rankFilter(carsnapshot_graphrankfilter);
             graphHandle.applyProbabilityDistributor(distributor);
             
-            for (Peak p : graphHandle.findPeaks(numberOfCandidates)) {
+            for (Peak p : graphHandle.findPeaks(numberOfCandidates, 6, .55f)) {
+            	
+            	cGraph.drawLine(i, p.center);
+            	
             	boolean isValidPeak = false;
             	for (Challenger elm : out2) {
-            		/**
-            		 * Проверяем, подходит ли данный пик для текущего кандидата. 
-            		 * Затем смотрим количество пиков в кандидате.
-            		 * Если больше 3х - кандидат переходит в фильтрованный массив. Их обрабатываем отдельно
-            		 * Если меньше 3х и кандидат не подходит - удаляем кандидата из коллекции.
-            		 */
-        			if ((elm.getId() == (i - step)) && elm.addPeak(p, i, i + step)) {
-            			/**
-            			 * Пик удалось пристроить!0 к челенжеру. Идем дальше
-            			 */
+            		if (elm.addPeak(p, i)) {
             			isValidPeak = true;
-            		} else if ((elm.getId() < (i - step)) && elm.elems.size() < countPlates ) {
-            			/**
-            			 * Если пик не получилось пристроить - смотрим на кандидата. Он большой? 
-            			 * Если маленький - скорее всего это не наша плашка. В будущем можно дофичить 
-            			 */
+            		} else if ((elm.getStep() < (i - step)) && elm.elems.size() < countPlates ) {
             			out2.remove(elm);
             		}
             	}
-            	/**
-            	 * Если не валидный пик - он становится новым кандидатом.
-            	 * Может быть он и есть наша плашка? :)
-            	 */
             	if (!isValidPeak) {
-            		Challenger chlgr = new Challenger(p, i, i, i+step);
+            		Challenger chlgr = new Challenger(p, i, step);
             		out2.add(chlgr);
             	}
             }
     	}
 		
-		/**
-		 * Согласно концепции, если плашки наезжают друг на друга - значит они должны быть объединены!
-		 * Собираем из 2х кандидатов единого!
-		 * Берем максимальные параметры кандидатов и получившийся в результате объединения кандидат кладем в 
-		 * финальный список
-		 */
 		LinkedList<Challenger> out3 = new LinkedList<Challenger>();
 		for (Challenger elm : out2) {
-			//Bitmap bi1 = Bitmap.createBitmap(image, elm.minX, elm.minY, Math.max(1,elm.maxX - elm.minX) , Math.max(1,elm.maxY - elm.minY));
-			//Bitmap bi2 = Bitmap.createBitmap(image, elm2.minX, elm2.minY, Math.max(1,elm2.maxX - elm2.minX) , Math.max(1,elm2.maxY - elm2.minY));
-			//Intelligence.console.consoleBitmap(bi1);
-			/**
-			 * Фильтр для остаточной хуйни последнего цикла
-			 */
+			float elmSizeX = elm.maxX - elm.minX;
+			float elmSizeY = elm.maxY - elm.minY;
+			
 			if (elm.elems.size() < countPlates)
 				continue;
-			
 			if ((elm.maxX <= elm.minX) || (elm.maxY <= elm.minY)) 
-				continue;
-			/**
-			 * Прямоугольники с вертикальной преобладающей нам тоже не нужны
-			 */
-			if ((elm.maxX - elm.minX) / (elm.maxY - elm.minY) < 1) 
+				continue;			
+			if (elmSizeX / elmSizeY < 1) 
 				continue;
 			
 			boolean isOk = false;
 			for (Challenger elm2 : out3) {
-				int diffX 	= 0;
-				int diffY 	= 0;
-				
+				float elm2SizeX = elm2.maxX - elm2.minX;
+				float elm2SizeY = elm2.maxY - elm2.minY;
+				float diffX 	= 0;
+				float diffY 	= 0;
 				if (elm2.maxY > elm.maxY) {
 					diffY = elm.maxY - elm2.minY;
 				} else {
 					diffY = elm2.maxY - elm.minY;
 				}
-				
 				if (elm2.maxX > elm.maxX) {
 					diffX = elm.maxX - elm2.minX;
 				} else {
 					diffX = elm2.maxX - elm.minX;
 				}
-				
-				if (diffY > 0 && diffX > 0) {
+				if (diffY > 0 && diffX > 0 && 
+				   (((diffY / elm2SizeY) > stickyCoef) || ((diffY / elmSizeY) > stickyCoef)) && 
+				   (((diffX / elm2SizeX) > stickyCoef) || ((diffX / elmSizeX) > stickyCoef)) ) {
+					
 					elm2.maxX = Math.max(elm.maxX, elm2.maxX);
 					elm2.minX = Math.min(elm.minX, elm2.minX);
 					elm2.maxY = Math.max(elm.maxY, elm2.maxY);
 					elm2.minY = Math.min(elm.minY, elm2.minY);
-					//Bitmap bi1 = Bitmap.createBitmap(image, elm.minX, elm.minY, Math.max(1,elm.maxX - elm.minX) , Math.max(1,elm.maxY - elm.minY));
-					//Bitmap bi2 = Bitmap.createBitmap(image, elm2.minX, elm2.minY, Math.max(1,elm2.maxX - elm2.minX) , Math.max(1,elm2.maxY - elm2.minY));
-					//Intelligence.console.consoleBitmap(bi1,bi2);
 					isOk = true;
 				}
-				
-				//Bitmap bi2 = Bitmap.createBitmap(image, elm2.minX, elm2.minY, Math.max(1,elm2.maxX - elm2.minX) , Math.max(1,elm2.maxY - elm2.minY));
-				
 			}
 			if (isOk == false) {
 				out3.add(elm);
 			}
 		}
-		Intelligence.console.console("----");
-    	for (Challenger elm : out3) {
-        	Bitmap bi = Bitmap.createBitmap(image, elm.minX, elm.minY, Math.max(1,elm.maxX - elm.minX) , Math.max(1,elm.maxY - elm.minY));
-        	Intelligence.console.consoleBitmap(bi);
-        //	graphHandle = null;
-        //	for (Graph.Peak p : computeGraph(bi)) {
-                //Bitmap bi2 = Bitmap.createBitmap(bi, 0, (int) (p.getLeft()), bi.getWidth(), (int) (p.getDiff()));
-	            //out.add(new Band(bi2));
-	     //   }
+		int amplify = 3;
+		for (Challenger elm : out3) {
+        	Bitmap bi = Bitmap.createBitmap( dest, 
+        			Math.max(0, elm.minX - amplify), 
+        			Math.max(0, elm.minY - amplify), 
+        			Math.max(1,	elm.maxX - elm.minX + amplify) , 
+        			Math.max(1,	elm.maxY - elm.minY + amplify));
+        	for (Graph.Peak p : computeGraph(bi)) {
+                Bitmap bi2 = Bitmap.createBitmap(image, elm.minX, elm.minY + p.getLeft(), Math.max(1,bi.getWidth()) , Math.max(1,p.getDiff()));
+                out.add(new Band(bi2));
+            }
         }
-        //*/
     	out2.clear();
     	out3.clear();
         

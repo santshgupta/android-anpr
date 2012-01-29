@@ -73,7 +73,7 @@ import android.graphics.Bitmap;
 import intelligence.intelligence.Intelligence;
 
 public class Band extends Photo {
-    static public Graph.ProbabilityDistributor distributor = new Graph.ProbabilityDistributor(0,0,10,10);
+    static public Graph.ProbabilityDistributor distributor = new Graph.ProbabilityDistributor(0,0,2,2);
     static private int numberOfCandidates = Intelligence.configurator.getIntProperty("intelligence_numberOfPlates");
             
     private BandGraph graphHandle = null;
@@ -93,22 +93,19 @@ public class Band extends Photo {
     }
     
     private synchronized ArrayList<Graph.Peak> computeGraph() {
-    	Intelligence.console.console("computeGraph!!!");
-    	if (graphHandle != null) return graphHandle.peaks; // graf uz bol vypocitany
+    	if (graphHandle != null) return graphHandle.peaks;
         Bitmap imageCopy = duplicateImage(this.image);
-        
-        Intelligence.console.console("fullEdgeDetector");
         imageCopy = fullEdgeDetector(imageCopy);
+        //Intelligence.console.consoleBitmap(imageCopy);
         
         graphHandle = histogram(imageCopy);
-        graphHandle.rankFilter(image.getHeight());
+        graphHandle.rankFilter(imageCopy.getHeight());
         graphHandle.applyProbabilityDistributor(distributor);
-        graphHandle.findPeaks(numberOfCandidates);
+        graphHandle.findPeaks(numberOfCandidates, 2);
         
         Intelligence.console.consoleBitmap(imageCopy);
         Intelligence.console.consoleBitmap(graphHandle.renderHorizontally(300, 100));
         imageCopy.recycle();
-        Intelligence.console.console("computeGraph - OK");
         return graphHandle.peaks;
     }
     
@@ -133,7 +130,7 @@ public class Band extends Photo {
     }
     
    /**
-    * TODO Џолностью переписать на нативный код
+    * TODO пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ
     * @param source
     */
    public Bitmap fullEdgeDetector(Bitmap source) {

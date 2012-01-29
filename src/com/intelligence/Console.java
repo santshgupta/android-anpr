@@ -47,6 +47,18 @@ public class Console {
         redrawMainView();
 	}
     
+    synchronized public ConsoleGraph createConsoleGraph(Bitmap bgSrc) {
+		this.canvas.drawBitmap(bgSrc, cWidth, cHeight, this.paint);
+		for (int y = cHeight ; y < (cHeight + bgSrc.getHeight()); y +=20 ) {
+			this.canvas.drawLine(cWidth, y, cWidth + bgSrc.getWidth(), y, this.paint);
+		}
+		
+		
+		ConsoleGraph gr = new ConsoleGraph(mainView, this.canvas, cWidth, cHeight);
+    	cHeight += bgSrc.getHeight() + 10;
+        return gr;
+	}
+    
     private void redrawMainView() {
     	((Activity)(mainView.getContext())).runOnUiThread(new Runnable() {
 			@Override
