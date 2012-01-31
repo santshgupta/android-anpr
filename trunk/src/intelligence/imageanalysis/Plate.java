@@ -86,7 +86,7 @@ import intelligence.intelligence.Intelligence;
 
 
 public class Plate extends Photo {
-    static public Graph.ProbabilityDistributor distributor = new Graph.ProbabilityDistributor(0,0,0,0);
+    static public Graph.ProbabilityDistributor distributor = new Graph.ProbabilityDistributor(0,0,4,4);
     static private int numberOfCandidates = Intelligence.configurator.getIntProperty("intelligence_numberOfChars");
     private static int horizontalDetectionType = 
             Intelligence.configurator.getIntProperty("platehorizontalgraph_detectionType");    
@@ -116,11 +116,11 @@ public class Plate extends Photo {
     
     private ArrayList<Graph.Peak> computeGraph() {
         if (graphHandle != null) return graphHandle.peaks; // graf uz bol vypocitany
-
+        Intelligence.console.consoleBitmap(plateCopy.getBi());
         graphHandle = histogram(plateCopy.getBi()); //PlateGraph graph = histogram(imageCopy); 
         graphHandle.applyProbabilityDistributor(distributor);
-        graphHandle.findPeaks(numberOfCandidates, 6);        
-        
+        graphHandle.findPeaks(numberOfCandidates);        
+        Intelligence.console.consoleBitmap(graphHandle.renderHorizontally(300, 80));
         return graphHandle.peaks;
     }    
     
@@ -137,6 +137,7 @@ public class Plate extends Photo {
 	                    new PositionInPlate(p.getLeft(), p.getRight())
                     )
                     );
+            Intelligence.console.consoleBitmap(Bitmap.createBitmap(this.plateCopy.image, p.getLeft(), 0, p.getDiff(), image.getHeight()));
         }
         
         return out;
@@ -167,6 +168,7 @@ public class Plate extends Photo {
     }    
     public static int ppp = 0;
     public void normalize() {
+    	
         // pre ucely orezania obrazka sa vytvori klon ktory sa normalizuje a prahuje s
         // koeficientom 0.999. funkcie cutTopBottom a cutLeftRight orezu originalny
         // obrazok na zaklade horizontalnej a vertikalnej projekcie naklonovaneho

@@ -29,6 +29,7 @@ import android.util.Log;
 
 public class Photo {
 	public Bitmap image;
+	public Bitmap originalImage = null;
 	// RGB to Luminance conversion constants as found on
 	// Charles A. Poynton's colorspace-faq:
 	// http://www.faqs.org/faqs/graphics/colorspace-faq/
@@ -173,6 +174,7 @@ public class Photo {
             		height_tmp = 600;
             		width_tmp = (int)((double)height_tmp * averageImg);
             	}
+            	this.originalImage = duplicateImage(bmp);
             }
             this.image = averageResizeBi(bmp, width_tmp, height_tmp);
             bmp.recycle();

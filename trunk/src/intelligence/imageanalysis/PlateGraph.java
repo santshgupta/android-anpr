@@ -106,7 +106,24 @@ public class PlateGraph extends Graph {
             }
         }
         
-        public ArrayList<Peak> findPeaks(int count, int useNearValue) {
+        public int indexOfLeftPeakRel(int peak, double peakFootConstantRel) {
+            int index=peak;
+            for (int i=peak; i>=0; i--) {
+                index = i;
+                if (yValues.get(index) < peakFootConstantRel*yValues.get(peak) ) break;
+            }
+            return Math.max(0,index);
+        }
+        public int indexOfRightPeakRel(int peak, double peakFootConstantRel) {
+            int index=peak;
+            for (int i=peak; i<yValues.size(); i++) {
+                index = i;
+                if (yValues.get(index) < peakFootConstantRel*yValues.get(peak) ) break;
+            }
+            return Math.min(yValues.size(), index);
+        }
+        
+        public ArrayList<Peak> findPeaks(int count) {
         	ArrayList<Peak> spacesTemp = new ArrayList<Peak>();
             float diffGVal = 2 * this.getAverageValue() - this.getMaxValue();
             ArrayList<Float> yValuesNew = new ArrayList<Float>();
@@ -119,19 +136,23 @@ public class PlateGraph extends Graph {
             for (int c = 0; c < count; c++) { // for count
                 float maxValue = 0.0f;
                 int maxIndex = 0;
+                boolean found = false;
                 for (int i=0; i<this.yValues.size(); i++) { 
                     if (allowedInterval(spacesTemp, i)) {
                         Float p = this.yValues.get(i);
                     	if (p >= maxValue) {
                             maxValue = p;
                             maxIndex = i;
+                            found = true;
                         }
                     }
                 }
+                if (!found)
+                	continue;
                 if (yValues.get(maxIndex) < plategraph_rel_minpeaksize * this.getMaxValue()) break;
                 
-                int leftIndex = indexOfLeftPeakRel(maxIndex, spacesTemp, peakFootConstant, useNearValue);
-                int rightIndex = indexOfRightPeakRel(maxIndex, spacesTemp, peakFootConstant, useNearValue);
+                int leftIndex = indexOfLeftPeakRel(maxIndex, peakFootConstant);
+                int rightIndex = indexOfRightPeakRel(maxIndex, peakFootConstant);
                 
                 spacesTemp.add(new Peak(
                         Math.max(0,leftIndex),

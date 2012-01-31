@@ -186,14 +186,18 @@ public class Intelligence {
             	if (enableReportGeneration) {
             		console.console("Plate width : "+plate.getWidth()+" px");
             		console.console("Plate height : "+plate.getHeight()+" px");
-                }                                
-            	
-                Plate notNormalizedCopy = null;
-                if (skewDetectionMode != 0) {
+                }   
+            	//console.consoleBitmap(plate.image);
+            	/*
+            	Plate notNormalizedCopy = null;
+                
+            	if (skewDetectionMode != 0) {
                 	notNormalizedCopy = plate.clone();
                 	notNormalizedCopy.image = notNormalizedCopy.horizontalEdgeDetector(notNormalizedCopy.getBi());
                 	float houghSkew = NativeGraphics.houghTransform(notNormalizedCopy.image);
                 	Bitmap source = plate.getBi();
+                	
+                
                 	Matrix m = new Matrix();
                 	if (enableReportGeneration) {
                 		console.console("skew : " + houghSkew + " px");
@@ -202,16 +206,19 @@ public class Intelligence {
                     Bitmap core = Bitmap.createBitmap (source, 0, 0, source.getWidth(), source.getHeight(), m, false);
                     plate = new Plate(core);
                     source.recycle();
-                }
+                } */
                 plate.normalize();
                 console.consoleBitmap(plate.image);
-                /*
+                //continue;
+                
                 float plateWHratio = (float)plate.getWidth() / (float)plate.getHeight();
                 console.console("plate w: " + plate.getWidth() + " plate h: " + plate.getHeight() + " plateWHratio: " + plateWHratio);
                 if (plateWHratio < Intelligence.configurator.getDoubleProperty("intelligence_minPlateWidthHeightRatio")
                 ||  plateWHratio > Intelligence.configurator.getDoubleProperty("intelligence_maxPlateWidthHeightRatio")
                 ) continue;
+                
                 Vector<Char> chars = plate.getChars();
+                /*
                 if (chars.size() < Intelligence.configurator.getIntProperty("intelligence_minimumChars") ||
                 chars.size() > Intelligence.configurator.getIntProperty("intelligence_maximumChars")
                 ) continue;

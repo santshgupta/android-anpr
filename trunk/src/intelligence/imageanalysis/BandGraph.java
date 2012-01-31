@@ -38,11 +38,12 @@ import intelligence.intelligence.Intelligence;
             }
         }
         
-        public ArrayList<Peak> findPeaks(int count, int useNearValue) {
+        public ArrayList<Peak> findPeaks(int count, int useNearValue, float coef) {
         	ArrayList<Graph.Peak> outPeaks = new ArrayList<Peak>();
-            
+        	ArrayList<Peak> outPeaksFiltered = new ArrayList<Peak>();
+        	
             for (int c = 0; c < count; c++) {
-                float maxValue = .3f;
+                float maxValue = coef;
                 int maxIndex = 0;
                 boolean found = false;
                 for (int i=0; i<this.yValues.size(); i++) {
@@ -59,24 +60,41 @@ import intelligence.intelligence.Intelligence;
                 if (!found)
                 	continue;
                 
-                int leftIndex = indexOfLeftPeakRel(maxIndex, outPeaks, 0.20, 6);
-                int rightIndex = indexOfRightPeakRel(maxIndex, outPeaks, 0.20, 6);
+                int leftIndex = indexOfLeftPeakRel(maxIndex, coef, useNearValue);
+                int rightIndex = indexOfRightPeakRel(maxIndex, coef, useNearValue);
                
-                leftIndex  -= leftIndex * 0.1;
-                rightIndex += rightIndex * 0.1;
                 outPeaks.add(new Peak(
-                        Math.max(0,leftIndex),
-                        maxIndex,
-                        Math.min(this.yValues.size() - 1, rightIndex)
-                        ));
-            }
-            
-            ArrayList<Peak> outPeaksFiltered = new ArrayList<Peak>();
-            
-            for (Peak p : outPeaks) {
-            	if ((p.getDiff() > 2 * this.handle.getHeight()) &&
-                    (p.getDiff() < 8 * this.handle.getHeight()))  {
-            		outPeaksFiltered.add(p);
+	                Math.max(0,leftIndex),
+	                maxIndex,
+	                Math.min(this.yValues.size() - 1, rightIndex)
+	                ));
+                
+                // If found peaks at left side
+                float stickyCoef = 0.2f;
+                float elmSizeX = rightIndex - leftIndex;
+                boolean isOk = false;
+                for (Peak p : outPeaksFiltered) {
+                	float diffX 	= 0;
+    				float elm2SizeX = p.right - p.left;
+    				if (p.right > rightIndex) {
+    					diffX = rightIndex - p.left;
+    				} else {
+    					diffX = p.right - leftIndex;
+    				}
+    				if (diffX > 0 && 
+    				   (((diffX / elm2SizeX) > stickyCoef) || ((diffX / elmSizeX) > stickyCoef)) ) {
+    					isOk = true;
+    				}
+                }
+                
+                if ((isOk == false) &&
+                   (elmSizeX > 2 * this.handle.getHeight()) &&
+                   (elmSizeX < 12 * this.handle.getHeight())) {
+                		outPeaksFiltered.add(new Peak(
+		                    Math.max(0,leftIndex),
+		                    maxIndex,
+		                    Math.min(this.yValues.size() - 1, rightIndex)
+		                    ));
                 }
             }
             

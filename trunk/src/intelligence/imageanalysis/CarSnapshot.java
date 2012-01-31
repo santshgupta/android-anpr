@@ -101,7 +101,7 @@ public class CarSnapshot extends Photo {
             Intelligence.configurator.getIntProperty("carsnapshot_graphrankfilter");
 
     static private int numberOfCandidates = Intelligence.configurator.getIntProperty("intelligence_numberOfBands");
-    private CarSnapshotGraph graphHandle = null;
+   // private CarSnapshotGraph graphHandle = null;
     
     public static Graph.ProbabilityDistributor distributor = new Graph.ProbabilityDistributor(0,0,2,2);
 	
@@ -125,19 +125,27 @@ public class CarSnapshot extends Photo {
 		paint.setTextSize(40);
     }
 
-    //public Bitmap renderGraph() {
-    //    this.computeGraph(this.image);
-    //    return graphHandle.renderVertically(100, this.getHeight() - 100);
-    //}    
-    
+  
+   
     private ArrayList<Graph.Peak> computeGraph(Bitmap img) {
-    	Bitmap imageCopy = Photo.duplicateImage(img);
-    	graphHandle = this.histogram(imageCopy);
+    	Bitmap dest = verticalEdgeBi(img); 
+    	dest = NativeGraphics.treshold(dest, 150);
+    	
+    	//Intelligence.console.consoleBitmap(dest);
+    	
+    	CarSnapshotGraph graphHandle = this.createCarSnapshotGraph(dest);
         graphHandle.rankFilter(carsnapshot_graphrankfilter);
         graphHandle.applyProbabilityDistributor(distributor);
-        // We find two candidate
-        graphHandle.findPeaks(2, 2, .20f); 
-        imageCopy.recycle();
+        /**
+         * .40 - min
+         * .45 - ideal
+         * .50 - max
+         */
+        graphHandle.findPeaks(2, 2, .40f); // We find two candidate
+
+    	//Intelligence.console.consoleBitmap(graphHandle.renderVertically(50, 300));
+    	
+        dest.recycle();
         return graphHandle.peaks;
     }
     
@@ -147,26 +155,38 @@ public class CarSnapshot extends Photo {
     	CopyOnWriteArrayList<Challenger> out2 = new CopyOnWriteArrayList<Challenger>();
     	
     	int imageWidth 	= this.image.getWidth();
-    	int step 		= 20;
-    	int countPlates = 4;
-    	// Value in percents, show coincidence between two challenger-images
-    	float stickyCoef = 0.2f;
+    	/**
+    	 * ideal   - 25
+    	 * minimum - 20
+    	 * maximum - 30
+    	 */
+    	int step = 25;
+    	
+    	/**
+    	 * ideal - 4
+    	 * minimum - 3
+    	 * maximum - 5
+    	 */
+    	int countPlates = 3;
+    	float stickyCoef = 0.2f;	// Value in percents, show coincidence between two challenger-images
+    	
+    	
     	int imageWidthIteration = imageWidth / step;
     	int imageLength = imageWidthIteration * step;
     	
-    	
-    	//Preprocessing for source image
-    	Bitmap dest = NativeGraphics.convert565to8888(image);
+    	Bitmap dest = NativeGraphics.convert565to8888(image); //Preprocessing for source image
     	dest = verticalEdgeBi(dest); 
-    	dest = NativeGraphics.treshold(dest, 150);
+    	dest = NativeGraphics.treshold(dest, 100);
     	
-    	ConsoleGraph cGraph = Intelligence.console.createConsoleGraph(image);
+    	/**
+    	 * Render processing - console
+    	 */
+    	ConsoleGraph cGraph = Intelligence.console.createConsoleGraph(image, step);
     	
 		for (int i = 0; i < imageLength - step; i += step) {
     		
 			Bitmap bi = Bitmap.createBitmap(dest, i, 0, step, dest.getHeight());
-    		
-    		graphHandle = this.histogram(bi);
+			ChallengerGraph graphHandle = this.createChallengerGraph(bi);
             graphHandle.rankFilter(carsnapshot_graphrankfilter);
             graphHandle.applyProbabilityDistributor(distributor);
             
@@ -189,6 +209,9 @@ public class CarSnapshot extends Photo {
             }
     	}
 		
+		/**
+		 * Join equal images
+		 */
 		LinkedList<Challenger> out3 = new LinkedList<Challenger>();
 		for (Challenger elm : out2) {
 			float elmSizeX = elm.maxX - elm.minX;
@@ -233,14 +256,31 @@ public class CarSnapshot extends Photo {
 			}
 		}
 		int amplify = 3;
+		/**
+		 * We find original picture with original dimensions and then we project work image to original picture
+		 */
 		for (Challenger elm : out3) {
-        	Bitmap bi = Bitmap.createBitmap( dest, 
-        			Math.max(0, elm.minX - amplify), 
-        			Math.max(0, elm.minY - amplify), 
-        			Math.max(1,	elm.maxX - elm.minX + amplify) , 
-        			Math.max(1,	elm.maxY - elm.minY + amplify));
-        	for (Graph.Peak p : computeGraph(bi)) {
-                Bitmap bi2 = Bitmap.createBitmap(image, elm.minX, elm.minY + p.getLeft(), Math.max(1,bi.getWidth()) , Math.max(1,p.getDiff()));
+			Bitmap bi = null;
+			int x = 0, y = 0, w = 0, h = 0;
+			if (originalImage != null) {
+				float coefWidth = (float)originalImage.getWidth() / (float)dest.getWidth();
+				float coefHeight = (float)originalImage.getHeight() / (float)dest.getHeight();
+				
+				x = (int)(Math.max(0, elm.minX - amplify) * coefWidth);
+				y = (int)(Math.max(0, elm.minY - amplify) * coefHeight);
+				w = (int)(Math.max(1,	elm.maxX - elm.minX + amplify) * coefWidth);
+				h = (int)(Math.max(1,	elm.maxY - elm.minY + amplify) * coefHeight);
+				bi = Bitmap.createBitmap(originalImage, x, y, w, h);
+			} else {
+				x = Math.max(0, elm.minX - amplify);
+				y = Math.max(0, elm.minY - amplify);
+				w = Math.max(1,	elm.maxX - elm.minX + amplify);
+				h = Math.max(1,	elm.maxY - elm.minY + amplify);
+				bi = Bitmap.createBitmap(image, x, y, w, h);
+			}
+			for (Graph.Peak p : computeGraph(NativeGraphics.convert565to8888(bi))) {
+                Bitmap bi2 = Bitmap.createBitmap(bi, 0, p.getLeft(), bi.getWidth(), p.getDiff());
+                //Intelligence.console.consoleBitmap(bi2);
                 out.add(new Band(bi2));
             }
         }
@@ -259,7 +299,19 @@ public class CarSnapshot extends Photo {
         return NativeGraphics.convolve(source, template, 3, 3, 1, 0);
     }
 
-    public CarSnapshotGraph histogram(Bitmap bi) {
+    
+    public ChallengerGraph createChallengerGraph(Bitmap bi) {
+    	ChallengerGraph graph = new ChallengerGraph(this);
+        float[] peaks = new float[bi.getHeight()];
+        /**
+         * Graph at vertical position
+         */
+        NativeGraphics.getHSVBrightness(bi, peaks);
+        graph.addPeaks(peaks);
+        return graph;        
+    }
+    
+    public CarSnapshotGraph createCarSnapshotGraph(Bitmap bi) {
         CarSnapshotGraph graph = new CarSnapshotGraph(this);
         float[] peaks = new float[bi.getHeight()];
         /**
