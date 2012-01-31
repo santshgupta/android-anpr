@@ -396,56 +396,62 @@ public class Graph {
         
     }
     
-    public int indexOfLeftPeakRel(int peak, ArrayList<Graph.Peak> outPeaks, double peakFootConstantRel, int koef) {
+    public int indexOfLeftPeakRel(int peak, double peakFootConstantRel, int koef) {
         int index = peak;
         int endl = 0;
-        for (Peak p : outPeaks) {
-            if ((p.right < index) && (endl < p.right)) {
-        		endl = p.right;
-            }
-        }
-        for (int i=peak; i > endl; i -= koef) {
+       
+        for (int i = peak; i > endl; i -= koef) {
         	float averageIndex = 0;
+        	int delim = 0;
         	if (i >= endl + koef) {
         		for (int i2 = i; i2 > i-koef; i2--) {
         			averageIndex += yValues.get(i2);
+        			delim++;
         		}
         	} else {
         		for (int i2 = i; i2 > endl; i2--) {
         			averageIndex += yValues.get(i2);
+        			delim++;
         		}
         	}
-        	averageIndex /= koef;
-            index = i;
-            if (averageIndex < peakFootConstantRel * yValues.get(peak) ) break;
-        }
-        return Math.max(0, index);
-    }
-    public int indexOfRightPeakRel(int peak, ArrayList<Graph.Peak> outPeaks, double peakFootConstantRel, int koef) {
-        int index=peak;
-        int endl = yValues.size();
-        for (Peak p : outPeaks) {
-            if ((p.left > index) && (endl > p.left)) {
-        		endl = p.left;
+        	averageIndex /= Math.max(1, delim);
+            if (averageIndex < peakFootConstantRel * yValues.get(peak) ) {
+            	index = i;
+                break;
+            } else {
+            	index = Math.max(endl, i - koef);
             }
         }
+        return Math.max(endl, index);
+    }
+    public int indexOfRightPeakRel(int peak, double peakFootConstantRel, int koef) {
+        int index=peak;
+        int endl = yValues.size() - 1;
+        
         for (int i = peak; i < endl; i += koef) {
         	float averageIndex = 0;
+        	int delim = 0;
         	if (i <= endl - koef) {
         		for (int i2 = i; i2 < i+koef; i2++) {
         			averageIndex += yValues.get(i2);
+        			delim++;
         		}
         	} else {
         		for (int i2 = i; i2 < endl; i2++) {
         			averageIndex += yValues.get(i2);
+        			delim++;
         		}
         	}
-        	averageIndex /= koef;
+        	averageIndex /= Math.max(1, delim);
             index = i;
-            if (averageIndex < peakFootConstantRel * yValues.get(peak))
-        		break;
+            if (averageIndex < peakFootConstantRel * yValues.get(peak) ) {
+            	index = i;
+                break;
+            } else {
+            	index = Math.min(endl, i + koef);
+            }
         }
-        return Math.min(yValues.size(), index);
+        return Math.min(endl, index);
     }
 
     

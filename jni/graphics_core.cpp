@@ -459,33 +459,29 @@ void GraphicsCore :: adaptiveTreshold (JNIEnv *env, jclass javaThis, jobject bit
 	}
 	uint32_t *rgbData = (uint32_t *) pixelscolor;
 	uint32_t *destData = (uint32_t *) pixelsgray;
-	int radius = 8;
-	int w = infocolor.width;
-	int h = infocolor.height;
+	int width 	= infocolor.width;
+	int height 	= infocolor.height;
 
-	int count;
-	float neighborhood;
+	IplImage *tmp = loadPixels(rgbData, width, height);
+	IplImage *tmp2 = cvCreateImage(cvSize(tmp->width, tmp->height), IPL_DEPTH_8U, 1);
+	IplImage *tmp3 =  cvCreateImage(cvSize(tmp->width, tmp->height), IPL_DEPTH_8U, 1);
 
-	for (int x = 0; x < w; x++) {
-		for (int y = 0; y < h; y++) {
-			count = 0;
-			neighborhood = 0;
-			for (int ix = x - radius; ix <= x + radius; ix++) {
-				for (int iy = y - radius; iy <= y + radius; iy++) {
-					if (ix >= 0 && iy >=0 && ix < w && iy < h) {
-						neighborhood += rgbData[iy * w + ix];
-						count++;
-					}
-				}
-			}
-			neighborhood /= count;
-			if (rgbData[y * w + x] < neighborhood) {
-				destData[y * w + x] = 0xff000000;
-			}  else {
-				destData[y * w + x] = 0xffffffff;
-			}
+	cvCvtColor(tmp, tmp2, CV_RGB2GRAY);
+	cvAdaptiveThreshold(tmp2, tmp3, 255, CV_ADAPTIVE_THRESH_GAUSSIAN_C,
+				CV_THRESH_BINARY, 11, 7);
+
+	for ( int y = 0; y < tmp3->height; y++ ) {
+		char* pt = (char*) (tmp3->imageData + y * tmp2->widthStep);
+		for (int x = 0; x < tmp3->width; x++ ) {
+			char color = pt[x];
+			destData[y * width + x] = 0xff000000 | (color) | (color << 8)
+									| (color << 16);
 		}
 	}
+
+	cvReleaseImage(&tmp);
+	cvReleaseImage(&tmp2);
+	cvReleaseImage(&tmp3);
 
 	LOGI("unlocking pixels");
 	AndroidBitmap_unlockPixels(env, bitmapcolor);

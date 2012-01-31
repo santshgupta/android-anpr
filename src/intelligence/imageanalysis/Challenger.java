@@ -21,7 +21,11 @@ public class Challenger {
 	public int delta;
 	
 
-	public final int COEF = 15;
+	// < 12 - fail
+	// 12 - is ideal
+	// 15 - is maximum
+	// > 15 - fail
+	public final int COEF = 12;
 	
 	public Challenger(Peak p, int step, int delta) { 
 		

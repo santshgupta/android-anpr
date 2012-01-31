@@ -75,7 +75,7 @@ import java.util.Comparator;
 import intelligence.imageanalysis.Graph.Peak;
 import intelligence.intelligence.Intelligence;
 
-public class CarSnapshotGraph extends Graph {
+public class ChallengerGraph extends Graph {
     private static double peakFootConstant = 
             Intelligence.configurator.getDoubleProperty("carsnapshotgraph_peakfootconstant"); //0.55
     private static double peakDiffMultiplicationConstant = 
@@ -83,7 +83,7 @@ public class CarSnapshotGraph extends Graph {
     
     CarSnapshot handle;
     
-    public CarSnapshotGraph(CarSnapshot handle) {
+    public ChallengerGraph(CarSnapshot handle) {
         this.handle = handle;
     }
     
@@ -136,29 +136,16 @@ public class CarSnapshotGraph extends Graph {
                 Math.min(this.yValues.size() - 1, rightIndex)
                 ));
             
-            float stickyCoef = 0.6f;
-            float elmSizeX = rightIndex - leftIndex;
-            boolean isOk = false;
-            for (Peak p : outPeaksFiltered) {
-            	float diffX 	= 0;
-				float elm2SizeX = p.right - p.left;
-				if (p.right > rightIndex) {
-					diffX = rightIndex - p.left;
-				} else {
-					diffX = p.right - leftIndex;
-				}
-				if (diffX > 0 && 
-				   (((diffX / elm2SizeX) > stickyCoef) || ((diffX / elmSizeX) > stickyCoef)) ) {
-					isOk = true;
-				}
-            }
-            
-            if (isOk == false) {
+            float leftIndexValue =  this.yValues.get(leftIndex);
+            float rightIndexValue = this.yValues.get(rightIndex);
+            if ((maxValue > leftIndexValue) && (maxValue > rightIndexValue)
+            	&& (maxValue/leftIndexValue > 1.15) && (maxValue/rightIndexValue > 1.15)) {
+        
             	outPeaksFiltered.add(new Peak(
-                    Math.max(0,leftIndex),
-                    maxIndex,
-                    Math.min(this.yValues.size() - 1, rightIndex)
-                    ));
+	                Math.max(0,leftIndex),
+	                maxIndex,
+	                Math.min(this.yValues.size()-1,rightIndex)
+	                ));
             }
         }
         

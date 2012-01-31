@@ -11,9 +11,11 @@ public class ConsoleGraph {
 	private int initPosX = 0;
 	private int initPosY = 0;
 	protected View mainView = null;
+	private int step = 0;
 	private Paint paintContent = new Paint(Paint.FILTER_BITMAP_FLAG);
     
-	public ConsoleGraph (View view, Canvas c, int x, int y) {
+	public ConsoleGraph (View view, Canvas c, int x, int y, int step) {
+		this.step = step;
 		this.canvas = c;
 		this.mainView = view;
 		this.initPosX = x;
@@ -24,7 +26,7 @@ public class ConsoleGraph {
 	}
 	
 	public void drawLine (int x, int y) {
-		this.canvas.drawLine(initPosX + x, initPosY + y, initPosX + x + 20, initPosY + y, paintContent);
+		this.canvas.drawLine(initPosX + x, initPosY + y, initPosX + x + step, initPosY + y, paintContent);
 		redrawMainView();
 	}
 	
