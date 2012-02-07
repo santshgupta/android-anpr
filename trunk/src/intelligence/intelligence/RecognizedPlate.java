@@ -89,8 +89,8 @@ public class RecognizedPlate {
 
     public String getString() {
         String ret = new String("");
-        for (int i=0; i<chars.size();i++) {
-            
+        for (int i=0; i < chars.size();i++) {
+        	Intelligence.console.console("char: " + this.chars.elementAt(i).getPattern(0).getChar());
             ret = ret + this.chars.elementAt(i).getPattern(0).getChar();
         }
         return ret;

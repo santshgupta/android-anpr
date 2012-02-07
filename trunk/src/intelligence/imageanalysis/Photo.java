@@ -9,6 +9,7 @@ package intelligence.imageanalysis;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 
 import com.graphics.NativeGraphics;
@@ -25,6 +26,7 @@ import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Paint;
 import android.graphics.drawable.BitmapDrawable;
+import android.os.Environment;
 import android.util.Log;
 
 public class Photo {
@@ -69,6 +71,25 @@ public class Photo {
     
     public Bitmap getBi() {
         return this.image;
+    }
+    
+    
+    public void saveImage(String fName) {
+    	String path = Environment.getExternalStorageDirectory().toString();
+    	File file = new File(path, fName);
+//    	
+    	FileOutputStream out = null;
+		try {
+			file.createNewFile();
+			out = new FileOutputStream(file);
+			this.image.compress(Bitmap.CompressFormat.JPEG, 90, out);
+			out.flush();
+			out.close();
+		} catch (FileNotFoundException e) {
+			Intelligence.console.console(e.toString());
+		} catch (IOException e) {
+			Intelligence.console.console(e.toString());
+		}
     }
     
     public void setBrightness(int x, int y, float value) {

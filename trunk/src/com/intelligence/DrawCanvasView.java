@@ -17,7 +17,7 @@ import android.view.View.OnTouchListener;
 
 public class DrawCanvasView extends View implements OnTouchListener {
 	
-	private Bitmap 		 	b 					= Bitmap.createBitmap(650, 4000, Bitmap.Config.ARGB_8888);
+	private Bitmap 		 	b 					= Bitmap.createBitmap(350, 2000, Bitmap.Config.ARGB_8888);
 	private final String 	___FILE_NAME___  	= "./test/test015.jpg";
 	private Paint 			paint 				= new Paint(Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG);
 	private Canvas 			mainCanvas 			= null;
@@ -58,12 +58,10 @@ public class DrawCanvasView extends View implements OnTouchListener {
 				Log.d("intelligence_debug", "The thread was run");
 				Canvas cnv = new Canvas(b);
 				try {
-					
 					Intelligence systemLogic 	= new Intelligence (true, cnv, view);
 					CarSnapshot c 				= new CarSnapshot (___FILE_NAME___, cnv);
 					String number 				= systemLogic.recognize(c);
 					Log.d("intelligence_debug", "recognized: " + number);
-					
 				} catch (IOException e) {
 					Log.e("intelligence_error", e.toString());
 				} catch (Exception e) {

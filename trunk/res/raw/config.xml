@@ -47,12 +47,12 @@ N - adaptive thresholding with radius N (must be greater or equal than 1)
 
 <!-- CHARACTER NORMALIZATION, FEATURE EXTRACTION AND RECOGNITION MODES -->
 
-<entry key="char_normalizeddimensions_x">8</entry> <!-- normalized character width (downsampled)-->
-<entry key="char_normalizeddimensions_y">13</entry> <!-- normalized character height (downsampled)-->
+<entry key="char_normalizeddimensions_x">13</entry> <!-- normalized character width (downsampled)-->
+<entry key="char_normalizeddimensions_y">16</entry> <!-- normalized character height (downsampled)-->
 
 <!-- path to directory containing already normalized characters. Dimensions of these
 characters must match with normalized characters width and height -->
-<entry key="char_learnAlphabetPath">./resources/alphabets/alphabet_8x13</entry>
+<entry key="char_learnAlphabetPath">./resources/alphabets/alphabet_13x16_rus</entry>
 
 <!-- character downsampling methods 
 0 - linear resampling (good for preserving edges (edge detection))
@@ -70,10 +70,10 @@ characters must match with normalized characters width and height -->
 0 - euclidean distance pattern matching
 1 - feedforward neural network
 -->
-<entry key="intelligence_classification_method">0</entry> 
+<entry key="intelligence_classification_method">1</entry> 
 <!-- classification method. 0=euclidean distance pattern mathing, 1=neural network -->
 <!-- NEURAL NETWORK LEARNING PARAMETERS -->
-<entry key="char_neuralNetworkPath">./resources/neuralnetworks/network_avgres_813_map.xml</entry> 
+<entry key="char_neuralNetworkPath">./resources/neuralnetworks/network_avgres_1316_rus.xml</entry> 
 <!-- neural network topology file (caution : dimensions must match with selected extraction method) -->
 <entry key="neural_maxk">8000</entry> <!-- maximum number of iterations during learning process -->
 <entry key="neural_eps">0.07</entry> <!-- expected error ratio -->
