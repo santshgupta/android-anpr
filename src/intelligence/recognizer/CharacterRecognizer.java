@@ -86,8 +86,8 @@ public abstract class CharacterRecognizer {
     // 0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F  G  H  I  J  K  L  M  N  O  P  Q  R  S  T  U  V  W  X  Y  Z
     public static char[] alphabet = {
         '0','1','2','3','4','5','6','7','8','9','A','B','C',
-        'D','E','F','G','H','I','J','K','L','M','N','O','P',
-        'Q','R','S','T','U','V','W','X','Y','Z'
+        'E','H','K','M','O','P',
+        'T','X','Y'
     };
     
     public static float[][] features = {
@@ -168,8 +168,8 @@ public abstract class CharacterRecognizer {
         }
         
         public Bitmap render() {
-            int width=500;
-            int height=200;
+            int width=300;
+            int height=120;
             Paint  paint  		= new Paint(Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG);
             Bitmap histogram 	= Bitmap.createBitmap(width+20, height+20, Bitmap.Config.ARGB_8888);
             paint.setColor(Color.GRAY);
@@ -196,11 +196,11 @@ public abstract class CharacterRecognizer {
                 left = i * colWidth + 42;
                 top = height - (int)( patterns.elementAt(i).cost * (height - 20));
                 
-                cnv.drawRect(
+                cnv.drawLine(
                         left,
                         top ,
                         colWidth - 2,
-                        height - top, 
+                        top, 
                         paint );
                 cnv.drawText( patterns.elementAt(i).chr+" " , left + 2,
                         top - 8, paint);

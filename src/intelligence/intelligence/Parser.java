@@ -76,7 +76,7 @@ import java.util.Vector;
 import org.w3c.dom.*;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-//import org.xml.sax.SAXException;
+
 
 public class Parser {
     public class PlateForm {
@@ -157,14 +157,12 @@ public class Parser {
         }
         return plateForms;
     }
-    ////
+    
     public void unFlagAll() {
         for (PlateForm form : this.plateForms)
             form.flagged = false;
     }
-    // pre danu dlzku znacky sa pokusi najst nejaky plateform o rovnakej dlzke
-    // v pripade ze nenajde ziadny, pripusti moznost ze je nejaky znak navyse
-    // a hlada plateform s mensim poctom pismen
+
     public void flagEqualOrShorterLength(int length) {
         boolean found = false;
         for (int i=length; i>=1 && !found; i--) {
@@ -195,7 +193,6 @@ public class Parser {
     //                      : 2 (equal or shorter)
     public String parse(RecognizedPlate recognizedPlate, int syntaxAnalysisMode) throws IOException {
         if (syntaxAnalysisMode==0) {
-            //Main.rg.insertText(" result : "+recognizedPlate.getString()+" --> <font size=15>"+recognizedPlate.getString()+"</font><hr><br>");
             return recognizedPlate.getString();
         }
         
@@ -210,45 +207,36 @@ public class Parser {
         Vector<FinalPlate> finalPlates = new Vector<FinalPlate>();
         
         for (PlateForm form : this.plateForms) {
-            if (!form.flagged) continue; // skip unflagged
-            for (int i=0; i<= length - form.length(); i++) { // posuvanie formy po znacke
-//                System.out.println("comparing "+recognizedPlate.getString()+" with form "+form.name+" and offset "+i );
+            if (!form.flagged) continue;
+            for (int i=0; i<= length - form.length(); i++) {
                 FinalPlate finalPlate = new FinalPlate();
-                for (int ii=0; ii<form.length(); ii++) { // prebehnut vsetky znaky formy
-                    // form.getPosition(ii).allowedChars // zoznam povolenych
-                    RecognizedChar rc = recognizedPlate.getChar(ii+i); // znak na znacke
-                    
+                for (int ii=0; ii<form.length(); ii++) {
+                    RecognizedChar rc = recognizedPlate.getChar(ii+i);
                     if (form.getPosition(ii).isAllowed(rc.getPattern(0).getChar())) {
                         finalPlate.addChar(rc.getPattern(0).getChar());
-                    } else { // treba vymenu
-                        finalPlate.requiredChanges++; // +1 za pismeno
+                    } else {
+                        finalPlate.requiredChanges++;
                         for (int x=0; x<rc.getPatterns().size(); x++) {
                             if (form.getPosition(ii).isAllowed(rc.getPattern(x).getChar())) {
                                 RecognizedChar.RecognizedPattern rp = rc.getPattern(x);
-                                finalPlate.requiredChanges += (rp.getCost() / 100);  // +x za jeho cost
+                                finalPlate.requiredChanges += (rp.getCost() / 100);
                                 finalPlate.addChar(rp.getChar());
                                 break;
                             }
                         }
                     }
                 }
-//                System.out.println("adding "+finalPlate.plate+" with required changes "+finalPlate.requiredChanges);
                 finalPlates.add(finalPlate);
             }
         }
-//        
-
-
         
-        // tu este osetrit nespracovanie znacky v pripade ze nebola oznacena ziadna
-        if (finalPlates.size()==0) return recognizedPlate.getString();
-        // else :
-        // najst tu s najmensim poctom vymen
+        if (finalPlates.size()==0) 
+        	return recognizedPlate.getString();
+        
         float minimalChanges = Float.POSITIVE_INFINITY;
         int minimalIndex = 0;
-//        System.out.println("---");
         for (int i=0; i<finalPlates.size(); i++) {
-//            System.out.println("::"+finalPlates.elementAt(i).plate+" "+finalPlates.elementAt(i).requiredChanges);
+        	//Intelligence.console.console("::"+finalPlates.elementAt(i).plate+" "+finalPlates.elementAt(i).requiredChanges);
             if (finalPlates.elementAt(i).requiredChanges <= minimalChanges) {
                 minimalChanges = finalPlates.elementAt(i).requiredChanges;
                 minimalIndex = i;
@@ -256,7 +244,7 @@ public class Parser {
         }
         
         String toReturn = recognizedPlate.getString();
-        if (finalPlates.elementAt(minimalIndex).requiredChanges <= 2)
+        if (finalPlates.elementAt(minimalIndex).requiredChanges <= 2.1)
             toReturn = finalPlates.elementAt(minimalIndex).plate;
         return toReturn;
     }

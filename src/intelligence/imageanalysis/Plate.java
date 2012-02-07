@@ -137,7 +137,8 @@ public class Plate extends Photo {
 	                    new PositionInPlate(p.getLeft(), p.getRight())
                     )
                     );
-            Intelligence.console.consoleBitmap(Bitmap.createBitmap(this.plateCopy.image, p.getLeft(), 0, p.getDiff(), image.getHeight()));
+            //saveImage(Bitmap.createBitmap(this.plateCopy.image, p.getLeft(), 0, p.getDiff(), image.getHeight()), "./test/" + p.toString() + ".jpg");
+            //Intelligence.console.consoleBitmap(Bitmap.createBitmap(this.plateCopy.image, p.getLeft(), 0, p.getDiff(), image.getHeight()));
         }
         
         return out;

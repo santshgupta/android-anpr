@@ -145,9 +145,6 @@ public class Intelligence {
     	console = new Console(mainView, canvas);
     	console.console("Processing was started! Please wait few minutes...");
     	if (classification_method == 0) {
-    		/**
-    		 * ��� ������!
-    		 */
             chrRecog = new KnnPatternClassificator();
     		console.console("KNN classificator has created!");
     	} else {
@@ -218,7 +215,7 @@ public class Intelligence {
                 ) continue;
                 
                 Vector<Char> chars = plate.getChars();
-                /*
+                
                 if (chars.size() < Intelligence.configurator.getIntProperty("intelligence_minimumChars") ||
                 chars.size() > Intelligence.configurator.getIntProperty("intelligence_maximumChars")
                 ) continue;
@@ -244,6 +241,7 @@ public class Intelligence {
                 float averageHue = plate.getAveragePieceHue(chars);
                 float averageSaturation = plate.getAveragePieceSaturation(chars);
                 for (Char chr : chars) {
+                	//chr.saveImage("./test/" + chr.toString() + ".jpg");
                 	//Intelligence.canvas.drawBitmap(chr.image, 200, p += 50, Intelligence.paint);
                     // heuristicka analyza jednotlivych pismen
                     boolean ok = true;
@@ -281,48 +279,50 @@ public class Intelligence {
                     if (brightnessCost > Intelligence.configurator.getDoubleProperty("intelligence_maxBrightnessCostDispersion")) {
                         errorFlags += "BRI ";
                         ok = false;
-                        if (!enableReportGeneration) continue;
+                        if (!enableReportGeneration) 
+                        	continue;
                     }
                     if (contrastCost > Intelligence.configurator.getDoubleProperty("intelligence_maxContrastCostDispersion")) {
                         errorFlags += "CON ";
                         ok = false;
-                        if (!enableReportGeneration) continue;
+                        if (!enableReportGeneration) 
+                        	continue;
                     }
                     if (hueCost > Intelligence.configurator.getDoubleProperty("intelligence_maxHueCostDispersion")) {
                         errorFlags += "HUE ";
                         ok = false;
-                        if (!enableReportGeneration) continue;
+                        if (!enableReportGeneration) 
+                        	continue;
                     }
                     if (saturationCost > Intelligence.configurator.getDoubleProperty("intelligence_maxSaturationCostDispersion")) {
                         errorFlags += "SAT ";
                         ok = false;
-                        if (!enableReportGeneration) continue;
+                        if (!enableReportGeneration) 
+                        	continue;
                     }
                     if (heightCost < -Intelligence.configurator.getDoubleProperty("intelligence_maxHeightCostDispersion")) {
                         errorFlags += "HEI ";
                         ok = false;
-                        if (!enableReportGeneration) continue;
+                        if (!enableReportGeneration) 
+                        	continue;
                     }
                     
                     float similarityCost = 0;
                     RecognizedChar rc = null;
                     if (ok==true) {
-                        rc = this.chrRecog.recognize(chr);
+                    	rc = Intelligence.chrRecog.recognize(chr);
                         similarityCost = rc.getPatterns().elementAt(0).getCost();
                         if (similarityCost > Intelligence.configurator.getDoubleProperty("intelligence_maxSimilarityCostDispersion")) {
                             errorFlags += "NEU ";
                             ok = false;
                             if (!enableReportGeneration) continue;
                         }
-                        
                     }
-                    
-                    if (ok==true) {
+                    if (ok == true) {
                     	recognizedPlate.addChar(rc);
-                    } else {
                     }
-                    
                     if (enableReportGeneration) {
+                    	/*
                     	console.console("WHR = "+widthHeightRatio);
                     	console.console("HEI = "+heightCost);
                     	console.console("NEU = "+similarityCost);
@@ -330,28 +330,21 @@ public class Intelligence {
                     	console.console("BRI = "+brightnessCost);
                     	console.console("HUE = "+hueCost);
                     	console.console("SAT = "+saturationCost);
-
+						*/
                         if (errorFlags.length()!=0) {
                         	console.console("errflags = "+errorFlags);
                         }
                      }
-                } // end for each char
-                
-                
-                // nasledujuci riadok zabezpeci spracovanie dalsieho kandidata na znacku, v pripade ze charrecognizingu je prilis malo rozpoznanych pismen
-                if (recognizedPlate.chars.size() < Intelligence.configurator.getIntProperty("intelligence_minimumChars")) continue;
+                } 
+                if (recognizedPlate.chars.size() < Intelligence.configurator.getIntProperty("intelligence_minimumChars")) 
+                	continue;
                 
                 String parsedOutput = parser.parse(recognizedPlate, syntaxAnalysisMode);
-                
                 if (enableReportGeneration) {
                 	console.console("_RECOGNIZED_ : " + parsedOutput);
                 }
-                
-                return parsedOutput;
-            	*/
-            	console.console("cicle - OK!");
-            	 
-            } // end for each  plate
+                return parsedOutput; 
+            }
         }
         return null;
     }
