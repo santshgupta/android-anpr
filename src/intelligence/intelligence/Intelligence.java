@@ -142,6 +142,7 @@ public class Intelligence {
         int p = 0;
         console.console("getBands");
         for (Band b : carSnapshot.getBands()) { //doporucene 3
+        	//console.consoleBitmap(b.image);
         	if (enableReportGeneration) {
         		console.console("Band width : "+b.getWidth()+" px");
         		console.console("Band height : "+b.getHeight()+" px");
@@ -171,8 +172,9 @@ public class Intelligence {
                     plate = new Plate(core);
                     source.recycle();
                 } */
+            	//console.consoleBitmap(plate.image);
                 plate.normalize();
-                console.consoleBitmap(plate.image);
+                //console.consoleBitmap(plate.image);
                 //continue;
                 
                 float plateWHratio = (float)plate.getWidth() / (float)plate.getHeight();
@@ -224,6 +226,8 @@ public class Intelligence {
                         ok = false;
                         if (!enableReportGeneration) 
                         	continue;
+                    } else {
+                    	Intelligence.console.console("WHR: " + widthHeightRatio);
                     }
                     
                     if ((chr.positionInPlate.x1 < 2 || chr.positionInPlate.x2 > plate.getWidth() - 1) && widthHeightRatio < 0.12) {

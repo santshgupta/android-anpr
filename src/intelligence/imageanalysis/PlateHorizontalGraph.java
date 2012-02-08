@@ -89,23 +89,7 @@ public class PlateHorizontalGraph extends Graph {
     }
     
     public ArrayList<Peak> findPeak(int count) {
-        if (horizontalDetectionType == 1) 
-        	return findPeak_edgedetection(count);
-        return findPeak_derivate(count); 
-    }
-    
-    public ArrayList<Peak> findPeak_derivate(int count) {  // RIESENIE DERIVACIOU
-        int a,b;
-        float maxVal = this.getMaxValue();
-        
-        for (a=2; -derivation(a,a+4) < maxVal*0.2 && a < this.yValues.size()-2-2-4; a++);
-        for (b=this.yValues.size()-1-2; derivation(b-4,b) < maxVal*0.2 && b>a+2; b--);
-
-        ArrayList<Peak> outPeaks = new ArrayList<Peak>();
-       
-        outPeaks.add(new Peak(a,b));
-        super.peaks = outPeaks;
-        return outPeaks;
+        return findPeak_edgedetection(count);
     }
     
     public ArrayList<Peak> findPeak_edgedetection (int count) {

@@ -36,7 +36,7 @@ N - adaptive thresholding with radius N (must be greater or equal than 1)
 
 <!-- CHARACTER HEURISTICS (DETERMINES CONSTRAINTS FOR CHARACTERS ACCEPTANCE) -->
 
-<entry key="intelligence_minCharWidthHeightRatio">0.1</entry> <!-- char proportions: minimum char width/height ratio -->
+<entry key="intelligence_minCharWidthHeightRatio">0.2</entry> <!-- char proportions: minimum char width/height ratio -->
 <entry key="intelligence_maxCharWidthHeightRatio">0.95</entry> <!-- char proportions: maximum char width/height ratio -->
 <entry key="intelligence_maxBrightnessCostDispersion">0.161</entry> <!-- maximum character brightness difference (from other chars) -->
 <entry key="intelligence_maxContrastCostDispersion">0.1</entry> <!-- maximum character contrast difference (from other chars) -->
@@ -98,6 +98,6 @@ characters must match with normalized characters width and height -->
 <entry key="platehorizontalgraph_detectionType">1</entry> <!-- 1=edge detection 0=magnitude derivate -->
 <entry key="platehorizontalgraph_peakfootconstant">0.05</entry>
 <entry key="plateverticalgraph_peakfootconstant">0.42</entry>
-<entry key="plategraph_rel_minpeaksize">0.86</entry>
+<entry key="plategraph_rel_minpeaksize">0.96</entry>
 <entry key="plategraph_peakfootconstant">0.7</entry>
 </properties>
