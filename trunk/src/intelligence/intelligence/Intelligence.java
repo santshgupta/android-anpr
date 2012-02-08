@@ -88,26 +88,22 @@ import intelligence.recognizer.NeuralPatternClassificator;
 import intelligence.recognizer.KnnPatternClassificator;
 
 public class Intelligence {
-	protected static Canvas canvas; 
-	protected static View mainView;
-	protected static Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG);
-    public static Console console;
 	
-	private long lastProcessDuration = 0; // trvanie posledneho procesu v ms
-    
-    public static Configurator configurator = new Configurator("."+File.separator+"config.xml", intelligencyActivity.cntxt);
+	public static Console console;
+	public static Configurator configurator = new Configurator("."+File.separator+"config.xml", intelligencyActivity.cntxt);
     public static CharacterRecognizer chrRecog;
     public static Parser parser;
     public boolean enableReportGeneration;
-    
-    
+    protected static Canvas canvas; 
+	protected static View mainView;
+	protected static Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG);
+    private long lastProcessDuration = 0;
     
     public Intelligence(boolean enableReportGeneration, Canvas cnv, View cnvView) throws Exception {
     	int classification_method = Intelligence.configurator.getIntProperty("intelligence_classification_method");
     	
     	mainView = cnvView;
     	canvas = cnv;
-    	
     	paint.setColor(Color.WHITE);
 		paint.setTextSize(40);
     	this.enableReportGeneration = enableReportGeneration;
@@ -128,7 +124,6 @@ public class Intelligence {
         console.console("Parser has created!");
     }
     
-    // vrati ako dlho v ms trvalo posledne rozpoznaavnie
     public long lastProcessDuration() {
         return this.lastProcessDuration;
     }
@@ -136,8 +131,7 @@ public class Intelligence {
     public String recognize(CarSnapshot carSnapshot) throws Exception {
     	console.console("Recognize");
     	Log.d("intelligence_debug", "recognize:");
-		//TimeMeter time = new TimeMeter();
-        int syntaxAnalysisMode = Intelligence.configurator.getIntProperty("intelligence_syntaxanalysis");
+	    int syntaxAnalysisMode = Intelligence.configurator.getIntProperty("intelligence_syntaxanalysis");
         int skewDetectionMode = Intelligence.configurator.getIntProperty("intelligence_skewdetection");
         
         if (enableReportGeneration) {
@@ -214,34 +208,30 @@ public class Intelligence {
                 float averageHue = plate.getAveragePieceHue(chars);
                 float averageSaturation = plate.getAveragePieceSaturation(chars);
                 for (Char chr : chars) {
-                	//chr.saveImage("./test/" + chr.toString() + ".jpg");
-                	//Intelligence.console.consoleBitmap(chr.image);
-                    // heuristicka analyza jednotlivych pismen
-                    boolean ok = true;
+                	//chr.saveImage("./test/222" + chr.toString() + ".jpg");
+                	Intelligence.console.consoleBitmap(chr.image);
+                    
+                	boolean ok = true;
                     String errorFlags = "";
                     
-                    // pri normalizovanom pisme musime uvazovat pomer
                     float widthHeightRatio = (float)(chr.pieceWidth);
                     widthHeightRatio /= (float)(chr.pieceHeight);
                     
                     if (widthHeightRatio < Intelligence.configurator.getDoubleProperty("intelligence_minCharWidthHeightRatio") ||
-                            widthHeightRatio > Intelligence.configurator.getDoubleProperty("intelligence_maxCharWidthHeightRatio")
-                            ) {
-                        errorFlags += "WHR ";
+                        widthHeightRatio > Intelligence.configurator.getDoubleProperty("intelligence_maxCharWidthHeightRatio")) {
+                        
+                    	errorFlags += "WHR (" + widthHeightRatio + ") ";
                         ok = false;
-                        if (!enableReportGeneration) continue;
+                        if (!enableReportGeneration) 
+                        	continue;
                     }
                     
-                    
-                    if ((chr.positionInPlate.x1 < 2 ||
-                            chr.positionInPlate.x2 > plate.getWidth()-1)
-                            && widthHeightRatio < 0.12
-                            ) {
+                    if ((chr.positionInPlate.x1 < 2 || chr.positionInPlate.x2 > plate.getWidth() - 1) && widthHeightRatio < 0.12) {
                         errorFlags += "POS ";
                         ok = false;
-                        if (!enableReportGeneration) continue;
+                        if ( ! enableReportGeneration) 
+                        	continue;
                     }
-                    //float similarityCost = rc.getSimilarityCost();
                     
                     float contrastCost = Math.abs(chr.statisticContrast - averageContrast);
                     float brightnessCost = Math.abs(chr.statisticAverageBrightness - averageBrightness);
@@ -249,7 +239,7 @@ public class Intelligence {
                     float saturationCost = Math.abs(chr.statisticAverageSaturation - averageSaturation);
                     float heightCost = (chr.pieceHeight - averageHeight) / averageHeight;
                     
-                   // Intelligence.console.console("avh: " + averageHeight);
+                    // Intelligence.console.console("avh: " + averageHeight);
                     if (brightnessCost > Intelligence.configurator.getDoubleProperty("intelligence_maxBrightnessCostDispersion")) {
                         errorFlags += "BRI ";
                         ok = false;
@@ -285,6 +275,7 @@ public class Intelligence {
                     RecognizedChar rc = null;
                     if (ok==true) {
                     	rc = Intelligence.chrRecog.recognize(chr);
+                    	//Intelligence.console.consoleBitmap(rc.render());
                         similarityCost = rc.getPatterns().elementAt(0).getCost();
                         if (similarityCost > Intelligence.configurator.getDoubleProperty("intelligence_maxSimilarityCostDispersion")) {
                             errorFlags += "NEU ";
