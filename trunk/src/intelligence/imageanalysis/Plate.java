@@ -153,6 +153,9 @@ public class Plate extends Photo {
         if (horizontalDetectionType == 1) 
         	clone2.horizontalEdgeDetector(clone2.getBi());
         PlateHorizontalGraph horizontal = clone1.histogramXaxis(clone2.getBi());
+        
+        //Intelligence.console.consoleBitmap(horizontal.renderHorizontally(300, 60));
+        
         this.image = cutLeftRight(this.image, horizontal);        
         this.plateCopy.image = cutLeftRight(this.plateCopy.image, horizontal);
         clone1.image.recycle();
@@ -173,7 +176,7 @@ public class Plate extends Photo {
         graph.applyProbabilityDistributor(new Graph.ProbabilityDistributor(0f,0f,2,2));
         ArrayList<Graph.Peak> peaks = graph.findPeak(3);        
         if (peaks.size()!=0) {
-            Graph.Peak p = peaks.get(0);
+        	Graph.Peak p = peaks.get(0);
             Bitmap b = Bitmap.createBitmap(origin, p.getLeft(), 0, p.getDiff(), image.getHeight());
             origin.recycle();
             return b;
