@@ -68,12 +68,14 @@ for more info about JavaANPR.
 package intelligence.intelligence;
 
 import intelligence.recognizer.CharacterRecognizer.*;
-
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Vector;
-//import javax.xml.parsers.ParserConfigurationException;
 import org.w3c.dom.*;
+
+import com.intelligence.intelligencyActivity;
+import com.intelligency.R;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -128,17 +130,16 @@ public class Parser {
     /** Creates a new instance of Parser */
     public Parser() throws Exception {
         this.plateForms = new Vector<PlateForm>();
-        this.plateForms = this.loadFromXml(Intelligence.configurator.getPathProperty("intelligence_syntaxDescriptionFile"));
+        this.plateForms = this.loadFromXml(R.raw.syntax);
     }
     
-    public Vector<PlateForm> loadFromXml(String fileName) throws Exception {
+    public Vector<PlateForm> loadFromXml(int fileId) throws Exception {
         Vector<PlateForm> plateForms = new Vector<PlateForm>();
         
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder parser = factory.newDocumentBuilder();
-        File f = new File(android.os.Environment.getExternalStorageDirectory(), fileName);
-        Document doc = parser.parse(f);
-        
+        InputStream is = intelligencyActivity.cntxt.getResources().openRawResource(fileId);
+        Document doc = parser.parse(is);
         Node structureNode = doc.getDocumentElement();
         NodeList structureNodeContent = structureNode.getChildNodes();
         for (int i=0; i<structureNodeContent.getLength(); i++) {

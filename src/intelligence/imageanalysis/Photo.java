@@ -11,38 +11,17 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-
 import com.graphics.NativeGraphics;
-
 import intelligence.intelligence.Intelligence;
-import jjil.android.RgbImageAndroid;
-import jjil.core.RgbImage;
-
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.ColorMatrix;
-import android.graphics.ColorMatrixColorFilter;
-import android.graphics.Paint;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Environment;
-import android.util.Log;
 
 public class Photo {
 	public Bitmap image;
 	public Bitmap originalImage = null;
-	// RGB to Luminance conversion constants as found on
-	// Charles A. Poynton's colorspace-faq:
-	// http://www.faqs.org/faqs/graphics/colorspace-faq/
-	private static float r_lum = .212671F;
-	private static float g_lum = .715160F;
-	private static float b_lum = .072169F;
-	//private RgbImage prevRgbImage = null;
-	//private static RgbImage mRgbImage = null;
-	//private static RgbImage mSecRgbImage = null;
 
-	
 	public Photo() {
         this.image = null;
     }
@@ -76,8 +55,7 @@ public class Photo {
     
     public void saveImage(String fName) {
     	String path = Environment.getExternalStorageDirectory().toString();
-    	File file = new File(path, fName);
-//    	
+    	File file = new File(path, fName);	
     	FileOutputStream out = null;
 		try {
 			file.createNewFile();

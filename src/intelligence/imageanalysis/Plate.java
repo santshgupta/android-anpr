@@ -68,22 +68,11 @@ for more info about JavaANPR.
 
 package intelligence.imageanalysis;
 
-//import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Vector;
-
 import com.graphics.NativeGraphics;
-
-import jjil.android.RgbImageAndroid;
-import jjil.core.RgbImage;
-
 import android.graphics.Bitmap;
-import android.util.Log;
-
-
 import intelligence.intelligence.Intelligence;
-//import javaanpr.imageanalysis.PositionInPlate;
-
 
 public class Plate extends Photo {
     static public Graph.ProbabilityDistributor distributor = new Graph.ProbabilityDistributor(0,0,4,4);
@@ -127,10 +116,8 @@ public class Plate extends Photo {
     public Vector<Char> getChars() {
         Vector<Char> out = new Vector<Char>();
         for (Graph.Peak p : computeGraph()) {
-            // vyseknut z povodneho! obrazka znacky, a ulozit do vektora. POZOR !!!!!! Vysekavame z povodneho, takze
-            // na suradnice vypocitane z imageCopy musime uplatnit inverznu transformaciu
-            //Graph.Peak p = peaks.elementAt(i);
-            if (p.getDiff() <= 0) continue;
+            if (p.getDiff() <= 0) 
+            	continue;
             out.add(new Char(
 	            		Bitmap.createBitmap(image, p.getLeft(), 0, p.getDiff(), image.getHeight())  ,
 	            		Bitmap.createBitmap(this.plateCopy.image, p.getLeft(), 0, p.getDiff(), image.getHeight()),  
@@ -152,29 +139,11 @@ public class Plate extends Photo {
         int template[] = {
           -1,0,1
         };
-        
-        //RgbImage rgbi = RgbImageAndroid.toRgbImage(source);
-        //BufferedImage destination = duplicateBufferedImage(source);
-        //convolve(rgbi, data, 1, 3, 1, 0);
-        source = NativeGraphics.convolve(source, template, 1, 3, 1, 0);
-        //Bitmap bTmp = RgbImageAndroid.toBitmap(rgbi);
-    	
-    	//////////////////////////////////////////////////////////////////////
-        //int[] pixels = new int[bTmp.getWidth() * bTmp.getHeight()];
-        //bTmp.getPixels(pixels, 0, bTmp.getWidth(), 0, 0, bTmp.getWidth(), bTmp.getHeight());   	
-        //source.setPixels(pixels, 0, bTmp.getWidth(), 0, 0, bTmp.getWidth(), bTmp.getHeight());
-    	//bTmp.recycle();
-    	//////////////////////////////////////////////////////////////////////
-        //new ConvolveOp(new Kernel(1,3, data), ConvolveOp.EDGE_NO_OP, null).filter(imageCopy, image);
+        source = NativeGraphics.convolve(source, template, 1, 3, 1, 0); 
     }    
+    
     public static int ppp = 0;
     public void normalize() {
-    	
-        // pre ucely orezania obrazka sa vytvori klon ktory sa normalizuje a prahuje s
-        // koeficientom 0.999. funkcie cutTopBottom a cutLeftRight orezu originalny
-        // obrazok na zaklade horizontalnej a vertikalnej projekcie naklonovaneho
-        // obrazka, ktory je prahovany
-        
         Plate clone1 = this.clone();
         clone1.verticalEdgeDetector(clone1.getBi());
         PlateVerticalGraph vertical = clone1.histogramYaxis(clone1.getBi());
@@ -189,13 +158,12 @@ public class Plate extends Photo {
         clone1.image.recycle();
         clone2.image.recycle();
         clone1 = null;
-        clone2 = null;
-        
+        clone2 = null;        
     }
+    
     private Bitmap cutTopBottom(Bitmap origin, PlateVerticalGraph graph) {
         graph.applyProbabilityDistributor(new Graph.ProbabilityDistributor(0f,0f,2,2));
-        Graph.Peak p = graph.findPeak(3).get(0);
-        
+        Graph.Peak p = graph.findPeak(3).get(0);        
         Bitmap b = Bitmap.createBitmap(origin, 0, p.getLeft(), this.image.getWidth(), p.getDiff());
         origin.recycle();
         return b;
@@ -203,8 +171,7 @@ public class Plate extends Photo {
     
     private Bitmap cutLeftRight(Bitmap origin, PlateHorizontalGraph graph) {
         graph.applyProbabilityDistributor(new Graph.ProbabilityDistributor(0f,0f,2,2));
-        ArrayList<Graph.Peak> peaks = graph.findPeak(3);
-        
+        ArrayList<Graph.Peak> peaks = graph.findPeak(3);        
         if (peaks.size()!=0) {
             Graph.Peak p = peaks.get(0);
             Bitmap b = Bitmap.createBitmap(origin, p.getLeft(), 0, p.getDiff(), image.getHeight());

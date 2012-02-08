@@ -64,8 +64,10 @@ public class DrawCanvasView extends View implements OnTouchListener {
 					Log.d("intelligence_debug", "recognized: " + number);
 				} catch (IOException e) {
 					Log.e("intelligence_error", e.toString());
+					e.printStackTrace();
 				} catch (Exception e) {
 					Log.e("intelligence_error", e.toString());
+					e.printStackTrace();
 				}
 				
 				synchronized (cntxt) {

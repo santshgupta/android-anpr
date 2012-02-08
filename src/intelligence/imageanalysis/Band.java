@@ -127,19 +127,12 @@ public class Band extends Photo {
     
     public BandGraph histogram(Bitmap bi) {
         BandGraph graph = new BandGraph(this);
-        /**
-         * Graph at horizontal position
-         */
         float[] peaks = new float[bi.getWidth()];
         NativeGraphics.getHSVBrightnessHorizontally(bi, peaks);
         graph.addPeaks(peaks);
         return graph;
     }
     
-   /**
-    * TODO ��������� ���������� �� �������� ���
-    * @param source
-    */
    public Bitmap fullEdgeDetector(Bitmap source) {
 	   return NativeGraphics.fullEdgeDetector(source);
    }

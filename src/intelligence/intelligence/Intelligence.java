@@ -69,42 +69,15 @@ for more info about JavaANPR.
 package intelligence.intelligence;
 
 import intelligence.configurator.Configurator;
-import intelligence.imageanalysis.Photo;
-
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-//import java.io.IOException;
 import java.util.Vector;
-
-import jjil.android.RgbImageAndroid;
-import jjil.core.RgbImage;
-
-import com.graphics.NativeGraphics;
 import com.intelligence.Console;
-import com.intelligence.DrawCanvasView;
 import com.intelligence.intelligencyActivity;
-
-import android.app.Activity;
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.util.Log;
 import android.view.View;
-
-//import com.intelligencyAndroid.DrawCanvasView;
-//import com.intelligencyAndroid.intelligencyAndroid;
-
-//import javaAndroid.awt.geom.AffineTransform;
-//import javaAndroid.awt.image.BufferedImage;
-//import javaAndroid.awt.image.DataBufferByte;
-//import javaAndroid.awt.image.WritableRaster;
-//import javax.sound.midi.MidiChannel;
-//import javaanpr.Main;
-//import javaanpr.gui.TimeMeter;
 import intelligence.imageanalysis.Band;
 import intelligence.imageanalysis.CarSnapshot;
 import intelligence.imageanalysis.Char;
@@ -242,7 +215,7 @@ public class Intelligence {
                 float averageSaturation = plate.getAveragePieceSaturation(chars);
                 for (Char chr : chars) {
                 	//chr.saveImage("./test/" + chr.toString() + ".jpg");
-                	//Intelligence.canvas.drawBitmap(chr.image, 200, p += 50, Intelligence.paint);
+                	//Intelligence.console.consoleBitmap(chr.image);
                     // heuristicka analyza jednotlivych pismen
                     boolean ok = true;
                     String errorFlags = "";
@@ -276,6 +249,7 @@ public class Intelligence {
                     float saturationCost = Math.abs(chr.statisticAverageSaturation - averageSaturation);
                     float heightCost = (chr.pieceHeight - averageHeight) / averageHeight;
                     
+                   // Intelligence.console.console("avh: " + averageHeight);
                     if (brightnessCost > Intelligence.configurator.getDoubleProperty("intelligence_maxBrightnessCostDispersion")) {
                         errorFlags += "BRI ";
                         ok = false;
