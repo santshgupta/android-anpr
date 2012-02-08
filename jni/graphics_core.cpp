@@ -468,7 +468,7 @@ void GraphicsCore :: adaptiveTreshold (JNIEnv *env, jclass javaThis, jobject bit
 
 	cvCvtColor(tmp, tmp2, CV_RGB2GRAY);
 	cvAdaptiveThreshold(tmp2, tmp3, 255, CV_ADAPTIVE_THRESH_GAUSSIAN_C,
-				CV_THRESH_BINARY, 11, 7);
+				CV_THRESH_BINARY, 17, 7);
 
 	for ( int y = 0; y < tmp3->height; y++ ) {
 		char* pt = (char*) (tmp3->imageData + y * tmp2->widthStep);

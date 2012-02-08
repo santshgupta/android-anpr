@@ -236,7 +236,7 @@ public class Parser {
         
         float minimalChanges = Float.POSITIVE_INFINITY;
         int minimalIndex = 0;
-        for (int i=0; i<finalPlates.size(); i++) {
+        for (int i = 0; i < finalPlates.size(); i++) {
         	//Intelligence.console.console("::"+finalPlates.elementAt(i).plate+" "+finalPlates.elementAt(i).requiredChanges);
             if (finalPlates.elementAt(i).requiredChanges <= minimalChanges) {
                 minimalChanges = finalPlates.elementAt(i).requiredChanges;

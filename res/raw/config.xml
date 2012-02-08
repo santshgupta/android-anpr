@@ -37,12 +37,12 @@ N - adaptive thresholding with radius N (must be greater or equal than 1)
 <!-- CHARACTER HEURISTICS (DETERMINES CONSTRAINTS FOR CHARACTERS ACCEPTANCE) -->
 
 <entry key="intelligence_minCharWidthHeightRatio">0.1</entry> <!-- char proportions: minimum char width/height ratio -->
-<entry key="intelligence_maxCharWidthHeightRatio">0.92</entry> <!-- char proportions: maximum char width/height ratio -->
+<entry key="intelligence_maxCharWidthHeightRatio">0.95</entry> <!-- char proportions: maximum char width/height ratio -->
 <entry key="intelligence_maxBrightnessCostDispersion">0.161</entry> <!-- maximum character brightness difference (from other chars) -->
 <entry key="intelligence_maxContrastCostDispersion">0.1</entry> <!-- maximum character contrast difference (from other chars) -->
 <entry key="intelligence_maxHueCostDispersion">0.145</entry> <!-- maximum character hue difference (from other chars) -->
 <entry key="intelligence_maxSaturationCostDispersion">0.24</entry> <!-- maximum character saturation difference (from other chars) -->
-<entry key="intelligence_maxHeightCostDispersion">0.2</entry> <!-- maximum character height difference (from other chars) -->
+<entry key="intelligence_maxHeightCostDispersion">0.25</entry> <!-- maximum character height difference (from other chars) -->
 <entry key="intelligence_maxSimilarityCostDispersion">100.0</entry> <!-- maximum character cost (recognition process) -->
 
 <!-- CHARACTER NORMALIZATION, FEATURE EXTRACTION AND RECOGNITION MODES -->
