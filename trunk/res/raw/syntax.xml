@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<structure>
+ <type name="russia">
+   <char content="abcehkmoptxy"/>
+   <char content="0123456789"/>
+   <char content="0123456789"/>
+   <char content="0123456789"/>
+   <char content="abcehkmoptxy"/>   
+   <char content="abcehkmoptxy"/>
+   <char content="0123456789"/>
+   <char content="0123456789"/>
+ </type>
+ <type name="russia2">
+   <char content="abcehkmoptxy"/>
+   <char content="0123456789"/>
+   <char content="0123456789"/>
+   <char content="0123456789"/>
+   <char content="abcehkmoptxy"/>   
+   <char content="abcehkmoptxy"/>
+   <char content="0123456789"/>
+   <char content="0123456789"/>
+   <char content="0123456789"/>
+ </type>
+</structure>
