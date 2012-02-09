@@ -83,7 +83,7 @@ public class KnnPatternClassificator extends CharacterRecognizer {
     
     public KnnPatternClassificator() throws IOException {
         String path = Intelligence.configurator.getPathProperty("char_learnAlphabetPath");
-        String alphaString = "0123456789abcdefghijklmnopqrstuvwxyz";
+        String alphaString = "0123456789abcehkmoptxy";
         
         // inicializacia vektora na pozadovanu velkost (nulovanie poloziek)
         this.learnVectors = new Vector<Vector<Double>>();
@@ -107,7 +107,7 @@ public class KnnPatternClassificator extends CharacterRecognizer {
 		} catch (FileNotFoundException e) {
 			throw new FileNotFoundException("KNN classificator data not found! We must verify path to the classificator");
 		}
-        // Џроверка алфавита
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         for (int i=0; i<alphaString.length(); i++) 
             if (this.learnVectors.elementAt(i)==null) throw new IOException("Warning : alphabet in "+path+" is not complete");
       

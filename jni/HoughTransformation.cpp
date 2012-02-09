@@ -41,10 +41,48 @@ HoughTransformation :: HoughTransformation (JNIEnv* env, jclass javaThis, jobjec
 	}
 
 	uint32_t *rgbData = (uint32_t *) pixelscolor;
-	BitmapData bmp(width, std::vector<uint32_t>(height, 0));
-	bitmapData = bmp;
-	bmp.clear();
 
+
+
+	IplImage *src = loadPixels(rgbData, width, height);
+	IplImage* dst = 0;
+	CvMemStorage *storage = cvCreateMemStorage(0);
+	CvSeq *lines = 0;
+	int i = 0;
+	IplImage *tmp2 = cvCreateImage(cvSize(src->width, src->height), IPL_DEPTH_8U, 1);
+	cvCvtColor(src, tmp2, CV_RGB2GRAY);
+	dst = cvCreateImage( cvGetSize(src), IPL_DEPTH_8U, 1 );
+	// РґРµС‚РµРєС‚РёСЂРѕРІР°РЅРёРµ РіСЂР°РЅРёС†
+	cvCanny( tmp2, dst, 50, 200, 3 );
+	// РєРѕРЅРІРµСЂС‚РёСЂСѓРµРј РІ С†РІРµС‚РЅРѕРµ РёР·РѕР±СЂР°Р¶РµРЅРёРµ
+	// РЅР°С…РѕР¶РґРµРЅРёРµ Р»РёРЅРёР№
+
+	lines = cvHoughLines2( dst, storage, CV_HOUGH_PROBABILISTIC, 1, CV_PI/180, 50, 50, 10 );
+
+	//for( i = 0; i < lines->total; i++ ){
+	if (lines->total > 0) {
+		CvPoint* line = (CvPoint*)cvGetSeqElem(lines,0);
+		LOGE("point 1| x: %i y: %i", line[0].x, line[0].y);
+		LOGE("point 2| x: %i y: %i", line[1].x, line[1].y);
+
+		dx = line[1].x - line[0].x;
+		dy = line[1].y - line[0].y;
+
+		angle = (float) (180 * atan(dy / dx) / PI);
+		LOGE("line angle: %f", angle);
+		LOGE("skew: %f", -dy / dx );
+	}
+
+	cvReleaseImage(&src);
+	cvReleaseImage(&dst);
+	cvReleaseImage(&tmp2);
+	cvReleaseMemStorage(&storage);
+
+	/////
+	//BitmapData bmp(width, std::vector<uint32_t>(height, 0));
+	//bitmapData = bmp;
+	//bmp.clear();
+	/*
 	for (int x = 0; x < width; x++) {
 		for (int y = 0; y < height; y++) {
 			redColor = (uint8_t) ((rgbData[y * width + x] >> 16) & 0xFF);
@@ -53,7 +91,7 @@ HoughTransformation :: HoughTransformation (JNIEnv* env, jclass javaThis, jobjec
 			float brightness = (float)fmax(fmax((double)redColor, (double)greenColor), (double)blueColor) / 255;
 			addLine(x,y, brightness);
 		}
-	}
+	}*/
 	AndroidBitmap_unlockPixels(env, bitmap);
 };
 
@@ -61,9 +99,26 @@ HoughTransformation :: HoughTransformation (JNIEnv* env, jclass javaThis, jobjec
 HoughTransformation :: ~HoughTransformation () {
 };
 
-/**
- * ”ормируем битмапу на обработку.Џолучаем Яркость
- */
+
+IplImage* HoughTransformation :: loadPixels(uint32_t* pixels, int width, int height) {
+	int x, y;
+	IplImage *img = cvCreateImage(cvSize(width, height), IPL_DEPTH_8U, 3);
+
+	for ( y = 0; y < height; y++ ) {
+        for ( x = 0; x < width; x++ ) {
+            // blue
+            IMAGE( img, x, y, 0 ) = pixels[x+y*width] & 0xFF;
+            // green
+            IMAGE( img, x, y, 1 ) = pixels[x+y*width] >> 8 & 0xFF;
+            // red
+            IMAGE( img, x, y, 2 ) = pixels[x+y*width] >> 16 & 0xFF;
+        }
+    }
+
+	return img;
+}
+
+/*
 void HoughTransformation :: addLine(int x, int y, float brightness) {
 	float xf = 2 * ((float)x) / width - 1;
 	float yf = 2 * ((float)y) / height - 1;
@@ -119,9 +174,10 @@ float HoughTransformation :: getAverageValue() {
 			sum += bitmapData[x][y];
 	return sum / (width * height);
 }
-
-
+*/
+/*
 jfloat HoughTransformation :: render(int renderType, int colorType) {
+
 	float average = getAverageValue();
 	maxPoint = computeMaxPoint();
 
@@ -142,12 +198,13 @@ jfloat HoughTransformation :: render(int renderType, int colorType) {
 	dy = dyl;
 
 	angle = (float) (180 * atan(dy / dx) / PI);
+
 	return -dy / dx;
 }
-
+*/
 
 
 jfloat HoughTransformation :: transform () {
-	return render(RENDER_ALL, COLOR_BW);
+	return 0;
 }
 

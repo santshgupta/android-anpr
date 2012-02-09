@@ -181,7 +181,7 @@ public class CarSnapshot extends Photo {
     	/**
     	 * Render processing - console
     	 */
-    	//ConsoleGraph cGraph = Intelligence.console.createConsoleGraph(image, step);
+    	ConsoleGraph cGraph = Intelligence.console.createConsoleGraph(image, step);
     	
 		for (int i = 0; i < imageLength - step; i += step) {
     		
@@ -192,7 +192,7 @@ public class CarSnapshot extends Photo {
             
             for (Peak p : graphHandle.findPeaks(numberOfCandidates, 6, .55f)) {
             	
-            	//cGraph.drawLine(i, p.center);
+            	cGraph.drawLine(i, p.center);
             	
             	boolean isValidPeak = false;
             	for (Challenger elm : out2) {

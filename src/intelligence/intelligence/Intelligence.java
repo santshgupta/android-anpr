@@ -71,10 +71,15 @@ package intelligence.intelligence;
 import intelligence.configurator.Configurator;
 import java.io.File;
 import java.util.Vector;
+
+import com.graphics.NativeGraphics;
 import com.intelligence.Console;
 import com.intelligence.intelligencyActivity;
+
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.util.Log;
 import android.view.View;
@@ -152,7 +157,7 @@ public class Intelligence {
             		console.console("Plate height : "+plate.getHeight()+" px");
                 }   
             	//console.consoleBitmap(plate.image);
-            	/*
+            	
             	Plate notNormalizedCopy = null;
                 
             	if (skewDetectionMode != 0) {
@@ -170,7 +175,7 @@ public class Intelligence {
                     Bitmap core = Bitmap.createBitmap (source, 0, 0, source.getWidth(), source.getHeight(), m, false);
                     plate = new Plate(core);
                     source.recycle();
-                } */
+                } 
             	//console.consoleBitmap(plate.image);
                 plate.normalize();
                 console.consoleBitmap(plate.plateCopy.image);

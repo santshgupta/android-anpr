@@ -149,7 +149,7 @@ public class Plate extends Photo {
         PlateVerticalGraph vertical = clone1.histogramYaxis(clone1.getBi());
         this.image = cutTopBottom(this.image, vertical);
 
-        Intelligence.console.consoleBitmap(vertical.renderVertically(60, 300));
+        Intelligence.console.consoleBitmap(vertical.renderVertically(60, 100));
         this.plateCopy.image = cutTopBottom(this.plateCopy.image, vertical);
         Plate clone2 = this.clone();
         if (horizontalDetectionType == 1) 
@@ -167,8 +167,11 @@ public class Plate extends Photo {
     }
     
     private Bitmap cutTopBottom(Bitmap origin, PlateVerticalGraph graph) {
-        graph.applyProbabilityDistributor(new Graph.ProbabilityDistributor(0f,0f,2,2));
-        Graph.Peak p = graph.findPeak(1).get(0);        
+        graph.applyProbabilityDistributor(new Graph.ProbabilityDistributor(0f,0f,0,0));
+        Graph.Peak p = graph.findPeak(1).get(0); 
+        Intelligence.console.consoleBitmap(origin);
+        Intelligence.console.console("w: " + origin.getWidth() + " h: " + origin.getHeight() + " d: " + p.getDiff());
+        
         Bitmap b = Bitmap.createBitmap(origin, 0, p.getLeft(), this.image.getWidth(), p.getDiff());
         origin.recycle();
         return b;
