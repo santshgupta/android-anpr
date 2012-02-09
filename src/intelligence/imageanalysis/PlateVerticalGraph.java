@@ -126,13 +126,13 @@ public class PlateVerticalGraph extends Graph {
             
             if (yValues.get(maxIndex) < 0.05 * super.getMaxValue()) break;//0.4
             
-            int leftIndex = indexOfLeftPeakRel(maxIndex, peakFootConstant, 3);
-            int rightIndex = indexOfRightPeakRel(maxIndex, peakFootConstant, 3);
+            int leftIndex = indexOfLeftPeakRel(maxIndex, peakFootConstant);
+            int rightIndex = indexOfRightPeakRel(maxIndex, peakFootConstant);
             
             outPeaks.add(new Peak(
                     Math.max(0,leftIndex),
                     maxIndex,
-                    Math.min(this.yValues.size()-1,rightIndex)
+                    Math.min(this.yValues.size(), rightIndex)
                     ));
         }
         
@@ -140,5 +140,26 @@ public class PlateVerticalGraph extends Graph {
                                    new PeakComparer(this));
         super.peaks = outPeaks;
         return outPeaks;
-    }    
+    }       
+    
+    public int indexOfLeftPeakRel(int peak, double peakFootConstantRel) {
+        int index=peak;
+        for (int i=peak; i>=0; i--) {
+            index = i;
+            if (yValues.get(index-1) <= peakFootConstantRel*yValues.get(peak) ) 
+            	break;
+        }
+        Intelligence.console.console("left peak: " + index + " peak: " + peak);
+        return Math.max(0,index);
+    }
+    
+    public int indexOfRightPeakRel(int peak, double peakFootConstantRel) {
+        int index=peak;
+        for (int i=peak; i<yValues.size(); i++) {
+            index = i;
+            if (yValues.get(index+1) <= peakFootConstantRel*yValues.get(peak) ) 
+            	break;
+        }
+        return Math.min(yValues.size(), index);
+    }
 }

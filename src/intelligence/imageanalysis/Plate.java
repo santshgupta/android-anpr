@@ -91,6 +91,7 @@ public class Plate extends Photo {
     public Plate(Bitmap bi) {
         super(bi);
         this.plateCopy = new Plate(duplicateImage(this.image), true);
+        this.plateCopy.winner();
         this.plateCopy.adaptiveThresholding();
     }
     
@@ -105,7 +106,6 @@ public class Plate extends Photo {
     
     private ArrayList<Graph.Peak> computeGraph() {
         if (graphHandle != null) return graphHandle.peaks; // graf uz bol vypocitany
-        Intelligence.console.consoleBitmap(plateCopy.getBi());
         graphHandle = histogram(plateCopy.getBi()); //PlateGraph graph = histogram(imageCopy); 
         graphHandle.applyProbabilityDistributor(distributor);
         graphHandle.findPeaks(numberOfCandidates);        
@@ -148,15 +148,17 @@ public class Plate extends Photo {
         clone1.verticalEdgeDetector(clone1.getBi());
         PlateVerticalGraph vertical = clone1.histogramYaxis(clone1.getBi());
         this.image = cutTopBottom(this.image, vertical);
+
+        Intelligence.console.consoleBitmap(vertical.renderVertically(60, 300));
         this.plateCopy.image = cutTopBottom(this.plateCopy.image, vertical);
         Plate clone2 = this.clone();
         if (horizontalDetectionType == 1) 
         	clone2.horizontalEdgeDetector(clone2.getBi());
         PlateHorizontalGraph horizontal = clone1.histogramXaxis(clone2.getBi());
         
-        //Intelligence.console.consoleBitmap(horizontal.renderHorizontally(300, 60));
         
-        this.image = cutLeftRight(this.image, horizontal);        
+        
+        this.image = cutLeftRight(this.image, horizontal);    
         this.plateCopy.image = cutLeftRight(this.plateCopy.image, horizontal);
         clone1.image.recycle();
         clone2.image.recycle();
@@ -166,7 +168,7 @@ public class Plate extends Photo {
     
     private Bitmap cutTopBottom(Bitmap origin, PlateVerticalGraph graph) {
         graph.applyProbabilityDistributor(new Graph.ProbabilityDistributor(0f,0f,2,2));
-        Graph.Peak p = graph.findPeak(3).get(0);        
+        Graph.Peak p = graph.findPeak(1).get(0);        
         Bitmap b = Bitmap.createBitmap(origin, 0, p.getLeft(), this.image.getWidth(), p.getDiff());
         origin.recycle();
         return b;

@@ -218,6 +218,10 @@ public class Photo {
         this.image = NativeGraphics.adaptiveTreshold(this.image);
     }
     
+    public void winner() { 	
+    	this.image = NativeGraphics.wiener(this.image);
+    }
+    
     public float[][] bitmapImageToArrayWithBounds(Bitmap image, int w, int h) {
         float[][] array = new float[w+2][h+2];
 

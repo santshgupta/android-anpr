@@ -280,7 +280,6 @@ public class CarSnapshot extends Photo {
 			}
 			for (Graph.Peak p : computeGraph(NativeGraphics.convert565to8888(bi))) {
                 Bitmap bi2 = Bitmap.createBitmap(bi, 0, p.getLeft(), bi.getWidth(), p.getDiff());
-                //Intelligence.console.consoleBitmap(bi2);
                 out.add(new Band(bi2));
             }
         }
