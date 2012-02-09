@@ -31,8 +31,8 @@ N - adaptive thresholding with radius N (must be greater or equal than 1)
 <entry key="intelligence_minimumChars">6</entry> <!-- minimum number of detected characters -->
 <entry key="intelligence_maximumChars">15</entry> <!-- maximum number of detected characters -->
 <entry key="intelligence_maxCharWidthDispersion">0.5</entry> <!-- maximum character width dispersion -->
-<entry key="intelligence_minPlateWidthHeightRatio">0.5</entry> <!-- plate proportions: minimum plate width/height ratio -->
-<entry key="intelligence_maxPlateWidthHeightRatio">15.0</entry> <!-- plate proportions: maximum plate width/height ratio -->
+<entry key="intelligence_minPlateWidthHeightRatio">4.8</entry> <!-- plate proportions: minimum plate width/height ratio -->
+<entry key="intelligence_maxPlateWidthHeightRatio">8.5</entry> <!-- plate proportions: maximum plate width/height ratio -->
 
 <!-- CHARACTER HEURISTICS (DETERMINES CONSTRAINTS FOR CHARACTERS ACCEPTANCE) -->
 
@@ -87,7 +87,6 @@ characters must match with normalized characters width and height -->
 2 - correct characters anyway (eliminate redundant characters)
 -->
 <entry key="intelligence_syntaxanalysis">2</entry> <!-- syntax analysis mode -->
-<entry key="intelligence_syntaxDescriptionFile">./resources/syntax/syntax.xml</entry>
 <!-- CAR SNAPSHOT, BAND, PLATE GRAPH ANALYSIS -->
 <entry key="carsnapshot_graphrankfilter">9</entry>
 <entry key="carsnapshot_distributormargins">25</entry>

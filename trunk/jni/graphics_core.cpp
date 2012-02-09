@@ -215,6 +215,9 @@ void GraphicsCore :: wienerTransformation(JNIEnv* env, jclass javaThis, jobject 
 		}
 	}
 	*/
+	cvReleaseImage(&tmp);
+	cvReleaseImage(&tmp2);
+
 	LOGI("unlocking pixels");
 	AndroidBitmap_unlockPixels(env, bitmapcolor);
 	AndroidBitmap_unlockPixels(env, bitmapgray);

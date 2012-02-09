@@ -146,20 +146,19 @@ public class PlateVerticalGraph extends Graph {
         int index=peak;
         for (int i=peak; i>=0; i--) {
             index = i;
-            if (yValues.get(index-1) <= peakFootConstantRel*yValues.get(peak) ) 
+            if (yValues.get(index) <= peakFootConstantRel*yValues.get(peak) ) 
             	break;
         }
-        Intelligence.console.console("left peak: " + index + " peak: " + peak);
-        return Math.max(0,index);
+        return Math.max(0, index);
     }
     
     public int indexOfRightPeakRel(int peak, double peakFootConstantRel) {
         int index=peak;
         for (int i=peak; i<yValues.size(); i++) {
             index = i;
-            if (yValues.get(index+1) <= peakFootConstantRel*yValues.get(peak) ) 
+            if (yValues.get(index) <= peakFootConstantRel*yValues.get(peak) ) 
             	break;
         }
-        return Math.min(yValues.size(), index);
+        return Math.min(yValues.size(), index+1);
     }
 }

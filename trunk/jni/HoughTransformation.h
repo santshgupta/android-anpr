@@ -14,8 +14,13 @@
 #include "logger.h"
 #include <vector>
 
+// OpenCV
+#include "cxcore.h"
+#include "cv.h"
 
-
+#define IMAGE( i, x, y, n )   *(( unsigned char * )(( i )->imageData      \
+                                    + ( x ) * sizeof( unsigned char ) * 3 \
+                                    + ( y ) * ( i )->widthStep ) + ( n ))
 
 namespace GraphicsCoreNS {
 
@@ -48,8 +53,9 @@ class HoughTransformation {
 		~HoughTransformation();
 
 		jfloat transform();
-		Point getMaxPoint();
-		jfloat render(int renderType, int colorType);
+		//Point getMaxPoint();
+		//jfloat render(int renderType, int colorType);
+		IplImage* loadPixels(uint32_t*, int, int);
 		static const double PI = 3.141592653589793;
 		Point maxPoint;
 		float angle;
@@ -61,10 +67,10 @@ class HoughTransformation {
 		static const int COLOR_BW = 1;
 	private:
 
-		void addLine(int, int, float);
-		float getMaxValue();
-		float getAverageValue();
-		Point computeMaxPoint();
+		//void addLine(int, int, float);
+		//float getMaxValue();
+		//float getAverageValue();
+		//Point computeMaxPoint();
 
 		uint32_t width;
 		uint32_t height;
