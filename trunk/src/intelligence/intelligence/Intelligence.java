@@ -142,7 +142,6 @@ public class Intelligence {
         int p = 0;
         console.console("getBands");
         for (Band b : carSnapshot.getBands()) { //doporucene 3
-        	//console.consoleBitmap(b.image);
         	if (enableReportGeneration) {
         		console.console("Band width : "+b.getWidth()+" px");
         		console.console("Band height : "+b.getHeight()+" px");
@@ -174,7 +173,7 @@ public class Intelligence {
                 } */
             	//console.consoleBitmap(plate.image);
                 plate.normalize();
-                //console.consoleBitmap(plate.image);
+                console.consoleBitmap(plate.plateCopy.image);
                 //continue;
                 
                 float plateWHratio = (float)plate.getWidth() / (float)plate.getHeight();
@@ -210,7 +209,7 @@ public class Intelligence {
                 float averageHue = plate.getAveragePieceHue(chars);
                 float averageSaturation = plate.getAveragePieceSaturation(chars);
                 for (Char chr : chars) {
-                	//chr.saveImage("./test/222" + chr.toString() + ".jpg");
+                	//chr.saveImage("./test/444" + chr.toString() + ".jpg");
                 	Intelligence.console.consoleBitmap(chr.image);
                     
                 	boolean ok = true;
@@ -257,7 +256,7 @@ public class Intelligence {
                         	continue;
                     }
                     if (hueCost > Intelligence.configurator.getDoubleProperty("intelligence_maxHueCostDispersion")) {
-                        errorFlags += "HUE ";
+                        errorFlags += "HUE ("+hueCost+")";
                         ok = false;
                         if (!enableReportGeneration) 
                         	continue;

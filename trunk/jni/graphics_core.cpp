@@ -192,7 +192,7 @@ void GraphicsCore :: wienerTransformation(JNIEnv* env, jclass javaThis, jobject 
 	IplImage *tmp = loadPixels(rgbData, width, height);
 	IplImage *tmp2 = cvCreateImage(cvSize(tmp->width, tmp->height), IPL_DEPTH_8U, 1);
 	cvCvtColor(tmp, tmp2, CV_RGB2GRAY);
-	openCVWienerFilter(tmp2, tmp2, 3, 3);
+	openCVWienerFilter(tmp2, tmp2, 2, 2);
 
 	for ( int y = 0; y < height; y++ ) {
 			for (int x = 0; x < width; x++ ){

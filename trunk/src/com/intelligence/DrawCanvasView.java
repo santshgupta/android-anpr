@@ -17,8 +17,8 @@ import android.view.View.OnTouchListener;
 
 public class DrawCanvasView extends View implements OnTouchListener {
 	
-	private Bitmap 		 	b 					= Bitmap.createBitmap(350, 2000, Bitmap.Config.ARGB_8888);
-	private final String 	___FILE_NAME___  	= "./test/test007.jpg";
+	private Bitmap 		 	b 					= Bitmap.createBitmap(450, 2000, Bitmap.Config.ARGB_8888);
+	private final String 	___FILE_NAME___  	= "./test/test015.jpg";
 	private Paint 			paint 				= new Paint(Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG);
 	private Canvas 			mainCanvas 			= null;
 	private View 			view;
