@@ -262,20 +262,21 @@ public class CarSnapshot extends Photo {
 		for (Challenger elm : out3) {
 			Bitmap bi = null;
 			int x = 0, y = 0, w = 0, h = 0;
+			float power = 1.04f;
 			if (originalImage != null) {
 				float coefWidth = (float)originalImage.getWidth() / (float)dest.getWidth();
 				float coefHeight = (float)originalImage.getHeight() / (float)dest.getHeight();
 				
 				x = (int)(Math.max(0, elm.minX - amplify) * coefWidth);
 				y = (int)(Math.max(0, elm.minY - amplify) * coefHeight);
-				w = (int)(Math.max(1,	elm.maxX - elm.minX + amplify) * coefWidth);
-				h = (int)(Math.max(1,	elm.maxY - elm.minY + amplify) * coefHeight);
+				w = (int)(Math.max(1,	elm.maxX - elm.minX + amplify) * coefWidth * power);
+				h = (int)(Math.max(1,	elm.maxY - elm.minY + amplify) * coefHeight * power);
 				bi = Bitmap.createBitmap(originalImage, x, y, w, h);
 			} else {
 				x = Math.max(0, elm.minX - amplify);
 				y = Math.max(0, elm.minY - amplify);
-				w = Math.max(1,	elm.maxX - elm.minX + amplify);
-				h = Math.max(1,	elm.maxY - elm.minY + amplify);
+				w = (int)(Math.max(1,	elm.maxX - elm.minX + amplify) * power);
+				h = (int)(Math.max(1,	elm.maxY - elm.minY + amplify) * power);
 				bi = Bitmap.createBitmap(image, x, y, w, h);
 			}
 			for (Graph.Peak p : computeGraph(NativeGraphics.convert565to8888(bi))) {

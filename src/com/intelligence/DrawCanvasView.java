@@ -4,6 +4,8 @@ import intelligence.imageanalysis.CarSnapshot;
 import intelligence.intelligence.Intelligence;
 
 import java.io.IOException;
+import java.util.HashSet;
+
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -17,7 +19,7 @@ import android.view.View.OnTouchListener;
 
 public class DrawCanvasView extends View implements OnTouchListener {
 	
-	private Bitmap 		 	b 					= Bitmap.createBitmap(350, 3500, Bitmap.Config.ARGB_8888);
+	private Bitmap 		 	b 					= Bitmap.createBitmap(450, 5000, Bitmap.Config.ARGB_8888);
 	private final String 	___FILE_NAME___  	= "./test/1.jpg";
 	private Paint 			paint 				= new Paint(Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG);
 	private Canvas 			mainCanvas 			= null;
@@ -59,7 +61,7 @@ public class DrawCanvasView extends View implements OnTouchListener {
 				try {
 					Intelligence systemLogic 	= new Intelligence (true, cnv, view);
 					CarSnapshot c 				= new CarSnapshot (___FILE_NAME___, cnv);
-					String number 				= systemLogic.recognize(c);
+					HashSet<String> number 		= systemLogic.recognize(c);
 					Log.d("intelligence_debug", "recognized: " + number);
 				} catch (IOException e) {
 					Log.e("intelligence_error", e.toString());

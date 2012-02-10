@@ -49,10 +49,10 @@ struct Point  {
 class HoughTransformation {
 	public:
 
-		HoughTransformation (JNIEnv *, jclass, jobject);
+		HoughTransformation ();
 		~HoughTransformation();
 
-		jfloat transform();
+		jfloat transform(JNIEnv *, jclass, jobject);
 		//Point getMaxPoint();
 		//jfloat render(int renderType, int colorType);
 		IplImage* loadPixels(uint32_t*, int, int);

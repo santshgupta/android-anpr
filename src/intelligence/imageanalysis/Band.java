@@ -73,7 +73,7 @@ import android.graphics.Bitmap;
 import intelligence.intelligence.Intelligence;
 
 public class Band extends Photo {
-    static public Graph.ProbabilityDistributor distributor = new Graph.ProbabilityDistributor(0,0,10, 10);
+    static public Graph.ProbabilityDistributor distributor = new Graph.ProbabilityDistributor(0, 0, 0, 0);
     static private int numberOfCandidates = Intelligence.configurator.getIntProperty("intelligence_numberOfPlates");
             
     private BandGraph graphHandle = null;
@@ -97,20 +97,16 @@ public class Band extends Photo {
         Bitmap imageCopy = duplicateImage(this.image);
         imageCopy = fullEdgeDetector(imageCopy);
         
-        //Intelligence.console.consoleBitmap(imageCopy);
+        Intelligence.console.consoleBitmap(imageCopy);
         
         graphHandle = histogram(imageCopy);
         graphHandle.rankFilter(imageCopy.getHeight());
         graphHandle.applyProbabilityDistributor(distributor);
+       
+        float coef = .3f;
+        graphHandle.findPeaks(numberOfCandidates, 15, coef); // smoothing coefficient (smoothing at 20px)
         
-        boolean nightMode = true;
-        float	coef	  = .4f;
-        if (nightMode) {
-        	coef = .4f;
-        }
-        graphHandle.findPeaks(numberOfCandidates, 20, coef); // smoothing coefficient (smoothing at 20px)
-        
-        //Intelligence.console.consoleBitmap(graphHandle.renderHorizontally(300, 100));
+        Intelligence.console.consoleBitmap(graphHandle.renderHorizontally(300, 100));
         
         imageCopy.recycle();
         return graphHandle.peaks;
