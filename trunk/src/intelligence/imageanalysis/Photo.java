@@ -164,6 +164,14 @@ public class Photo {
             Bitmap bmp = BitmapFactory.decodeStream(new FileInputStream(source), null, o);
             int width_tmp = bmp.getWidth();
             int height_tmp = bmp.getHeight();
+            
+            float coef = 0.7f;
+            int width_resized = (int)(width_tmp * coef);
+            int height_resized = (int)(height_tmp * coef);
+            int x_resized = (width_tmp - width_resized) / 2;
+            int y_resized = (height_tmp - height_resized) / 2;
+            bmp = Bitmap.createBitmap (bmp, x_resized, y_resized, width_resized, height_resized);
+            
             if (width_tmp > 800 || height_tmp > 600) {
             	double averageImg = (double)width_tmp / (double)height_tmp; 
             	if (averageImg > 1) {

@@ -393,7 +393,15 @@ public class Graph {
             }
             this.yValues.set(i, sum / size);
         }
-        
+        /**
+         * Clear not averaged values
+         */
+        for (int i = 0; i < halfSize;  i++) {
+        	this.yValues.set(i, .0f);
+        }
+        for (int i = (this.yValues.size() - 1); i >= this.yValues.size() - halfSize;  i--) {
+        	this.yValues.set(i, .0f);
+        }
     }
     
     public int indexOfLeftPeakRel(int peak, double peakFootConstantRel, int koef) {

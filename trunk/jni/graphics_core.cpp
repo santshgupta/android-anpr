@@ -191,32 +191,30 @@ void GraphicsCore :: wienerTransformation(JNIEnv* env, jclass javaThis, jobject 
 
 	IplImage *tmp = loadPixels(rgbData, width, height);
 	IplImage *tmp2 = cvCreateImage(cvSize(tmp->width, tmp->height), IPL_DEPTH_8U, 1);
+	IplImage *tmp3 = cvCreateImage(cvSize(tmp->width, tmp->height), IPL_DEPTH_8U, 1);
+
 	cvCvtColor(tmp, tmp2, CV_RGB2GRAY);
-	openCVWienerFilter(tmp2, tmp2, 2, 2);
+	openCVWienerFilter(tmp2, tmp3, 8, 8);
+	char color = 0;
+	int wDelta = (int)(tmp3->width  / 3 * 2);
+	int hDelta = (int)(tmp3->height / 3 * 2);
 
-	for ( int y = 0; y < height; y++ ) {
-			for (int x = 0; x < width; x++ ){
-
-				char color = tmp2->imageData[y*width+x];
-				destData[y * width + x] = 0xff000000 | (color) | (color << 8)
-											| (color << 16);
-			}
-		}
-	/**
-	 * 3 channels images processing
-	 *
-	for ( int y = 0; y < height; y++ ) {
-		for (int x = 0; x < width; x++ ){
-			char colorR = tmp2->imageData[3*(y*width+x)];
-			char colorG = tmp2->imageData[3*(y*width+x)+1];
-			char colorB = tmp2->imageData[3*(y*width+x)+2];
-			destData[y * width + x] = 0xff000000 | (colorR) | (colorG << 8)
-										| (colorB << 16);
+	for ( int y = 0; y < tmp3->height; y++ ) {
+		char* pt = (char*) (tmp3->imageData + y * tmp3->widthStep);
+		char* ptOriginal = (char*) (tmp2->imageData + y * tmp2->widthStep);
+		for (int x = 0; x < tmp3->width; x++ ) {
+			if (x > wDelta && y > hDelta)
+				color = pt[x];
+			else
+				color = ptOriginal[x];
+			destData[y * width + x] = 0xff000000 | (color) | (color << 8)
+													| (color << 16);
 		}
 	}
-	*/
+
 	cvReleaseImage(&tmp);
 	cvReleaseImage(&tmp2);
+	cvReleaseImage(&tmp3);
 
 	LOGI("unlocking pixels");
 	AndroidBitmap_unlockPixels(env, bitmapcolor);

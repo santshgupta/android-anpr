@@ -70,6 +70,7 @@ package intelligence.intelligence;
 
 import intelligence.configurator.Configurator;
 import java.io.File;
+import java.util.HashSet;
 import java.util.Vector;
 
 import com.graphics.NativeGraphics;
@@ -86,6 +87,7 @@ import android.view.View;
 import intelligence.imageanalysis.Band;
 import intelligence.imageanalysis.CarSnapshot;
 import intelligence.imageanalysis.Char;
+import intelligence.imageanalysis.Photo;
 import intelligence.imageanalysis.Plate;
 import intelligence.recognizer.CharacterRecognizer;
 import intelligence.recognizer.CharacterRecognizer.RecognizedChar;
@@ -133,7 +135,8 @@ public class Intelligence {
         return this.lastProcessDuration;
     }
     
-    public String recognize(CarSnapshot carSnapshot) throws Exception {
+    public HashSet<String> recognize(CarSnapshot carSnapshot) throws Exception {
+    	HashSet<String> parsedOutput = new HashSet<String>(); 
     	console.console("Recognize");
     	Log.d("intelligence_debug", "recognize:");
 	    int syntaxAnalysisMode = Intelligence.configurator.getIntProperty("intelligence_syntaxanalysis");
@@ -156,17 +159,11 @@ public class Intelligence {
             		console.console("Plate width : "+plate.getWidth()+" px");
             		console.console("Plate height : "+plate.getHeight()+" px");
                 }   
-            	//console.consoleBitmap(plate.image);
             	
-            	Plate notNormalizedCopy = null;
-                
             	if (skewDetectionMode != 0) {
-                	notNormalizedCopy = plate.clone();
-                	notNormalizedCopy.image = notNormalizedCopy.horizontalEdgeDetector(notNormalizedCopy.getBi());
-                	float houghSkew = NativeGraphics.houghTransform(notNormalizedCopy.image);
+                	Bitmap i = plate.horizontalEdgeDetector(Photo.duplicateImage(plate.getBi()));
+                	float houghSkew = NativeGraphics.houghTransform(i);
                 	Bitmap source = plate.getBi();
-                	
-                
                 	Matrix m = new Matrix();
                 	if (enableReportGeneration) {
                 		console.console("skew : " + houghSkew + " px");
@@ -176,10 +173,10 @@ public class Intelligence {
                     plate = new Plate(core);
                     source.recycle();
                 } 
+            	
             	//console.consoleBitmap(plate.image);
                 plate.normalize();
                 console.consoleBitmap(plate.plateCopy.image);
-                //continue;
                 
                 float plateWHratio = (float)plate.getWidth() / (float)plate.getHeight();
                 console.console("plate w: " + plate.getWidth() + " plate h: " + plate.getHeight() + " plateWHratio: " + plateWHratio);
@@ -312,14 +309,13 @@ public class Intelligence {
                 if (recognizedPlate.chars.size() < Intelligence.configurator.getIntProperty("intelligence_minimumChars")) 
                 	continue;
                 
-                String parsedOutput = parser.parse(recognizedPlate, syntaxAnalysisMode);
+                parsedOutput.add(parser.parse(recognizedPlate, syntaxAnalysisMode));
                 if (enableReportGeneration) {
                 	console.console("_RECOGNIZED_ : " + parsedOutput);
                 }
-                return parsedOutput; 
             }
         }
-        return null;
+        return parsedOutput;
     }
     
 }

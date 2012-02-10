@@ -89,7 +89,6 @@ public class NativeGraphics {
 		return destBitmap;
 	}
 	
-	
 	public static float houghTransform(Bitmap source) {
 		return nativeHoughTransform(source);
 	}

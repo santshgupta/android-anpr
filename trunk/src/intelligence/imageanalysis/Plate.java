@@ -116,7 +116,7 @@ public class Plate extends Photo {
     public Vector<Char> getChars() {
         Vector<Char> out = new Vector<Char>();
         for (Graph.Peak p : computeGraph()) {
-            if (p.getDiff() <= 0) 
+            if (p.getDiff() <= 3) 
             	continue;
             out.add(new Char(
 	            		Bitmap.createBitmap(image, p.getLeft(), 0, p.getDiff(), image.getHeight())  ,
