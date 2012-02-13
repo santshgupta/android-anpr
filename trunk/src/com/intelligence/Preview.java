@@ -34,12 +34,10 @@ class Preview extends SurfaceView implements SurfaceHolder.Callback {
 	private CommonThread _cThread;
 	private Intelligence systemLogic;
 	protected Bitmap bmpData = null;
-	private DrawCanvasView dcv = null;
+	//private DrawCanvasView dcv = null;
 	boolean retry = false;
-	
-	/**
-	 * Дополнительный поток, в котором необходимо осуществлять работу с SurfaceView
-	 */
+	//protected CarSnapshot carSnap = null;
+	protected Object lock = new Object();
 	public class CommonThread extends Thread {
 	    public boolean _run = false;
 	 
@@ -51,41 +49,51 @@ class Preview extends SurfaceView implements SurfaceHolder.Callback {
 	        //Canvas c;
 	        while (_run) {
 	            //c = null;
-	            try {
 	            	//if (bmpData != null) {
-	        			//try {
-	        				//CarSnapshot cs = new CarSnapshot ("./test/9.jpg");
+	        	/*		
+	        	try {
+	        				
+	        				
 		        			//if (cs.image == null) {
 		        			//	return;
 		        			//}
-		        			//HashSet<String> number 		= systemLogic.recognize(cs);
-							//Log.d(TAG, "__RECOGNIZED: " + number.toString());
-						//} catch (Exception e) {
+	        				synchronized (lock) {
+	        					if (bmpData == null)
+	        						lock.wait();
+	        					CarSnapshot carSnap = new CarSnapshot (bmpData,1);
+								HashSet<String> number 		= systemLogic.recognize(carSnap);
+			        			Log.d(TAG, "__RECOGNIZED: " + number.toString());
+	        				}
+		        			//cs = null;
+		        			//System.gc();
+		        			
+						} catch (Exception e) {
 							/// TODO Auto-generated catch block
 							//e.printStackTrace();
-						//}
-	            	//}
-	                //c = Preview.this.getHolder().lockCanvas(null);
-	                //synchronized (Preview.this.getHolder()) {
-	                //	//Preview.this.onDraw(c);
-	               // }
-	            } finally {
-	                //if (c != null) {
-	                //	Preview.this.getHolder().unlockCanvasAndPost(c);
-	                //}
-	            }
+						}
+	            	//}	
+	        */	
 	        }
 	    }
 	}
 	
 	Preview(Context context, DrawCanvasView dcv) {
 		super(context);
-		Preview.this.dcv = dcv; 
+		//Preview.this.dcv = dcv; 
 		// Install a SurfaceHolder.Callback so we get notified when the
 		// underlying surface is created and destroyed.
 		mHolder = getHolder();
 		mHolder.addCallback(this);
 		mHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
+		try {
+			systemLogic 	= new Intelligence (true, dcv);
+		} catch (Exception e) {
+			Log.e("intelligence_error", e.toString());
+			e.printStackTrace();
+		}
+		this._cThread = new CommonThread();
+		this._cThread._run = true;
+		this._cThread.start();
 	}
  
 	public void surfaceCreated(SurfaceHolder holder) {
@@ -93,32 +101,18 @@ class Preview extends SurfaceView implements SurfaceHolder.Callback {
 		// to draw.
 		camera = Camera.open();
 		
-		//try {
-		//	systemLogic 	= new Intelligence (true);
-		//} catch (Exception e) {
-		//	Log.e("intelligence_error", e.toString());
-		//	e.printStackTrace();
-		//}
-		
-		//this._cThread = new CommonThread();
-		//this._cThread._run = true;
-		//this._cThread.start();
 		try {
-			camera.setPreviewDisplay(holder);
- 
+			camera.setPreviewDisplay(holder); 
 			camera.setPreviewCallback(new PreviewCallback() {
  
 				public void onPreviewFrame(byte[] data, Camera arg1) {
-					 if ( (dcv == null) || retry )
-	        			  return;
-					//Camera.Parameters parameters = camera.getParameters();
-					//if (parameters == null)
-					//	return;
 					
-					//int format = parameters.getPreviewFormat();
-
+					if (retry)
+	        			  return;
+					Camera.Parameters parameters = camera.getParameters();
+					int format = parameters.getPreviewFormat();
 					// YUV formats require more conversion
-					/*
+					
 					if (format == ImageFormat.NV21)
 					{
 				    	int w = parameters.getPreviewSize().width;
@@ -130,14 +124,19 @@ class Preview extends SurfaceView implements SurfaceHolder.Callback {
 						ByteArrayOutputStream pBmpStream = new ByteArrayOutputStream();
 						yuv_image.compressToJpeg(rect, 100, pBmpStream);
 						bmpData  = BitmapFactory.decodeByteArray(pBmpStream.toByteArray(), 0, pBmpStream.size());
-					}*/
-					Log.d(TAG, "!!!!!! OK !!!!!");
+						
+						synchronized (lock) {
+							bmpData  = BitmapFactory.decodeByteArray(pBmpStream.toByteArray(), 0, pBmpStream.size());
+							lock.notify();
+						}
+					}
+					
 					/*// Jpeg and RGB565 are supported by BitmapFactory.decodeByteArray
 					else if (format == ImageFormat.JPEG || format == ImageFormat.RGB_565)
 					{
 						mBitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
 					}*/
-					dcv.invalidate();
+					//dcv.invalidate();
 				}
 			});
 		} catch (IOException exception) {
@@ -148,13 +147,13 @@ class Preview extends SurfaceView implements SurfaceHolder.Callback {
  
 	public void surfaceDestroyed(SurfaceHolder holder) {
 		retry = true;
-        //_cThread._run = false;
-        //while (retry) {
-        //  try {
-            //    _cThread.join();
-              //  retry = false;
-            //} catch (InterruptedException e) {}
-        //}
+        _cThread._run = false;
+        while (retry) {
+          try {
+                _cThread.join();
+                retry = false;
+             } catch (InterruptedException e) {}
+        }
         camera.setPreviewCallback(null);
 		camera.stopPreview();
 		camera.release();
@@ -168,6 +167,7 @@ class Preview extends SurfaceView implements SurfaceHolder.Callback {
 		List<Camera.Size> sizes = parameters.getSupportedPreviewSizes(); 
 		cs = sizes.get(0); 
 		parameters.setPreviewFormat(ImageFormat.NV21);
+		parameters.setPreviewFrameRate(14);
 		parameters.setPreviewSize(cs.width,cs.height);
 		camera.setParameters(parameters);
 		camera.startPreview();

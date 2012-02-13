@@ -75,6 +75,7 @@ import java.util.Vector;
 
 import com.graphics.NativeGraphics;
 import com.intelligence.Console;
+import com.intelligence.DrawCanvasView;
 import com.intelligence.intelligencyActivity;
 
 import android.graphics.Bitmap;
@@ -96,21 +97,21 @@ import intelligence.recognizer.KnnPatternClassificator;
 
 public class Intelligence {
 	
-	//public static Console console;
+	public static Console console;
 	public static Configurator configurator = new Configurator("."+File.separator+"config.xml", intelligencyActivity.cntxt);
     public static CharacterRecognizer chrRecog;
     public static Parser parser;
     public boolean enableReportGeneration;
-    //protected static Canvas canvas; 
-	//protected static View mainView;
+    protected static Canvas canvas; 
+	protected static View mainView;
 	protected static Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG);
     private long lastProcessDuration = 0;
     
-    public Intelligence(boolean enableReportGeneration) throws Exception {
+    public Intelligence(boolean enableReportGeneration, DrawCanvasView cnvView) throws Exception {
     	int classification_method = Intelligence.configurator.getIntProperty("intelligence_classification_method");
     	
-    	//mainView = cnvView;
-    	//canvas = cnv;
+    	mainView = cnvView;
+    	canvas = cnvView.canvas;
     	paint.setColor(Color.WHITE);
 		paint.setTextSize(40);
     	this.enableReportGeneration = enableReportGeneration;
@@ -118,8 +119,8 @@ public class Intelligence {
     	/**
     	 * Visual console logger
     	 */
-    	//console = new Console(mainView, canvas);
-    	//console.console("Processing was started! Please wait few minutes...");
+    	console = new Console(mainView, canvas);
+    	console.console("Processing was started! Please wait few minutes...");
     	if (classification_method == 0) {
             chrRecog = new KnnPatternClassificator();
     		//console.console("KNN classificator has created!");
