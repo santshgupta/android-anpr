@@ -10,6 +10,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.Log;
 import android.view.Display;
@@ -19,8 +20,8 @@ import android.view.View.OnTouchListener;
 
 public class DrawCanvasView extends View implements OnTouchListener {
 	
-	private Bitmap 		 	b 					= Bitmap.createBitmap(450, 5000, Bitmap.Config.ARGB_8888);
-	private final String 	___FILE_NAME___  	= "./test/1.jpg";
+	//private Bitmap 		 	b 					= Bitmap.createBitmap(450, 800, Bitmap.Config.ARGB_8888);
+	private final String 	___FILE_NAME___  	= "./test/9.jpg";
 	private Paint 			paint 				= new Paint(Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG);
 	private Canvas 			mainCanvas 			= null;
 	private View 			view;
@@ -51,16 +52,16 @@ public class DrawCanvasView extends View implements OnTouchListener {
 		setOnTouchListener(this);
 	}
 	
-
+/*
 	public void refresh() {		
 		Thread t = new Thread(new Runnable() {
 			@Override
 			public void run() {
 				Log.d("intelligence_debug", "The thread was run");
-				Canvas cnv = new Canvas(b);
+				//Canvas cnv = new Canvas(b);
 				try {
-					Intelligence systemLogic 	= new Intelligence (true, cnv, view);
-					CarSnapshot c 				= new CarSnapshot (___FILE_NAME___, cnv);
+					Intelligence systemLogic 	= new Intelligence (true);
+					CarSnapshot c 				= new CarSnapshot (___FILE_NAME___);
 					HashSet<String> number 		= systemLogic.recognize(c);
 					Log.d("intelligence_debug", "recognized: " + number);
 				} catch (IOException e) {
@@ -74,9 +75,6 @@ public class DrawCanvasView extends View implements OnTouchListener {
 				synchronized (cntxt) {
 					while (mainCanvas == null ) {
 						Log.d("intelligence_debug", "wait canvas");
-						/**
-						 * We Wait until the main canvas is initialized!
-						 */
 						try {
 							cntxt.wait();
 						} catch (InterruptedException e) {
@@ -98,21 +96,15 @@ public class DrawCanvasView extends View implements OnTouchListener {
 		});
 		t.start();
 	}
-	
+	*/
 	@Override
 	public void onDraw(Canvas canvas) {
-		synchronized (cntxt) {
-			if (mainCanvas == null) {
-				mainCanvas = canvas;
-				try {
-					Log.d("intelligence_debug", "Canvas loaded! Notifyng!");
-					cntxt.notify();
-				} catch (IllegalMonitorStateException e) {
-					Log.e("intelligence_error", e.toString());
-				}
-			}
-		}
-		mainCanvas.drawBitmap(b, canvasViewX, canvasViewY, paint);
+		
+		Log.d("test","!!!!!!!!!!!!!!");
+		Paint p = new Paint(Color.RED);
+		canvas.drawText("PREVIEW", canvas.getWidth() / 2,
+				canvas.getHeight() / 2, p);
+		//mainCanvas.drawBitmap(b, canvasViewX, canvasViewY, paint);
 	}
 
 	

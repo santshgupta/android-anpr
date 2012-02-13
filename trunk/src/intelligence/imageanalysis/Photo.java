@@ -6,6 +6,7 @@ package intelligence.imageanalysis;
  * http://www.faqs.org/faqs/graphics/colorspace-faq/
  * Adapted by zdanchik.ru
  */
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -17,6 +18,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Environment;
+import android.util.Log;
 
 public class Photo {
 	public Bitmap image;
@@ -34,6 +36,38 @@ public class Photo {
         this.loadImage(filepath);
     }
 	
+	
+	public Photo(Bitmap bmp, int isFileInit) {
+		if (bmp == null) {
+    		//Log.d("asd", "NULL!");
+    		return;
+    	}
+    	//Log.d("asd", "START!");
+    	int width_tmp = bmp.getWidth();
+        int height_tmp = bmp.getHeight();
+        
+        float coef = 0.7f;
+        int width_resized = (int)(width_tmp * coef);
+        int height_resized = (int)(height_tmp * coef);
+        int x_resized = (width_tmp - width_resized) / 2;
+        int y_resized = (height_tmp - height_resized) / 2;
+        bmp = Bitmap.createBitmap (bmp, x_resized, y_resized, width_resized, height_resized);
+        
+        if (width_tmp > 800 || height_tmp > 600) {
+        	double averageImg = (double)width_tmp / (double)height_tmp; 
+        	if (averageImg > 1) {
+        		width_tmp = 800;
+            	height_tmp = (int)((double)width_tmp / averageImg);
+        	} else {
+        		height_tmp = 600;
+        		width_tmp = (int)((double)height_tmp * averageImg);
+        	}
+        	this.originalImage = duplicateImage(bmp);
+        }
+        this.image = averageResizeBi(bmp, width_tmp, height_tmp);
+        bmp.recycle();
+	}
+
 	public Photo clone() {
         return new Photo(Photo.duplicateImage(this.image));
     }
@@ -64,9 +98,9 @@ public class Photo {
 			out.flush();
 			out.close();
 		} catch (FileNotFoundException e) {
-			Intelligence.console.console(e.toString());
+			//Intelligence.console.console(e.toString());
 		} catch (IOException e) {
-			Intelligence.console.console(e.toString());
+			//Intelligence.console.console(e.toString());
 		}
     }
     
@@ -187,7 +221,7 @@ public class Photo {
             bmp.recycle();
         }
 		catch (FileNotFoundException e) {
-        	Intelligence.console.console("Input image file not found: " + filepath);
+        	//Intelligence.console.console("Input image file not found: " + filepath);
         	throw new FileNotFoundException("file not found!");
         }
 	}
