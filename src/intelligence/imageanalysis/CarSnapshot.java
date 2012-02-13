@@ -71,6 +71,7 @@ package intelligence.imageanalysis;
 
 import intelligence.intelligence.Intelligence;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -85,11 +86,12 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.util.Log;
 import intelligence.imageanalysis.CarSnapshotGraph;
 import intelligence.imageanalysis.Graph.Peak;
 
 public class CarSnapshot extends Photo {
-	private Canvas cnv = null;
+	//private Canvas cnv = null;
 	protected Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG);
     private static int distributor_margins = 
             Intelligence.configurator.getIntProperty("carsnapshot_distributormargins");
@@ -105,22 +107,28 @@ public class CarSnapshot extends Photo {
     
     public static Graph.ProbabilityDistributor distributor = new Graph.ProbabilityDistributor(0,0,2,2);
 	
-    public CarSnapshot(Canvas canvas) {
-    	cnv = canvas;
+    public CarSnapshot() {
+    	//cnv = canvas;
     	paint.setColor(Color.WHITE);
 		paint.setTextSize(40);
     }
     
-    public CarSnapshot(String filepath, Canvas canvas) throws IOException {
+    public CarSnapshot(String filepath) throws IOException {
     	super(filepath);
-    	cnv = canvas;
+    	//cnv = canvas;
+    	paint.setColor(Color.WHITE);
+		paint.setTextSize(40);
+    }
+    public CarSnapshot(Bitmap bmp, int isFileInit) throws IOException {
+    	super(bmp, isFileInit);
+    	//cnv = canvas;
     	paint.setColor(Color.WHITE);
 		paint.setTextSize(40);
     }
     
-    public CarSnapshot(Bitmap bi, Canvas canvas) {
+    public CarSnapshot(Bitmap bi) {
         super(bi);
-        cnv = canvas;
+        //cnv = canvas;
         paint.setColor(Color.WHITE);
 		paint.setTextSize(40);
     }
@@ -181,7 +189,7 @@ public class CarSnapshot extends Photo {
     	/**
     	 * Render processing - console
     	 */
-    	ConsoleGraph cGraph = Intelligence.console.createConsoleGraph(image, step);
+    	//ConsoleGraph cGraph = Intelligence.console.createConsoleGraph(image, step);
     	
 		for (int i = 0; i < imageLength - step; i += step) {
     		
@@ -192,7 +200,7 @@ public class CarSnapshot extends Photo {
             
             for (Peak p : graphHandle.findPeaks(numberOfCandidates, 6, .55f)) {
             	
-            	cGraph.drawLine(i, p.center);
+            	//cGraph.drawLine(i, p.center);
             	
             	boolean isValidPeak = false;
             	for (Challenger elm : out2) {

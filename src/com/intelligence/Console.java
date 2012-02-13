@@ -22,9 +22,9 @@ public class Console {
 		this.mainView = mv;
 		this.paint.setColor(Color.WHITE);
 		this.paint.setTextSize(14);
-		this.canvas.drawText("___Intelligence visual console___", cWidth, cHeight, paint);
-		cHeight += (SPACING + 10);
-        redrawMainView();
+		//this.canvas.drawText("___Intelligence visual console___", cWidth, cHeight, paint);
+		//cHeight += (SPACING + 10);
+        //redrawMainView();
 	}
 	
 	
@@ -36,29 +36,30 @@ public class Console {
     }
     
     synchronized public void consoleBitmap(Bitmap bmp) {
-		this.canvas.drawBitmap(bmp, cWidth, cHeight, this.paint);
-    	cHeight += bmp.getHeight() + 10;
-        redrawMainView();
+		//this.canvas.drawBitmap(bmp, cWidth, cHeight, this.paint);
+    	//cHeight += bmp.getHeight() + 10;
+        //redrawMainView();
 	}
     synchronized public void consoleBitmap(Bitmap bmp, Bitmap bmp2) {
-		this.canvas.drawBitmap(bmp, cWidth, cHeight, this.paint);
-		this.canvas.drawBitmap(bmp2, cWidth + bmp.getWidth() + cWidth, cHeight, this.paint);
-    	cHeight += bmp.getHeight() + 10;
-        redrawMainView();
+		//this.canvas.drawBitmap(bmp, cWidth, cHeight, this.paint);
+		//this.canvas.drawBitmap(bmp2, cWidth + bmp.getWidth() + cWidth, cHeight, this.paint);
+    	//cHeight += bmp.getHeight() + 10;
+        //redrawMainView();
 	}
     
     synchronized public ConsoleGraph createConsoleGraph(Bitmap bgSrc, int step) {
-		this.canvas.drawBitmap(bgSrc, cWidth, cHeight, this.paint);
-		for (int y = cHeight ; y < (cHeight + bgSrc.getHeight()); y +=20 ) {
-			this.canvas.drawLine(cWidth, y, cWidth + bgSrc.getWidth(), y, this.paint);
-		}
+		//this.canvas.drawBitmap(bgSrc, cWidth, cHeight, this.paint);
+		//for (int y = cHeight ; y < (cHeight + bgSrc.getHeight()); y +=20 ) {
+			//this.canvas.drawLine(cWidth, y, cWidth + bgSrc.getWidth(), y, this.paint);
+		//}
 		
 		
-		ConsoleGraph gr = new ConsoleGraph(mainView, this.canvas, cWidth, cHeight, step);
-    	cHeight += bgSrc.getHeight() + 10;
-        return gr;
+		//ConsoleGraph gr = new ConsoleGraph(mainView, this.canvas, cWidth, cHeight, step);
+    	//cHeight += bgSrc.getHeight() + 10;
+        //return gr;
+    	return null;
 	}
-    
+   
     private void redrawMainView() {
     	((Activity)(mainView.getContext())).runOnUiThread(new Runnable() {
 			@Override
