@@ -20,10 +20,10 @@ import android.view.View.OnTouchListener;
 
 public class DrawCanvasView extends View implements OnTouchListener {
 	
-	//private Bitmap 		 	b 					= Bitmap.createBitmap(450, 800, Bitmap.Config.ARGB_8888);
-	private final String 	___FILE_NAME___  	= "./test/9.jpg";
+	private Bitmap 		 	b 					= Bitmap.createBitmap(400, 400, Bitmap.Config.ARGB_8888);
+	//private final String 	___FILE_NAME___  	= "./test/9.jpg";
 	private Paint 			paint 				= new Paint(Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG);
-	private Canvas 			mainCanvas 			= null;
+	public Canvas 			canvas	 			= null;
 	private View 			view;
 	private Context 		cntxt 				= null;
 	
@@ -42,7 +42,7 @@ public class DrawCanvasView extends View implements OnTouchListener {
 		super(context);
 		cntxt = context;
 		view  = this;
-		
+		canvas = new Canvas(b);
 		Activity a = (Activity)view.getContext();
 		Display d = a.getWindowManager().getDefaultDisplay();
 		displayWidth = d.getWidth();
@@ -101,10 +101,13 @@ public class DrawCanvasView extends View implements OnTouchListener {
 	public void onDraw(Canvas canvas) {
 		
 		Log.d("test","!!!!!!!!!!!!!!");
-		Paint p = new Paint(Color.RED);
-		canvas.drawText("PREVIEW", canvas.getWidth() / 2,
-				canvas.getHeight() / 2, p);
+		//Paint p = new Paint(Color.RED);
+		//canvas.drawText("PREVIEW", canvas.getWidth() / 2,
+		//		canvas.getHeight() / 2, p);
 		//mainCanvas.drawBitmap(b, canvasViewX, canvasViewY, paint);
+		
+		
+		canvas.drawBitmap(b, canvasViewX, canvasViewY, paint);
 	}
 
 	
