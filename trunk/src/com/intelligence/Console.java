@@ -5,6 +5,8 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.PorterDuff.Mode;
+import android.graphics.PorterDuffXfermode;
 import android.util.Log;
 import android.view.View;
 
@@ -48,14 +50,16 @@ public class Console {
 	}
     
     synchronized public ConsoleGraph createConsoleGraph(Bitmap bgSrc, int step) {
-		this.canvas.drawBitmap(bgSrc, cWidth, cHeight, this.paint);
-		for (int y = cHeight ; y < (cHeight + bgSrc.getHeight()); y +=20 ) {
-			this.canvas.drawLine(cWidth, y, cWidth + bgSrc.getWidth(), y, this.paint);
-		}
+		//this.canvas.drawBitmap(bgSrc, cWidth, cHeight, this.paint);
+		//for (int y = 0 ; y <  bgSrc.getHeight(); y +=20 ) {
+		//	this.canvas.drawLine(0, y, bgSrc.getWidth(), y, this.paint);
+		//}
 		
-		
-		ConsoleGraph gr = new ConsoleGraph(mainView, this.canvas, cWidth, cHeight, step);
-    	cHeight += bgSrc.getHeight() + 10;
+    	Paint paint = new Paint();
+    	paint.setXfermode(new PorterDuffXfermode(Mode.CLEAR));
+    	canvas.drawPaint(paint);
+		ConsoleGraph gr = new ConsoleGraph(mainView, this.canvas, 0, 0, step);
+    	//cHeight += bgSrc.getHeight() + 10;
         return gr;
 	}
     

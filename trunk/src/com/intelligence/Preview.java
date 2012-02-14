@@ -22,7 +22,7 @@ import android.view.SurfaceView;
 
 class Preview extends SurfaceView implements SurfaceHolder.Callback {
 	private static final String TAG = "Preview";
-	public static boolean makeSnapshot = true;
+	public boolean makeSnapshot = true;
 	private ExecutorService pool;
 	private Camera.Size cs = null;
 	SurfaceHolder mHolder;

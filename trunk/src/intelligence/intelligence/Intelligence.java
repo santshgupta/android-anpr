@@ -122,13 +122,13 @@ public class Intelligence {
     	console.console("Processing was started! Please wait few minutes...");
     	if (classification_method == 0) {
             chrRecog = new KnnPatternClassificator();
-    		console.console("KNN classificator has created!");
+    		//console.console("KNN classificator has created!");
     	} else {
             chrRecog = new NeuralPatternClassificator();
-            console.console("Neural classificator has created!");
+            //console.console("Neural classificator has created!");
     	}
         parser = new Parser();
-        console.console("Parser has created!");
+        //console.console("Parser has created!");
     }
     
     public long lastProcessDuration() {
@@ -137,27 +137,28 @@ public class Intelligence {
     
     public HashSet<String> recognize(CarSnapshot carSnapshot) throws Exception {
     	HashSet<String> parsedOutput = new HashSet<String>(); 
-    	console.console("Recognize");
+    	//console.console("Recognize");
     	Log.d("intelligence_debug", "recognize:");
 	    int syntaxAnalysisMode = Intelligence.configurator.getIntProperty("intelligence_syntaxanalysis");
         int skewDetectionMode = Intelligence.configurator.getIntProperty("intelligence_skewdetection");
         
         if (enableReportGeneration) {
-        	console.console("Automatic Number Plate Recognition Report");
-        	console.console("Image width: "+carSnapshot.getWidth()+" px");
-        	console.console("Image height: "+carSnapshot.getHeight()+" px");
+        	//console.console("Automatic Number Plate Recognition Report");
+        	//console.console("Image width: "+carSnapshot.getWidth()+" px");
+        	//console.console("Image height: "+carSnapshot.getHeight()+" px");
         }
         int p = 0;
-        console.console("getBands");
+       // console.console("getBands");
         for (Band b : carSnapshot.getBands()) { //doporucene 3
+        	/*
         	if (enableReportGeneration) {
-        		console.console("Band width : "+b.getWidth()+" px");
-        		console.console("Band height : "+b.getHeight()+" px");
+        		//console.console("Band width : "+b.getWidth()+" px");
+        		//console.console("Band height : "+b.getHeight()+" px");
             }
             for (Plate plate : b.getPlates()) {//doporucene 3
             	if (enableReportGeneration) {
-            		console.console("Plate width : "+plate.getWidth()+" px");
-            		console.console("Plate height : "+plate.getHeight()+" px");
+            		//console.console("Plate width : "+plate.getWidth()+" px");
+            		//console.console("Plate height : "+plate.getHeight()+" px");
                 }   
             	
             	if (skewDetectionMode != 0) {
@@ -166,7 +167,7 @@ public class Intelligence {
                 	Bitmap source = plate.getBi();
                 	Matrix m = new Matrix();
                 	if (enableReportGeneration) {
-                		console.console("skew : " + houghSkew + " px");
+                		//console.console("skew : " + houghSkew + " px");
                 	}
                 	m.setSkew(0, houghSkew);
                     Bitmap core = Bitmap.createBitmap (source, 0, 0, source.getWidth(), source.getHeight(), m, false);
@@ -176,10 +177,10 @@ public class Intelligence {
             	
             	//console.consoleBitmap(plate.image);
                 plate.normalize();
-                console.consoleBitmap(plate.plateCopy.image);
+                //console.consoleBitmap(plate.plateCopy.image);
                 
                 float plateWHratio = (float)plate.getWidth() / (float)plate.getHeight();
-                console.console("plate w: " + plate.getWidth() + " plate h: " + plate.getHeight() + " plateWHratio: " + plateWHratio);
+                //console.console("plate w: " + plate.getWidth() + " plate h: " + plate.getHeight() + " plateWHratio: " + plateWHratio);
                 if (plateWHratio < Intelligence.configurator.getDoubleProperty("intelligence_minPlateWidthHeightRatio")
                 ||  plateWHratio > Intelligence.configurator.getDoubleProperty("intelligence_maxPlateWidthHeightRatio")
                 ) continue;
@@ -195,11 +196,11 @@ public class Intelligence {
                 
                 // SKEW-RELATED
                 if (enableReportGeneration) {
-                	console.console("Skew detection");
+                	///console.console("Skew detection");
                 }
                 RecognizedPlate recognizedPlate = new RecognizedPlate();
                 if (enableReportGeneration) {
-                	console.console("Character segmentation");
+                	//console.console("Character segmentation");
                 }
                 for (Char chr : chars) {
                 	chr.normalize();
@@ -212,7 +213,7 @@ public class Intelligence {
                 float averageSaturation = plate.getAveragePieceSaturation(chars);
                 for (Char chr : chars) {
                 	//chr.saveImage("./test/444" + chr.toString() + ".jpg");
-                	Intelligence.console.consoleBitmap(chr.image);
+                	//Intelligence.console.consoleBitmap(chr.image);
                     
                 	boolean ok = true;
                     String errorFlags = "";
@@ -228,7 +229,7 @@ public class Intelligence {
                         if (!enableReportGeneration) 
                         	continue;
                     } else {
-                    	Intelligence.console.console("WHR: " + widthHeightRatio);
+                    	//Intelligence.console.console("WHR: " + widthHeightRatio);
                     }
                     
                     if ((chr.positionInPlate.x1 < 2 || chr.positionInPlate.x2 > plate.getWidth() - 1) && widthHeightRatio < 0.12) {
@@ -292,17 +293,17 @@ public class Intelligence {
                     	recognizedPlate.addChar(rc);
                     }
                     if (enableReportGeneration) {
-                    	/*
-                    	console.console("WHR = "+widthHeightRatio);
-                    	console.console("HEI = "+heightCost);
-                    	console.console("NEU = "+similarityCost);
-                    	console.console("CON = "+contrastCost);
-                    	console.console("BRI = "+brightnessCost);
-                    	console.console("HUE = "+hueCost);
-                    	console.console("SAT = "+saturationCost);
-						*/
+                    	
+                    	//console.console("WHR = "+widthHeightRatio);
+                    	//console.console("HEI = "+heightCost);
+                    	//console.console("NEU = "+similarityCost);
+                    	//console.console("CON = "+contrastCost);
+                    	//console.console("BRI = "+brightnessCost);
+                    	//console.console("HUE = "+hueCost);
+                    	//console.console("SAT = "+saturationCost);
+						
                         if (errorFlags.length()!=0) {
-                        	console.console("errflags = "+errorFlags);
+                        	//console.console("errflags = "+errorFlags);
                         }
                      }
                 } 
@@ -311,9 +312,9 @@ public class Intelligence {
                 
                 parsedOutput.add(parser.parse(recognizedPlate, syntaxAnalysisMode));
                 if (enableReportGeneration) {
-                	console.console("_RECOGNIZED_ : " + parsedOutput);
+                	//console.console("_RECOGNIZED_ : " + parsedOutput);
                 }
-            }
+            }*/
         }
         return parsedOutput;
     }
