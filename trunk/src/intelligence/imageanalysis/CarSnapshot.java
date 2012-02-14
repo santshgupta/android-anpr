@@ -71,7 +71,6 @@ package intelligence.imageanalysis;
 
 import intelligence.intelligence.Intelligence;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -86,7 +85,6 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.util.Log;
 import intelligence.imageanalysis.CarSnapshotGraph;
 import intelligence.imageanalysis.Graph.Peak;
 
@@ -119,8 +117,9 @@ public class CarSnapshot extends Photo {
     	paint.setColor(Color.WHITE);
 		paint.setTextSize(40);
     }
-    public CarSnapshot(Bitmap bmp, int isFileInit) throws IOException {
-    	super(bmp, isFileInit);
+    
+    public CarSnapshot(Bitmap bmp, int i) throws IOException {
+    	super(bmp, i);
     	//cnv = canvas;
     	paint.setColor(Color.WHITE);
 		paint.setTextSize(40);
@@ -189,7 +188,7 @@ public class CarSnapshot extends Photo {
     	/**
     	 * Render processing - console
     	 */
-    	//ConsoleGraph cGraph = Intelligence.console.createConsoleGraph(image, step);
+    	ConsoleGraph cGraph = Intelligence.console.createConsoleGraph(image, step);
     	
 		for (int i = 0; i < imageLength - step; i += step) {
     		
@@ -200,7 +199,7 @@ public class CarSnapshot extends Photo {
             
             for (Peak p : graphHandle.findPeaks(numberOfCandidates, 6, .55f)) {
             	
-            	//cGraph.drawLine(i, p.center);
+            	cGraph.drawLine(i, p.center);
             	
             	boolean isValidPeak = false;
             	for (Challenger elm : out2) {

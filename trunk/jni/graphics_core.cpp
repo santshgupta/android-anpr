@@ -135,8 +135,190 @@ void GraphicsCore :: fullEdgeDetector(JNIEnv* env, jclass javaThis, jobject bitm
 
 
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////// YUV TO RGB CONVERTER ///////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#define kMaxStride (2048 * 4)
+#define SIMD_ALIGNED(var) var __attribute__((aligned(16)))
+void GraphicsCore :: yuvToRGB(JNIEnv* env, jclass javaThis, jbyteArray bitmapData, jobject bitmapgray) {
+	///AndroidBitmapInfo infocolor;
+	//void* pixelscolor;
+	AndroidBitmapInfo infogray;
+	void* pixelsgray;
+	uint8_t redColor, greenColor, blueColor;
+	int ret, y, x;
+
+	LOGI("GraphicsCore::yuvToRGB");
+	#ifdef __ARM_NEON__
+		LOGI("Neon support - ok/ armv7: 2.6.29-g582a0f5 #38 / default: 2.6.29-00261-g0097074-dirty #20 / armv5: 2.6.29-g582a0f5 digit@lulu #37" );
+	#endif
+	/**
+	 * Get kernel
+	 */
+	uint8_t *src_y = (uint8_t*)env->GetByteArrayElements(bitmapData, NULL);
+	//int kernel[kernelCountRows][kernelCountCols];
+	//for (int i = 0; i < kernelCountRows; i++) {
+	//	for (int j = 0; j < kernelCountCols; j++) {
+	//		kernel[j][i] = carr[i * kernelCountRows + j];
+	//	}
+	//}
+	//if ((ret = AndroidBitmap_getInfo(env, bitmapcolor, &infocolor)) < 0) {
+	//	LOGE("AndroidBitmap_getInfo() failed 1 ! error=%d", ret);
+	//	return;
+	//}
+
+	if ((ret = AndroidBitmap_getInfo(env, bitmapgray, &infogray)) < 0) {
+		LOGE("AndroidBitmap_getInfo() failed 2 ! error=%d", ret);
+		return;
+	}
+
+	LOGI("gray image :: width is %d; height is %d; stride is %d; format is %d;flags is%d",infogray.width,infogray.height,infogray.stride,infogray.format,infogray.flags);
+	if (infogray.format != ANDROID_BITMAP_FORMAT_RGBA_8888) {
+		LOGE("Bitmap output format is not RGBA_8888 4 ! format=%d", infogray.format);
+		return;
+	}
+
+	//if ((ret = AndroidBitmap_lockPixels(env, bitmapcolor, &pixelscolor)) < 0) {
+	//	LOGE("AndroidBitmap_lockPixels() failed ! error=%d", ret);
+	//}
+
+	if ((ret = AndroidBitmap_lockPixels(env, bitmapgray, &pixelsgray)) < 0) {
+		LOGE("AndroidBitmap_lockPixels() failed ! error=%d", ret);
+	}
+
+	//uint32_t *rgbData = (uint32_t *) pixelscolor;
+	uint8_t *destData = (uint8_t *) pixelsgray;
+	int halfwidth = (infogray.width + 1) >> 1;
+	int src_stride_y = 1;
+	int dst_stride_argb = infogray.width;
+	SIMD_ALIGNED(uint8_t rowuv[kMaxStride * 2]);
+	uint8_t *src_uv = (uint8_t*)(src_y + infogray.width * infogray.height);
+	for (int y = 0; y < infogray.height; ++y) {
+	    if ((y & 1) == 0) {
+	      // Copy a row of UV.
+	      SplitUV_NEON(src_uv, rowuv, rowuv + kMaxStride, halfwidth);
+	      src_uv += 1;
+	    }
+	    I420ToARGBRow(src_y, rowuv, rowuv + kMaxStride, destData, infogray.width);
+	    destData += dst_stride_argb;
+	    src_y += src_stride_y;
+	}
 
 
+#ifdef __ARM_NEON__
+#endif
+
+
+
+
+	//int width 	= infocolor.width;
+	//int height 	= infocolor.height;
+
+
+	//cvReleaseImage(&tmp);
+	//cvReleaseImage(&tmp2);
+	//cvReleaseImage(&tmp3);
+
+	LOGI("unlocking pixels");
+	//AndroidBitmap_unlockPixels(env, bitmapcolor);
+	AndroidBitmap_unlockPixels(env, bitmapgray);
+}
+
+void GraphicsCore :: SplitUV_NEON(const uint8_t* src_uv,
+                         uint8_t* dst_u, uint8_t* dst_v, int pix) {
+  asm volatile (
+    "1:                                        \n"
+    "vld2.u8    {q0,q1}, [%0]!                 \n"  // load 16 pairs of UV
+    "subs       %3, %3, #16                    \n"  // 16 processed per loop
+    "vst1.u8    {q0}, [%1]!                    \n"  // store U
+    "vst1.u8    {q1}, [%2]!                    \n"  // Store V
+    "bhi        1b                             \n"
+    : "+r"(src_uv),
+      "+r"(dst_u),
+      "+r"(dst_v),
+      "+r"(pix)             // Output registers
+    :                       // Input registers
+    : "memory", "cc", "q0", "q1" // Clobber List
+  );
+}
+
+
+#define YUVTORGB                                                               \
+    "vld1.u8    {d0}, [%0]!                    \n"                             \
+    "vld1.u32   {d2[0]}, [%1]!                 \n"                             \
+    "vld1.u32   {d2[1]}, [%2]!                 \n"                             \
+                                                                               \
+    "veor.u8    d2, d26                        \n"/*subtract 128 from u and v*/\
+                                                                               \
+    "vmull.s8   q8, d2, d24                    \n"/*  u/v B/R component      */\
+                                                                               \
+    "vmull.s8   q9, d2, d25                    \n"/*  u/v G component        */\
+                                                                               \
+    "vmov.u8    d1, #0                         \n"/*  split odd/even y apart */\
+    "vtrn.u8    d0, d1                         \n"                             \
+                                                                               \
+    "vsub.s16   q0, q0, q15                    \n"/*  offset y               */\
+    "vmul.s16   q0, q0, q14                    \n"                             \
+                                                                               \
+    "vadd.s16   d18, d19                       \n"                             \
+                                                                               \
+    "vqadd.s16  d20, d0, d16                   \n"                             \
+    "vqadd.s16  d21, d1, d16                   \n"                             \
+                                                                               \
+    "vqadd.s16  d22, d0, d17                   \n"                             \
+    "vqadd.s16  d23, d1, d17                   \n"                             \
+                                                                               \
+    "vqadd.s16  d16, d0, d18                   \n"                             \
+    "vqadd.s16  d17, d1, d18                   \n"                             \
+                                                                               \
+    "vqrshrun.s16 d0, q10, #6                  \n"                             \
+    "vqrshrun.s16 d1, q11, #6                  \n"                             \
+    "vqrshrun.s16 d2, q8, #6                   \n"                             \
+                                                                               \
+    "vmovl.u8   q10, d0                        \n"/*  set up for reinterleave*/\
+    "vmovl.u8   q11, d1                        \n"                             \
+    "vmovl.u8   q8, d2                         \n"                             \
+                                                                               \
+    "vtrn.u8    d20, d21                       \n"                             \
+    "vtrn.u8    d22, d23                       \n"                             \
+    "vtrn.u8    d16, d17                       \n"                             \
+
+
+typedef signed char __attribute__((vector_size(16))) vec8;
+static const vec8 kUVToRB[8]  = { 127, 127, 127, 127, 102, 102, 102, 102 };
+static const vec8 kUVToG[8]   = { -25, -25, -25, -25, -52, -52, -52, -52 };
+
+void GraphicsCore :: I420ToARGBRow(const uint8_t* y_buf,
+        const uint8_t* u_buf,
+        const uint8_t* v_buf,
+        uint8_t* rgb_buf,
+        int width)
+{
+
+	__asm__ __volatile__ (
+	    "vld1.u8    {d24}, [%5]                    \n"
+	    "vld1.u8    {d25}, [%6]                    \n"
+	    "vmov.u8    d26, #128                      \n"
+	    "vmov.u16   q14, #74                       \n"
+	    "vmov.u16   q15, #16                       \n"
+	  "1:                                          \n"
+	YUVTORGB
+	    "vmov.u8    d21, d16                       \n"
+	    "vmov.u8    d23, #255                      \n"
+	    "vst4.u8    {d20, d21, d22, d23}, [%3]!    \n"
+	    "subs       %4, %4, #8                     \n"
+	    "bhi        1b                             \n"
+	    : "+r"(y_buf),          // %0
+	      "+r"(u_buf),          // %1
+	      "+r"(v_buf),          // %2
+	      "+r"(rgb_buf),        // %3
+	      "+r"(width)           // %4
+	    : "r"(kUVToRB),
+	      "r"(kUVToG)
+	    : "cc", "memory", "q0", "q1", "q2", "q3", "q8", "q9",
+	                      "q10", "q11", "q12", "q13", "q14", "q15"
+	  );
+}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////W I N E R     T R A N S F O R M A T I O N ///////////////////////////////////////
@@ -168,7 +350,6 @@ void GraphicsCore :: wienerTransformation(JNIEnv* env, jclass javaThis, jobject 
 		LOGE("Bitmap input format must be RGBA_8888, format = %d", infocolor.format);
 		return;
 	}
-
 	LOGI("gray image :: width is %d; height is %d; stride is %d; format is %d;flags is%d",infogray.width,infogray.height,infogray.stride,infogray.format,infogray.flags);
 	if (infogray.format != ANDROID_BITMAP_FORMAT_RGBA_8888) {
 		LOGE("Bitmap output format is not RGBA_8888 4 ! format=%d", infogray.format);
@@ -192,7 +373,6 @@ void GraphicsCore :: wienerTransformation(JNIEnv* env, jclass javaThis, jobject 
 	IplImage *tmp = loadPixels(rgbData, width, height);
 	IplImage *tmp2 = cvCreateImage(cvSize(tmp->width, tmp->height), IPL_DEPTH_8U, 1);
 	IplImage *tmp3 = cvCreateImage(cvSize(tmp->width, tmp->height), IPL_DEPTH_8U, 1);
-
 	cvCvtColor(tmp, tmp2, CV_RGB2GRAY);
 	openCVWienerFilter(tmp2, tmp3, 8, 8);
 	char color = 0;

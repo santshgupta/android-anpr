@@ -6,7 +6,6 @@ package intelligence.imageanalysis;
  * http://www.faqs.org/faqs/graphics/colorspace-faq/
  * Adapted by zdanchik.ru
  */
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -18,7 +17,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Environment;
-import android.util.Log;
 
 public class Photo {
 	public Bitmap image;
@@ -36,14 +34,9 @@ public class Photo {
         this.loadImage(filepath);
     }
 	
-	
-	public Photo(Bitmap bmp, int isFileInit) {
-		if (bmp == null) {
-    		//Log.d("asd", "NULL!");
-    		return;
-    	}
-    	//Log.d("asd", "START!");
-    	int width_tmp = bmp.getWidth();
+	public Photo(Bitmap bmp, int i) {
+		
+		int width_tmp = bmp.getWidth();
         int height_tmp = bmp.getHeight();
         
         float coef = 0.7f;
@@ -98,9 +91,9 @@ public class Photo {
 			out.flush();
 			out.close();
 		} catch (FileNotFoundException e) {
-			//Intelligence.console.console(e.toString());
+			Intelligence.console.console(e.toString());
 		} catch (IOException e) {
-			//Intelligence.console.console(e.toString());
+			Intelligence.console.console(e.toString());
 		}
     }
     
@@ -221,7 +214,7 @@ public class Photo {
             bmp.recycle();
         }
 		catch (FileNotFoundException e) {
-        	//Intelligence.console.console("Input image file not found: " + filepath);
+        	Intelligence.console.console("Input image file not found: " + filepath);
         	throw new FileNotFoundException("file not found!");
         }
 	}

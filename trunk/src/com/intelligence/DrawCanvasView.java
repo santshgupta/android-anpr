@@ -3,14 +3,13 @@ package com.intelligence;
 import intelligence.imageanalysis.CarSnapshot;
 import intelligence.intelligence.Intelligence;
 
-import java.io.IOException;
 import java.util.HashSet;
 
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Bitmap.Config;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.Log;
 import android.view.Display;
@@ -20,12 +19,9 @@ import android.view.View.OnTouchListener;
 
 public class DrawCanvasView extends View implements OnTouchListener {
 	
-	private Bitmap 		 	b 					= Bitmap.createBitmap(400, 400, Bitmap.Config.ARGB_8888);
-	//private final String 	___FILE_NAME___  	= "./test/9.jpg";
+	private Bitmap 		 	b 					= Bitmap.createBitmap(450, 5000, Bitmap.Config.ARGB_8888);
+	private final String 	___FILE_NAME___  	= "./test/9.jpg";
 	private Paint 			paint 				= new Paint(Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG);
-	public Canvas 			canvas	 			= null;
-	private View 			view;
-	private Context 		cntxt 				= null;
 	
 	private final static int NONE = 0; 
 	private final static int DRAG = 1; 
@@ -37,13 +33,20 @@ public class DrawCanvasView extends View implements OnTouchListener {
 	private float startY = 0;
 	private static int  displayWidth = 0;
 	private static int displayHeight = 0;
-	
-	public DrawCanvasView(Context context) {
+	private Intelligence systemLogic;
+	private Preview preview;
+	public DrawCanvasView(Context context, Preview preview) {
 		super(context);
-		cntxt = context;
-		view  = this;
-		canvas = new Canvas(b);
-		Activity a = (Activity)view.getContext();
+		Canvas cnv = new Canvas(b);
+		DrawCanvasView.this.preview = preview;
+		
+		try {
+			systemLogic 	= new Intelligence (true, cnv, this);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		Activity a = (Activity)this.getContext();
 		Display d = a.getWindowManager().getDefaultDisplay();
 		displayWidth = d.getWidth();
 		displayHeight = d.getHeight();
@@ -52,61 +55,37 @@ public class DrawCanvasView extends View implements OnTouchListener {
 		setOnTouchListener(this);
 	}
 	
-/*
+
 	public void refresh() {		
 		Thread t = new Thread(new Runnable() {
 			@Override
 			public void run() {
 				Log.d("intelligence_debug", "The thread was run");
-				//Canvas cnv = new Canvas(b);
 				try {
-					Intelligence systemLogic 	= new Intelligence (true);
-					CarSnapshot c 				= new CarSnapshot (___FILE_NAME___);
-					HashSet<String> number 		= systemLogic.recognize(c);
-					Log.d("intelligence_debug", "recognized: " + number);
-				} catch (IOException e) {
-					Log.e("intelligence_error", e.toString());
-					e.printStackTrace();
+					synchronized (preview.lock) {
+						
+						if (preview.previewBitmap == null) {
+							preview.lock.wait();
+						}
+						//	Bitmap bmpTmp = Preview.bmp.copy(Config.ARGB_8888, true);
+					
+						CarSnapshot c 				= new CarSnapshot (preview.previewBitmap, 1);
+						HashSet<String> number 		= systemLogic.recognize(c);
+						Log.d("intelligence_debug", "recognized: " + number);
+							//bmpTmp.recycle();
+						
+					}
 				} catch (Exception e) {
 					Log.e("intelligence_error", e.toString());
 					e.printStackTrace();
 				}
-				
-				synchronized (cntxt) {
-					while (mainCanvas == null ) {
-						Log.d("intelligence_debug", "wait canvas");
-						try {
-							cntxt.wait();
-						} catch (InterruptedException e) {
-							Log.e("intelligence_error", e.toString());
-						}
-					}
-				}	
-				
-				Activity a = (Activity)getContext();
-				a.runOnUiThread(new Runnable() {
-					
-					@Override
-					public void run() {
-						Log.d("intelligence_debug", "redraw canvas!");
-						invalidate();
-					}
-				});
 			}
 		});
 		t.start();
 	}
-	*/
+	
 	@Override
 	public void onDraw(Canvas canvas) {
-		
-		Log.d("test","!!!!!!!!!!!!!!");
-		//Paint p = new Paint(Color.RED);
-		//canvas.drawText("PREVIEW", canvas.getWidth() / 2,
-		//		canvas.getHeight() / 2, p);
-		//mainCanvas.drawBitmap(b, canvasViewX, canvasViewY, paint);
-		
-		
 		canvas.drawBitmap(b, canvasViewX, canvasViewY, paint);
 	}
 
