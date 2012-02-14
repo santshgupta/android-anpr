@@ -1,142 +1,81 @@
 package com.intelligence;
 
-import intelligence.imageanalysis.CarSnapshot;
-import intelligence.intelligence.Intelligence;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.HashSet;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
-import com.intelligence.Preview.CommonThread;
+import com.graphics.NativeGraphics;
 
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.ImageFormat;
-import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.YuvImage;
 import android.hardware.Camera;
 import android.hardware.Camera.PreviewCallback;
-import android.hardware.Camera.Size;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 class Preview extends SurfaceView implements SurfaceHolder.Callback {
 	private static final String TAG = "Preview";
+	public static boolean makeSnapshot = true;
+	private ExecutorService pool;
 	private Camera.Size cs = null;
 	SurfaceHolder mHolder;
 	public Camera camera;
-	private CommonThread _cThread;
-	private Intelligence systemLogic;
-	protected Bitmap bmpData = null;
-	//private DrawCanvasView dcv = null;
 	boolean retry = false;
-	//protected CarSnapshot carSnap = null;
 	protected Object lock = new Object();
-	public class CommonThread extends Thread {
-	    public boolean _run = false;
-	 
-	    public CommonThread() {
-	    }
-	 
-	    @Override
-	    public void run() {
-	        //Canvas c;
-	        while (_run) {
-	            //c = null;
-	            	//if (bmpData != null) {
-	        	/*		
-	        	try {
-	        				
-	        				
-		        			//if (cs.image == null) {
-		        			//	return;
-		        			//}
-	        				synchronized (lock) {
-	        					if (bmpData == null)
-	        						lock.wait();
-	        					CarSnapshot carSnap = new CarSnapshot (bmpData,1);
-								HashSet<String> number 		= systemLogic.recognize(carSnap);
-			        			Log.d(TAG, "__RECOGNIZED: " + number.toString());
-	        				}
-		        			//cs = null;
-		        			//System.gc();
-		        			
-						} catch (Exception e) {
-							/// TODO Auto-generated catch block
-							//e.printStackTrace();
-						}
-	            	//}	
-	        */	
-	        }
-	    }
-	}
+	public Bitmap previewBitmap = null;
 	
-	Preview(Context context, DrawCanvasView dcv) {
+	Preview(Context context) {
 		super(context);
-		//Preview.this.dcv = dcv; 
-		// Install a SurfaceHolder.Callback so we get notified when the
-		// underlying surface is created and destroyed.
 		mHolder = getHolder();
 		mHolder.addCallback(this);
 		mHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
-		try {
-			systemLogic 	= new Intelligence (true, dcv);
-		} catch (Exception e) {
-			Log.e("intelligence_error", e.toString());
-			e.printStackTrace();
-		}
-		this._cThread = new CommonThread();
-		this._cThread._run = true;
-		this._cThread.start();
 	}
  
 	public void surfaceCreated(SurfaceHolder holder) {
-		// The Surface has been created, acquire the camera and tell it where
-		// to draw.
+
 		camera = Camera.open();
-		
+		pool = Executors.newFixedThreadPool(5);
 		try {
 			camera.setPreviewDisplay(holder); 
 			camera.setPreviewCallback(new PreviewCallback() {
  
-				public void onPreviewFrame(byte[] data, Camera arg1) {
+				public void onPreviewFrame(final byte[] data, Camera arg1) {
 					
 					if (retry)
 	        			  return;
-					Camera.Parameters parameters = camera.getParameters();
-					int format = parameters.getPreviewFormat();
-					// YUV formats require more conversion
-					
-					if (format == ImageFormat.NV21)
-					{
-				    	int w = parameters.getPreviewSize().width;
-				    	int h = parameters.getPreviewSize().height;
-				    	// Get the YuV image
-				    	YuvImage yuv_image = new YuvImage(data, format, w, h, null);
-				    	// Convert YuV to Jpeg
-						Rect rect = new Rect(0, 0, w, h);
-						ByteArrayOutputStream pBmpStream = new ByteArrayOutputStream();
-						yuv_image.compressToJpeg(rect, 100, pBmpStream);
-						bmpData  = BitmapFactory.decodeByteArray(pBmpStream.toByteArray(), 0, pBmpStream.size());
-						
-						synchronized (lock) {
-							bmpData  = BitmapFactory.decodeByteArray(pBmpStream.toByteArray(), 0, pBmpStream.size());
-							lock.notify();
-						}
+					if (makeSnapshot == true) {
+						makeSnapshot = false;
+				
+						pool.submit(new Runnable() {
+							
+							@Override
+							public void run() {
+								Camera.Parameters parameters = camera.getParameters();
+								int format = parameters.getPreviewFormat();
+								if (format == ImageFormat.NV21)
+								{
+							    	int w = parameters.getPreviewSize().width;
+							    	int h = parameters.getPreviewSize().height;
+							    	YuvImage yuv_image = new YuvImage(data, format, w, h, null);
+							    	Rect rect = new Rect(0, 0, w, h);
+									ByteArrayOutputStream pBmpStream = new ByteArrayOutputStream();
+									yuv_image.compressToJpeg(rect, 100, pBmpStream);
+									synchronized (lock) {
+										previewBitmap = BitmapFactory.decodeByteArray(pBmpStream.toByteArray(), 0, pBmpStream.size());
+										lock.notify();
+									}
+								}
+								Log.e(TAG, "!!!!!!!!!!!!!!!!");
+							}
+						});
 					}
-					
-					/*// Jpeg and RGB565 are supported by BitmapFactory.decodeByteArray
-					else if (format == ImageFormat.JPEG || format == ImageFormat.RGB_565)
-					{
-						mBitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
-					}*/
-					//dcv.invalidate();
 				}
 			});
 		} catch (IOException exception) {
@@ -147,13 +86,7 @@ class Preview extends SurfaceView implements SurfaceHolder.Callback {
  
 	public void surfaceDestroyed(SurfaceHolder holder) {
 		retry = true;
-        _cThread._run = false;
-        while (retry) {
-          try {
-                _cThread.join();
-                retry = false;
-             } catch (InterruptedException e) {}
-        }
+		pool.shutdown();
         camera.setPreviewCallback(null);
 		camera.stopPreview();
 		camera.release();
