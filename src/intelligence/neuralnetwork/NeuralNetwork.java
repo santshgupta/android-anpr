@@ -120,7 +120,7 @@ public class NeuralNetwork {
     }
   
     private void loadFromXml(String fileName) throws ParserConfigurationException, SAXException, IOException, ParseException {
-        //Intelligence.console.console("NeuralNetwork : loading network topology from file "+fileName);
+        Intelligence.console.console("NeuralNetwork : loading network topology from file "+fileName);
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder parser = factory.newDocumentBuilder();
         File source = new File(android.os.Environment.getExternalStorageDirectory(), fileName);
@@ -165,7 +165,7 @@ public class NeuralNetwork {
     }
 
     public void saveToXml(String fileName) throws ParserConfigurationException, FileNotFoundException, TransformerException, TransformerConfigurationException {
-        //Intelligence.console.console("Saving network topology to file "+fileName);
+        Intelligence.console.console("Saving network topology to file "+fileName);
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder parser = factory.newDocumentBuilder();
         Document doc = parser.newDocument();
@@ -496,7 +496,7 @@ public class NeuralNetwork {
         int currK = 0;
         double currE = Double.POSITIVE_INFINITY;        
         
-        //Intelligence.console.console("entering adaptation loop ... (maxK = "+maxK+")");        
+        Intelligence.console.console("entering adaptation loop ... (maxK = "+maxK+")");        
         
         while ( currK < maxK && currE > eps ) {
             computeTotalGradient(totalGradients,partialGradients,trainingSet);
@@ -519,7 +519,7 @@ public class NeuralNetwork {
             }            
             currE = totalGradients.getGradientAbs(); 
             currK++;
-            //if (currK%25==0) Intelligence.console.console("currK="+currK+"   currE="+currE);
+            if (currK%25==0) Intelligence.console.console("currK="+currK+"   currE="+currE);
         }
     }
         

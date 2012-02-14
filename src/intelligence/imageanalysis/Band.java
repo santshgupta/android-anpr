@@ -97,7 +97,7 @@ public class Band extends Photo {
         Bitmap imageCopy = duplicateImage(this.image);
         imageCopy = fullEdgeDetector(imageCopy);
         
-        //Intelligence.console.consoleBitmap(imageCopy);
+        Intelligence.console.consoleBitmap(imageCopy);
         
         graphHandle = histogram(imageCopy);
         graphHandle.rankFilter(imageCopy.getHeight());
@@ -106,7 +106,7 @@ public class Band extends Photo {
         float coef = .3f;
         graphHandle.findPeaks(numberOfCandidates, 15, coef); // smoothing coefficient (smoothing at 20px)
         
-        //Intelligence.console.consoleBitmap(graphHandle.renderHorizontally(300, 100));
+        Intelligence.console.consoleBitmap(graphHandle.renderHorizontally(300, 100));
         
         imageCopy.recycle();
         return graphHandle.peaks;

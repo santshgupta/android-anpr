@@ -86,5 +86,12 @@ void JNICALL Java_com_graphics_NativeGraphics_nativeWiener (JNIEnv* env,
 	core.wienerTransformation(env, javaThis, bitmapSource, bitmapDest);
 }
 
+void JNICALL Java_com_graphics_NativeGraphics_nativeYuvToRGB (JNIEnv* env,
+		jclass javaThis, jbyteArray krnl, jobject bitmapDest)
+{
+	GraphicsCoreNS :: GraphicsCore core;
+	core.yuvToRGB(env, javaThis, krnl, bitmapDest);
+}
+
 
 

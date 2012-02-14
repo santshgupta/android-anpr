@@ -79,6 +79,9 @@ JNIEXPORT void JNICALL Java_com_graphics_NativeGraphics_nativeFullEdgeDetector
 void JNICALL Java_com_graphics_NativeGraphics_nativeWiener (JNIEnv* ,
 		jclass , jobject , jobject );
 
+void JNICALL Java_com_graphics_NativeGraphics_nativeYuvToRGB (JNIEnv* ,
+		jclass , jbyteArray , jobject );
+
 #ifdef __cplusplus
 }
 #endif
