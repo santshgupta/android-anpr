@@ -29,6 +29,12 @@ public class Console {
         redrawMainView();
 	}
 	
+	synchronized public void clear() {
+		cHeight = SPACING + 10;
+		Paint paint = new Paint();
+    	paint.setXfermode(new PorterDuffXfermode(Mode.CLEAR));
+    	canvas.drawPaint(paint);
+	}
 	
 	public void console(String str) {
 		Log.d("intelligence_debug", str);
@@ -50,17 +56,13 @@ public class Console {
 	}
     
     synchronized public ConsoleGraph createConsoleGraph(Bitmap bgSrc, int step) {
-		//this.canvas.drawBitmap(bgSrc, cWidth, cHeight, this.paint);
-		//for (int y = 0 ; y <  bgSrc.getHeight(); y +=20 ) {
-		//	this.canvas.drawLine(0, y, bgSrc.getWidth(), y, this.paint);
-		//}
-		
-    	Paint paint = new Paint();
-    	paint.setXfermode(new PorterDuffXfermode(Mode.CLEAR));
-    	canvas.drawPaint(paint);
-		ConsoleGraph gr = new ConsoleGraph(mainView, this.canvas, 0, 0, step);
-    	//cHeight += bgSrc.getHeight() + 10;
-        return gr;
+        this.canvas.drawBitmap(bgSrc, cWidth, cHeight, this.paint);
+        for (int y = cHeight ; y < (cHeight + bgSrc.getHeight()); y +=20 ) {
+                this.canvas.drawLine(cWidth, y, cWidth + bgSrc.getWidth(), y, this.paint);
+        }
+        ConsoleGraph gr = new ConsoleGraph(mainView, this.canvas, cWidth, cHeight, step);
+		cHeight += bgSrc.getHeight() + 10;
+		return gr;
 	}
     
     private void redrawMainView() {

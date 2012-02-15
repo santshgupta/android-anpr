@@ -137,7 +137,7 @@ public class Intelligence {
     
     public HashSet<String> recognize(CarSnapshot carSnapshot) throws Exception {
     	HashSet<String> parsedOutput = new HashSet<String>(); 
-    	//console.console("Recognize");
+    	console.clear();
     	Log.d("intelligence_debug", "recognize:");
 	    int syntaxAnalysisMode = Intelligence.configurator.getIntProperty("intelligence_syntaxanalysis");
         int skewDetectionMode = Intelligence.configurator.getIntProperty("intelligence_skewdetection");
@@ -150,7 +150,7 @@ public class Intelligence {
         int p = 0;
        // console.console("getBands");
         for (Band b : carSnapshot.getBands()) { //doporucene 3
-        	/*
+        	
         	if (enableReportGeneration) {
         		//console.console("Band width : "+b.getWidth()+" px");
         		//console.console("Band height : "+b.getHeight()+" px");
@@ -314,7 +314,11 @@ public class Intelligence {
                 if (enableReportGeneration) {
                 	//console.console("_RECOGNIZED_ : " + parsedOutput);
                 }
-            }*/
+                plate.image.recycle();
+                plate.plateCopy.image.recycle();
+            }
+            b.image.recycle();
+            System.gc();
         }
         return parsedOutput;
     }

@@ -138,11 +138,8 @@ void GraphicsCore :: fullEdgeDetector(JNIEnv* env, jclass javaThis, jobject bitm
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////// YUV TO RGB CONVERTER ///////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-#define kMaxStride (2048 * 4)
-#define SIMD_ALIGNED(var) var __attribute__((aligned(16)))
 void GraphicsCore :: yuvToRGB(JNIEnv* env, jclass javaThis, jbyteArray bitmapData, jobject bitmapgray) {
-	///AndroidBitmapInfo infocolor;
-	//void* pixelscolor;
+
 	AndroidBitmapInfo infogray;
 	void* pixelsgray;
 	uint8_t redColor, greenColor, blueColor;
@@ -155,17 +152,7 @@ void GraphicsCore :: yuvToRGB(JNIEnv* env, jclass javaThis, jbyteArray bitmapDat
 	/**
 	 * Get kernel
 	 */
-	uint8_t *src_y = (uint8_t*)env->GetByteArrayElements(bitmapData, NULL);
-	//int kernel[kernelCountRows][kernelCountCols];
-	//for (int i = 0; i < kernelCountRows; i++) {
-	//	for (int j = 0; j < kernelCountCols; j++) {
-	//		kernel[j][i] = carr[i * kernelCountRows + j];
-	//	}
-	//}
-	//if ((ret = AndroidBitmap_getInfo(env, bitmapcolor, &infocolor)) < 0) {
-	//	LOGE("AndroidBitmap_getInfo() failed 1 ! error=%d", ret);
-	//	return;
-	//}
+	uint8_t *src = (uint8_t*)env->GetByteArrayElements(bitmapData, NULL);
 
 	if ((ret = AndroidBitmap_getInfo(env, bitmapgray, &infogray)) < 0) {
 		LOGE("AndroidBitmap_getInfo() failed 2 ! error=%d", ret);
@@ -178,115 +165,112 @@ void GraphicsCore :: yuvToRGB(JNIEnv* env, jclass javaThis, jbyteArray bitmapDat
 		return;
 	}
 
-	//if ((ret = AndroidBitmap_lockPixels(env, bitmapcolor, &pixelscolor)) < 0) {
-	//	LOGE("AndroidBitmap_lockPixels() failed ! error=%d", ret);
-	//}
-
 	if ((ret = AndroidBitmap_lockPixels(env, bitmapgray, &pixelsgray)) < 0) {
 		LOGE("AndroidBitmap_lockPixels() failed ! error=%d", ret);
 	}
 
-	//uint32_t *rgbData = (uint32_t *) pixelscolor;
 	uint8_t *destData = (uint8_t *) pixelsgray;
-	int halfwidth = (infogray.width + 1) >> 1;
-	int src_stride_y = 1;
-	int dst_stride_argb = infogray.width;
-	SIMD_ALIGNED(uint8_t rowuv[kMaxStride * 2]);
-	uint8_t *src_uv = (uint8_t*)(src_y + infogray.width * infogray.height);
-	for (int y = 0; y < infogray.height; ++y) {
-	    if ((y & 1) == 0) {
-	      // Copy a row of UV.
-	      SplitUV_NEON(src_uv, rowuv, rowuv + kMaxStride, halfwidth);
-	      src_uv += 1;
+	int width = infogray.width;
+	/*
+	int i, j;
+	uint8_t nY;
+	for (i = 0; i < infogray.height; i++) {
+	    for (j = 0; j < infogray.width; j++) {
+	    	nY = *(src + i * infogray.width + j);
+	    	destData[i * infogray.width + j] = 0xff000000 | (nY) | (nY << 8)
+	    														| (nY << 16);
 	    }
-	    I420ToARGBRow(src_y, rowuv, rowuv + kMaxStride, destData, infogray.width);
-	    destData += dst_stride_argb;
-	    src_y += src_stride_y;
 	}
+	*/
+	/*
+	__asm__ __volatile__ (
+		"vld1.u8    {d24}, [%5]                    \n"
+		"vld1.u8    {d25}, [%6]                    \n"
+		"vmov.u8    d26, #128                      \n"
+		"vmov.u16   q14, #74                       \n"
+		"vmov.u16   q15, #16                       \n"
+	  "1:                                          \n"
+	YUVTORGB
+		"vmov.u8    d21, d16                       \n"
+		"vmov.u8    d23, #255                      \n"
+		"vst4.u8    {d20, d21, d22, d23}, [%3]!    \n"
+		"subs       %4, %4, #8                     \n"
+		"bhi        1b                             \n"
+		: "+r"(y_buf),          // %0
+		  "+r"(u_buf),          // %1
+		  "+r"(v_buf),          // %2
+		  "+r"(rgb_buf),        // %3
+		  "+r"(width)           // %4
+		: "r"(kUVToRB),
+		  "r"(kUVToG)
+		: "cc", "memory", "q0", "q1", "q2", "q3", "q8", "q9",
+						  "q10", "q11", "q12", "q13", "q14", "q15"
+	  );
+*/
+	__asm__ __volatile__
+	(
+			// Clear memory
+			"mov r5, #0 \n\t"
+			"mov r6, #0 \n\t"
+			"vdup.i32 d0, r5  \n\t"
+			"vdup.i32 d1, r5  \n\t"
+			"vdup.i32 d2, r5  \n\t"
+			"vdup.i32 d3, r5  \n\t"
+			"vdup.i32 d4, r5  \n\t"
+			"vdup.i32 d8, r5  \n\t"
+			"vdup.i32 d9, r5  \n\t"
+			"vdup.i32 d10, r5  \n\t"
+			"vdup.i32 d20, r5  \n\t"
+			"vdup.i32 d21, r5  \n\t"
+			"vdup.i32 d22, r5  \n\t"
 
 
-#ifdef __ARM_NEON__
-#endif
+			// clear counter
+			//"vdup.i32 d20, r5  										\n\t"
+			// First 4 pixels
+			//"1:													  \n\t"
+
+			//"add r6, r6, #1 \n\t"
+
+			//"vld4.8 		{d0, d1, d2, d3}, [%[x]] \n\t"
+			"vld4.8 		{d0[0], d1[0], d2[0], d3[0]}, [%[x]]! \n\t"
+			"vld4.8 		{d0[2], d1[2], d2[2], d3[2]}, [%[x]]! \n\t"
+			"vld4.8 		{d0[4], d1[4], d2[4], d3[4]}, [%[x]]! \n\t"
+			"vld4.8 		{d0[6], d1[6], d2[6], d3[6]}, [%[x]]! \n\t"
+			// 16bit long red
+			//"vst1.16 	{d22[0]}, [%[rptr]] \n\t"
+			// 16bit long green
+			//"vst1.16 	{d21[0]}, [%[gptr]] \n\t"
+			// 16bit long blue
+			//"vst1.16 	{d20[0]}, [%[bptr]] \n\t"
 
 
+			//"vst4.8    {d0, d1, d2, d3}, [%[rptr]]! \n\t"
+			//"vst1.8 	{d0[0]}, [%1]				 \n\t"
+			//"vst1.8 	{d1}, [%[rptr]!]				 \n\t"
+			//"vst1.8 	{d2}, [%[rptr]]!				 \n\t"
+			//"vst1.8 	{d3}, [%[rptr]]				 \n\t"
+			// clear accumulators
+			//"vdup.i32 d20, r5  \n\t"
+			//"vdup.i32 d21, r5  \n\t"
+			//"vdup.i32 d22, r5  \n\t"
+			//"subs       %[wdth], %[wdth], #8           \n\t"
+			//"bhi        1b                             \n\t"
+			: [x] "+r" (src),
+			"+r" (destData),
+			[wdth] "+r" (width)
+			:
+			// registers
+			: "cc", "d0", "d1", "d2", "d3", "d4", "d5", "d6", "d7", "d8", "d9", "d10", "d11", "d12", "d13", "d14","memory"
+	);
 
-
-	//int width 	= infocolor.width;
-	//int height 	= infocolor.height;
-
-
-	//cvReleaseImage(&tmp);
-	//cvReleaseImage(&tmp2);
-	//cvReleaseImage(&tmp3);
 
 	LOGI("unlocking pixels");
 	//AndroidBitmap_unlockPixels(env, bitmapcolor);
 	AndroidBitmap_unlockPixels(env, bitmapgray);
 }
 
-void GraphicsCore :: SplitUV_NEON(const uint8_t* src_uv,
-                         uint8_t* dst_u, uint8_t* dst_v, int pix) {
-  asm volatile (
-    "1:                                        \n"
-    "vld2.u8    {q0,q1}, [%0]!                 \n"  // load 16 pairs of UV
-    "subs       %3, %3, #16                    \n"  // 16 processed per loop
-    "vst1.u8    {q0}, [%1]!                    \n"  // store U
-    "vst1.u8    {q1}, [%2]!                    \n"  // Store V
-    "bhi        1b                             \n"
-    : "+r"(src_uv),
-      "+r"(dst_u),
-      "+r"(dst_v),
-      "+r"(pix)             // Output registers
-    :                       // Input registers
-    : "memory", "cc", "q0", "q1" // Clobber List
-  );
-}
 
-
-#define YUVTORGB                                                               \
-    "vld1.u8    {d0}, [%0]!                    \n"                             \
-    "vld1.u32   {d2[0]}, [%1]!                 \n"                             \
-    "vld1.u32   {d2[1]}, [%2]!                 \n"                             \
-                                                                               \
-    "veor.u8    d2, d26                        \n"/*subtract 128 from u and v*/\
-                                                                               \
-    "vmull.s8   q8, d2, d24                    \n"/*  u/v B/R component      */\
-                                                                               \
-    "vmull.s8   q9, d2, d25                    \n"/*  u/v G component        */\
-                                                                               \
-    "vmov.u8    d1, #0                         \n"/*  split odd/even y apart */\
-    "vtrn.u8    d0, d1                         \n"                             \
-                                                                               \
-    "vsub.s16   q0, q0, q15                    \n"/*  offset y               */\
-    "vmul.s16   q0, q0, q14                    \n"                             \
-                                                                               \
-    "vadd.s16   d18, d19                       \n"                             \
-                                                                               \
-    "vqadd.s16  d20, d0, d16                   \n"                             \
-    "vqadd.s16  d21, d1, d16                   \n"                             \
-                                                                               \
-    "vqadd.s16  d22, d0, d17                   \n"                             \
-    "vqadd.s16  d23, d1, d17                   \n"                             \
-                                                                               \
-    "vqadd.s16  d16, d0, d18                   \n"                             \
-    "vqadd.s16  d17, d1, d18                   \n"                             \
-                                                                               \
-    "vqrshrun.s16 d0, q10, #6                  \n"                             \
-    "vqrshrun.s16 d1, q11, #6                  \n"                             \
-    "vqrshrun.s16 d2, q8, #6                   \n"                             \
-                                                                               \
-    "vmovl.u8   q10, d0                        \n"/*  set up for reinterleave*/\
-    "vmovl.u8   q11, d1                        \n"                             \
-    "vmovl.u8   q8, d2                         \n"                             \
-                                                                               \
-    "vtrn.u8    d20, d21                       \n"                             \
-    "vtrn.u8    d22, d23                       \n"                             \
-    "vtrn.u8    d16, d17                       \n"                             \
-
-
-typedef signed char __attribute__((vector_size(16))) vec8;
-static const vec8 kUVToRB[8]  = { 127, 127, 127, 127, 102, 102, 102, 102 };
-static const vec8 kUVToG[8]   = { -25, -25, -25, -25, -52, -52, -52, -52 };
 
 void GraphicsCore :: I420ToARGBRow(const uint8_t* y_buf,
         const uint8_t* u_buf,
@@ -295,29 +279,6 @@ void GraphicsCore :: I420ToARGBRow(const uint8_t* y_buf,
         int width)
 {
 
-	__asm__ __volatile__ (
-	    "vld1.u8    {d24}, [%5]                    \n"
-	    "vld1.u8    {d25}, [%6]                    \n"
-	    "vmov.u8    d26, #128                      \n"
-	    "vmov.u16   q14, #74                       \n"
-	    "vmov.u16   q15, #16                       \n"
-	  "1:                                          \n"
-	YUVTORGB
-	    "vmov.u8    d21, d16                       \n"
-	    "vmov.u8    d23, #255                      \n"
-	    "vst4.u8    {d20, d21, d22, d23}, [%3]!    \n"
-	    "subs       %4, %4, #8                     \n"
-	    "bhi        1b                             \n"
-	    : "+r"(y_buf),          // %0
-	      "+r"(u_buf),          // %1
-	      "+r"(v_buf),          // %2
-	      "+r"(rgb_buf),        // %3
-	      "+r"(width)           // %4
-	    : "r"(kUVToRB),
-	      "r"(kUVToG)
-	    : "cc", "memory", "q0", "q1", "q2", "q3", "q8", "q9",
-	                      "q10", "q11", "q12", "q13", "q14", "q15"
-	  );
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

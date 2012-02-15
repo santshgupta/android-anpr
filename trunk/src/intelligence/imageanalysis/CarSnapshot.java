@@ -183,12 +183,13 @@ public class CarSnapshot extends Photo {
     	
     	Bitmap dest = NativeGraphics.convert565to8888(image); //Preprocessing for source image
     	dest = verticalEdgeBi(dest); 
-    	dest = NativeGraphics.treshold(dest, 100);
+    	Intelligence.console.consoleBitmap(dest);
+    	dest = NativeGraphics.treshold(dest, 80);
     	
     	/**
     	 * Render processing - console
     	 */
-    	ConsoleGraph cGraph = Intelligence.console.createConsoleGraph(image, step);
+    	ConsoleGraph cGraph = Intelligence.console.createConsoleGraph(dest, step);
     	
 		for (int i = 0; i < imageLength - step; i += step) {
     		

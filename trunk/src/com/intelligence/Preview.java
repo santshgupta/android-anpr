@@ -1,5 +1,7 @@
 package com.intelligence;
 
+import intelligence.intelligence.Intelligence;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
@@ -29,7 +31,7 @@ class Preview extends SurfaceView implements SurfaceHolder.Callback {
 	public Camera camera;
 	boolean retry = false;
 	protected Object lock = new Object();
-	public Bitmap previewBitmap = null;
+	public byte previewBitmapData[] = null;
 	
 	Preview(Context context) {
 		super(context);
@@ -63,6 +65,8 @@ class Preview extends SurfaceView implements SurfaceHolder.Callback {
 								{
 							    	int w = parameters.getPreviewSize().width;
 							    	int h = parameters.getPreviewSize().height;
+							    	Intelligence.console.consoleBitmap(NativeGraphics.yuvToRGB(data, w, h));
+							    	/*
 							    	YuvImage yuv_image = new YuvImage(data, format, w, h, null);
 							    	Rect rect = new Rect(0, 0, w, h);
 									ByteArrayOutputStream pBmpStream = new ByteArrayOutputStream();
@@ -70,9 +74,8 @@ class Preview extends SurfaceView implements SurfaceHolder.Callback {
 									synchronized (lock) {
 										previewBitmap = BitmapFactory.decodeByteArray(pBmpStream.toByteArray(), 0, pBmpStream.size());
 										lock.notify();
-									}
+									}*/
 								}
-								Log.e(TAG, "!!!!!!!!!!!!!!!!");
 							}
 						});
 					}
