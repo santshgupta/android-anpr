@@ -32,12 +32,14 @@ public class NativeGraphics {
 	public static Bitmap nativeSobel(Bitmap src, int[] template) {
 		Bitmap destBitmap = Bitmap.createBitmap(src.getWidth(), src.getHeight(), Bitmap.Config.ARGB_8888);
 		nativeSobel(src, destBitmap, template);
+		src.recycle();
 		return destBitmap;
 	}
 	
 	public static Bitmap convert565to8888(Bitmap src) {
 		Bitmap destBitmap = Bitmap.createBitmap(src.getWidth(), src.getHeight(), Bitmap.Config.ARGB_8888);
 		nativeConvert565to8888(src, destBitmap);
+		src.recycle();
 		return destBitmap;
 	}
 	
@@ -48,12 +50,14 @@ public class NativeGraphics {
 	public static Bitmap getHSVBrightness(Bitmap src, float[] peaks) {
 		Bitmap destBitmap = Bitmap.createBitmap(src.getWidth(), src.getHeight(), Bitmap.Config.ARGB_8888);
 		nativeGetHSVBrightness(src, peaks);
+		src.recycle();
 		return destBitmap;
 	}
 	
 	public static Bitmap getHSVBrightnessHorizontally(Bitmap src, float[] peaks) {
 		Bitmap destBitmap = Bitmap.createBitmap(src.getWidth(), src.getHeight(), Bitmap.Config.ARGB_8888);
 		nativeGetHSVBrightnessHorizontally(src, peaks);
+		src.recycle();
 		return destBitmap;
 	}
 	/**
@@ -65,28 +69,33 @@ public class NativeGraphics {
 	public static Bitmap treshold(Bitmap src, int cnt) {
 		Bitmap destBitmap = Bitmap.createBitmap(src.getWidth(), src.getHeight(), Bitmap.Config.ARGB_8888);
 		nativeTreshold(src, destBitmap, cnt);
+		src.recycle();
 		return destBitmap;
 	}
 	public static Bitmap adaptiveTreshold(Bitmap src) {
 		Bitmap destBitmap = Bitmap.createBitmap(src.getWidth(), src.getHeight(), Bitmap.Config.ARGB_8888);
 		nativeAdaptiveTreshold(src, destBitmap);
+		src.recycle();
 		return destBitmap;
 	}
 	public static Bitmap convolve(Bitmap src, int[] template, int kernelCountRows, int kernelCountCols, int filterDiv, int offset) {
 		Bitmap destBitmap = Bitmap.createBitmap(src.getWidth(), src.getHeight(), Bitmap.Config.ARGB_8888);
 		nativeConvolve(src, destBitmap, template, kernelCountRows, kernelCountCols, filterDiv, offset);
+		src.recycle();
 		return destBitmap;
 	}
 	
 	public static Bitmap fullEdgeDetector(Bitmap source) {
 		Bitmap destBitmap = Bitmap.createBitmap(source.getWidth(), source.getHeight(), Bitmap.Config.ARGB_8888);
 		nativeFullEdgeDetector(source, destBitmap);
+		source.recycle();
 		return destBitmap;
 	}
 	
 	public static Bitmap wiener(Bitmap source) {
 		Bitmap destBitmap = Bitmap.createBitmap(source.getWidth(), source.getHeight(), Bitmap.Config.ARGB_8888);
 		nativeWiener(source, destBitmap);
+		source.recycle();
 		return destBitmap;
 	}
 	

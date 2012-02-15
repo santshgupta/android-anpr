@@ -1,4 +1,5 @@
 package com.intelligence;
+import intelligence.intelligence.Intelligence;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
@@ -18,8 +19,7 @@ public class intelligencyActivity extends Activity {
         
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);                                                                                           
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,                                                                         
-        WindowManager.LayoutParams.FLAG_FULLSCREEN);                                                                                  
-        this.getWindow().setWindowAnimations(0);  
+        WindowManager.LayoutParams.FLAG_FULLSCREEN);      
         
         /**
          * The main processing engine 
@@ -27,9 +27,34 @@ public class intelligencyActivity extends Activity {
         
         
         mView = new Preview(this);                                                                                                                                                      
-        view = new DrawCanvasView(this, mView);                                                                                                                      
-        view.refresh();
+        view = new DrawCanvasView(this, mView);  
+       // view.refresh();
         setContentView(mView);                                                                                                                                
         addContentView(view, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
     }
+    
+    boolean retry = false;
+    @Override
+    protected void onPause() {
+    	super.onPause();
+    	view._cThread._run = false;
+		retry = true;
+		while (retry) {
+
+			Intelligence.console.console("ON STOP!!!!!!!!!!!");
+			try {
+				view._cThread.join();
+				retry = false;
+			} catch (InterruptedException e) {}
+		}
+		view._cThread = null;
+		System.gc();
+    }
+    
+    @Override
+    protected void onResume() {
+    	super.onResume();
+    	view.refresh();
+    }
+    
 }

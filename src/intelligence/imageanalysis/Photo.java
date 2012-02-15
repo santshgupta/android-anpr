@@ -55,10 +55,10 @@ public class Photo {
         		height_tmp = 600;
         		width_tmp = (int)((double)height_tmp * averageImg);
         	}
-        	this.originalImage = duplicateImage(bmp);
+        	this.originalImage = bmp;
         }
         this.image = averageResizeBi(bmp, width_tmp, height_tmp);
-        bmp.recycle();
+        //bmp.recycle();
 	}
 
 	public Photo clone() {
