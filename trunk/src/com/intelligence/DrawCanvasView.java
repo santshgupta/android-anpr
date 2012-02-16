@@ -75,7 +75,7 @@ public class DrawCanvasView extends View implements OnTouchListener {
 		DrawCanvasView.this.preview = preview;
 		
 		try {
-			//systemLogic 	= new Intelligence (true, cnv, this);
+			systemLogic = new Intelligence (true, cnv, this);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
