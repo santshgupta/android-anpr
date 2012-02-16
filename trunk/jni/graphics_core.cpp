@@ -169,7 +169,9 @@ void GraphicsCore :: yuvToRGB(JNIEnv* env, jclass javaThis, jbyteArray bitmapDat
 		LOGE("AndroidBitmap_lockPixels() failed ! error=%d", ret);
 	}
 
-	uint8_t *destData = (uint8_t *) pixelsgray;
+	//uint8_t *destData = (uint8_t *) pixelsgray;
+	uint32_t destData[123] = {};
+	uint32_t *ddPtr = destData;
 	int width = infogray.width;
 	/*
 	int i, j;
@@ -210,54 +212,28 @@ void GraphicsCore :: yuvToRGB(JNIEnv* env, jclass javaThis, jbyteArray bitmapDat
 	__asm__ __volatile__
 	(
 			// Clear memory
-			"mov r5, #0 \n\t"
-			"mov r6, #0 \n\t"
-			"vdup.i32 d0, r5  \n\t"
-			"vdup.i32 d1, r5  \n\t"
-			"vdup.i32 d2, r5  \n\t"
-			"vdup.i32 d3, r5  \n\t"
-			"vdup.i32 d4, r5  \n\t"
-			"vdup.i32 d8, r5  \n\t"
-			"vdup.i32 d9, r5  \n\t"
-			"vdup.i32 d10, r5  \n\t"
-			"vdup.i32 d20, r5  \n\t"
-			"vdup.i32 d21, r5  \n\t"
-			"vdup.i32 d22, r5  \n\t"
+			"mov r5, #0 								\n\t"
+			"mov r6, #0 								\n\t"
+			"vdup.i32 d0, r5  							\n\t"
+			"vdup.i32 d1, r5  							\n\t"
+			"vdup.i32 d2, r5  							\n\t"
+			"vdup.i32 d3, r5  							\n\t"
 
+			"vld1.8 {d0}, [%[x]] 						\n\t"
+			"vld1.8 {d1}, [%[x]] 						\n\t"
+			"vld1.8 {d2}, [%[x]]! 						\n\t"
 
-			// clear counter
-			//"vdup.i32 d20, r5  										\n\t"
-			// First 4 pixels
-			//"1:													  \n\t"
+			"vst4.8    {d0[0], d1[0], d2[0], d3[0]}, [%[dest]]!    \n"
+			"vst4.8    {d0[1], d1[1], d2[1], d3[1]}, [%[dest]]!    \n"
+			"vst4.8    {d0[2], d1[2], d2[2], d3[2]}, [%[dest]]!    \n"
+			"vst4.8    {d0[3], d1[3], d2[3], d3[3]}, [%[dest]]!    \n"
+			"vst4.8    {d0[4], d1[4], d2[4], d3[4]}, [%[dest]]!    \n"
+			"vst4.8    {d0[5], d1[5], d2[5], d3[5]}, [%[dest]]!    \n"
+			"vst4.8    {d0[6], d1[6], d2[6], d3[6]}, [%[dest]]!    \n"
+			"vst4.8    {d0[7], d1[7], d2[7], d3[7]}, [%[dest]]!    \n"
 
-			//"add r6, r6, #1 \n\t"
-
-			//"vld4.8 		{d0, d1, d2, d3}, [%[x]] \n\t"
-			"vld4.8 		{d0[0], d1[0], d2[0], d3[0]}, [%[x]]! \n\t"
-			"vld4.8 		{d0[2], d1[2], d2[2], d3[2]}, [%[x]]! \n\t"
-			"vld4.8 		{d0[4], d1[4], d2[4], d3[4]}, [%[x]]! \n\t"
-			"vld4.8 		{d0[6], d1[6], d2[6], d3[6]}, [%[x]]! \n\t"
-			// 16bit long red
-			//"vst1.16 	{d22[0]}, [%[rptr]] \n\t"
-			// 16bit long green
-			//"vst1.16 	{d21[0]}, [%[gptr]] \n\t"
-			// 16bit long blue
-			//"vst1.16 	{d20[0]}, [%[bptr]] \n\t"
-
-
-			//"vst4.8    {d0, d1, d2, d3}, [%[rptr]]! \n\t"
-			//"vst1.8 	{d0[0]}, [%1]				 \n\t"
-			//"vst1.8 	{d1}, [%[rptr]!]				 \n\t"
-			//"vst1.8 	{d2}, [%[rptr]]!				 \n\t"
-			//"vst1.8 	{d3}, [%[rptr]]				 \n\t"
-			// clear accumulators
-			//"vdup.i32 d20, r5  \n\t"
-			//"vdup.i32 d21, r5  \n\t"
-			//"vdup.i32 d22, r5  \n\t"
-			//"subs       %[wdth], %[wdth], #8           \n\t"
-			//"bhi        1b                             \n\t"
 			: [x] "+r" (src),
-			"+r" (destData),
+			[dest] "+r" (ddPtr),
 			[wdth] "+r" (width)
 			:
 			// registers
