@@ -66,6 +66,7 @@ class Preview extends SurfaceView implements SurfaceHolder.Callback {
 							    	int w = parameters.getPreviewSize().width;
 							    	int h = parameters.getPreviewSize().height;
 							    	Intelligence.console.consoleBitmap(NativeGraphics.yuvToRGB(data, w, h));
+							    	Intelligence.console.console("OK!");
 							    	/*
 							    	YuvImage yuv_image = new YuvImage(data, format, w, h, null);
 							    	Rect rect = new Rect(0, 0, w, h);
