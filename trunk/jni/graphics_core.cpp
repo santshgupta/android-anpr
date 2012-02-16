@@ -169,59 +169,27 @@ void GraphicsCore :: yuvToRGB(JNIEnv* env, jclass javaThis, jbyteArray bitmapDat
 		LOGE("AndroidBitmap_lockPixels() failed ! error=%d", ret);
 	}
 
-	//uint8_t *destData = (uint8_t *) pixelsgray;
+	//uint32_t *ddPtr = (uint32_t *) pixelsgray;
 	uint32_t destData[123] = {};
 	uint32_t *ddPtr = destData;
-	int width = infogray.width;
-	/*
-	int i, j;
-	uint8_t nY;
-	for (i = 0; i < infogray.height; i++) {
-	    for (j = 0; j < infogray.width; j++) {
-	    	nY = *(src + i * infogray.width + j);
-	    	destData[i * infogray.width + j] = 0xff000000 | (nY) | (nY << 8)
-	    														| (nY << 16);
-	    }
-	}
-	*/
-	/*
-	__asm__ __volatile__ (
-		"vld1.u8    {d24}, [%5]                    \n"
-		"vld1.u8    {d25}, [%6]                    \n"
-		"vmov.u8    d26, #128                      \n"
-		"vmov.u16   q14, #74                       \n"
-		"vmov.u16   q15, #16                       \n"
-	  "1:                                          \n"
-	YUVTORGB
-		"vmov.u8    d21, d16                       \n"
-		"vmov.u8    d23, #255                      \n"
-		"vst4.u8    {d20, d21, d22, d23}, [%3]!    \n"
-		"subs       %4, %4, #8                     \n"
-		"bhi        1b                             \n"
-		: "+r"(y_buf),          // %0
-		  "+r"(u_buf),          // %1
-		  "+r"(v_buf),          // %2
-		  "+r"(rgb_buf),        // %3
-		  "+r"(width)           // %4
-		: "r"(kUVToRB),
-		  "r"(kUVToG)
-		: "cc", "memory", "q0", "q1", "q2", "q3", "q8", "q9",
-						  "q10", "q11", "q12", "q13", "q14", "q15"
-	  );
-*/
-	__asm__ __volatile__
-	(
-			// Clear memory
-			"mov r5, #0 								\n\t"
-			"mov r6, #0 								\n\t"
-			"vdup.i32 d0, r5  							\n\t"
-			"vdup.i32 d1, r5  							\n\t"
-			"vdup.i32 d2, r5  							\n\t"
-			"vdup.i32 d3, r5  							\n\t"
+	int width = 8;
+	//for (y = 0; y < 3; y++) {
+		//uint8_t *line = (uint8_t*) pixelscolor;
 
-			"vld1.8 {d0}, [%[x]] 						\n\t"
-			"vld1.8 {d1}, [%[x]] 						\n\t"
-			"vld1.8 {d2}, [%[x]]! 						\n\t"
+		__asm__ __volatile__
+		(
+			// Clear memory
+			"mov r5, #0 								\n"
+			"mov r6, #0 								\n"
+			"1:											\n"
+			"vdup.i32 d0, r5  							\n"
+			"vdup.i32 d1, r5  							\n"
+			"vdup.i32 d2, r5  							\n"
+			"vdup.i32 d3, r5  							\n"
+
+			"vld1.8 {d0}, [%[x]] 						\n"
+			"vld1.8 {d1}, [%[x]] 						\n"
+			"vld1.8 {d2}, [%[x]]! 						\n"
 
 			"vst4.8    {d0[0], d1[0], d2[0], d3[0]}, [%[dest]]!    \n"
 			"vst4.8    {d0[1], d1[1], d2[1], d3[1]}, [%[dest]]!    \n"
@@ -231,15 +199,18 @@ void GraphicsCore :: yuvToRGB(JNIEnv* env, jclass javaThis, jbyteArray bitmapDat
 			"vst4.8    {d0[5], d1[5], d2[5], d3[5]}, [%[dest]]!    \n"
 			"vst4.8    {d0[6], d1[6], d2[6], d3[6]}, [%[dest]]!    \n"
 			"vst4.8    {d0[7], d1[7], d2[7], d3[7]}, [%[dest]]!    \n"
-
+			"subs       %[wdth], %[wdth], #8                     	\n"
+			"bhi        1b											\n"
 			: [x] "+r" (src),
 			[dest] "+r" (ddPtr),
 			[wdth] "+r" (width)
 			:
 			// registers
 			: "cc", "d0", "d1", "d2", "d3", "d4", "d5", "d6", "d7", "d8", "d9", "d10", "d11", "d12", "d13", "d14","memory"
-	);
+		);
 
+		//pixelscolor = (char *) pixelscolor + infoSource.stride;
+	//}
 
 	LOGI("unlocking pixels");
 	//AndroidBitmap_unlockPixels(env, bitmapcolor);
