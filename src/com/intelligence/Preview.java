@@ -1,35 +1,19 @@
 package com.intelligence;
 
-import intelligence.intelligence.Intelligence;
-
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
-import com.graphics.NativeGraphics;
-
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.ImageFormat;
-import android.graphics.Rect;
-import android.graphics.YuvImage;
 import android.hardware.Camera;
 import android.hardware.Camera.PreviewCallback;
-import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 class Preview extends SurfaceView implements SurfaceHolder.Callback {
-	private static final String TAG = "Preview";
 	public boolean makeSnapshot = true;
-	private ExecutorService pool;
 	public Camera.Size cs = null;
-	SurfaceHolder mHolder;
+	private SurfaceHolder mHolder;
 	public Camera camera;
-	boolean retry = false;
 	protected Object lock = new Object();
 	public byte[] previewBitmapData;
 	
@@ -43,7 +27,6 @@ class Preview extends SurfaceView implements SurfaceHolder.Callback {
 	public void surfaceCreated(SurfaceHolder holder) {
 
 		camera = Camera.open();
-		pool = Executors.newFixedThreadPool(5);
 		try {
 			camera.setPreviewDisplay(holder); 
 			camera.setPreviewCallback(new PreviewCallback() {
@@ -52,38 +35,6 @@ class Preview extends SurfaceView implements SurfaceHolder.Callback {
 					synchronized (lock) {
 						previewBitmapData = data;
 					}
-					//if (retry)
-	        		//	  return;
-					//if (makeSnapshot == true) {
-					//	makeSnapshot = false;
-				
-						///pool.submit(new Runnable() {
-							
-						//	@Override
-						//	public void run() {
-						//		Camera.Parameters parameters = camera.getParameters();
-						//		int format = parameters.getPreviewFormat();
-						//		if (format == ImageFormat.NV21)
-						//		{
-						//	    	int w = parameters.getPreviewSize().width;
-						//	    	int h = parameters.getPreviewSize().height;
-							    	
-							    	//NativeGraphics.yuvToRGB(data, w, h);
-							    	//Intelligence.console.console("OK!");
-							    	
-							    	//YuvImage yuv_image = new YuvImage(data, format, w, h, null);
-							    	//Rect rect = new Rect(0, 0, w, h);
-									//ByteArrayOutputStream pBmpStream = new ByteArrayOutputStream();
-									//yuv_image.compressToJpeg(rect, 100, pBmpStream);
-									
-						//			synchronized (lock) {
-						//				NativeGraphics.yuvToRGB(data, w, h);//BitmapFactory.decodeByteArray(pBmpStream.toByteArray(), 0, pBmpStream.size());
-						//				lock.notify();
-						//			}
-						//		}
-						//	}
-						//});
-					//}
 				}
 			});
 		} catch (IOException exception) {
@@ -93,8 +44,6 @@ class Preview extends SurfaceView implements SurfaceHolder.Callback {
 	}
  
 	public void surfaceDestroyed(SurfaceHolder holder) {
-		retry = true;
-		pool.shutdown();
         camera.setPreviewCallback(null);
 		camera.stopPreview();
 		camera.release();

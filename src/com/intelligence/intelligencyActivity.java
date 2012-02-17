@@ -1,5 +1,4 @@
 package com.intelligence;
-import intelligence.intelligence.Intelligence;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
@@ -16,16 +15,9 @@ public class intelligencyActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         cntxt = this;
-        
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);                                                                                           
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,                                                                         
         WindowManager.LayoutParams.FLAG_FULLSCREEN);      
-        
-        /**
-         * The main processing engine 
-         */
-        
-        
         mView = new Preview(this);                                                                                                                                                      
         view = new DrawCanvasView(this, mView);  
         setContentView(mView);                                                                                                                                
@@ -37,8 +29,7 @@ public class intelligencyActivity extends Activity {
     protected void onPause() {
     	super.onPause();
     	view._cThread._run = false;
-		view._cThread.cancel();
-		view._cThread = null;
+    	view._cThread = null;
 		System.gc();
     }
     

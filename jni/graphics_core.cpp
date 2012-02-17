@@ -166,6 +166,7 @@ void GraphicsCore :: yuvToRGB(JNIEnv* env, jclass javaThis, jbyteArray bitmapDat
 
 	uint32_t *ddPtr = (uint32_t *) pixelsgray;
 	int len = infogray.width * infogray.height;
+#ifdef __ARM_NEON__
 	typedef signed char __attribute__((vector_size(16))) vec8;
 	static const vec8 kUVToRB[8]  = { 255, 255, 255, 255, 255, 255, 255, 255 };
 
@@ -200,7 +201,7 @@ void GraphicsCore :: yuvToRGB(JNIEnv* env, jclass javaThis, jbyteArray bitmapDat
 		"vst4.8    {d0[6], d1[6], d2[6], d3[6]}, [%[dest]]!    \n"
 		"vst4.8    {d0[7], d1[7], d2[7], d3[7]}, [%[dest]]!    \n"
 
-		// substract counter while it don't attepted zero
+		// Subtract counter while it don't attempted zero
 		"subs       %[l], %[l], #8     		                	\n"
 		"bhi        1b											\n"
 		:
@@ -213,6 +214,11 @@ void GraphicsCore :: yuvToRGB(JNIEnv* env, jclass javaThis, jbyteArray bitmapDat
 		// registers
 		: "cc", "d0", "d1", "d2", "d3", "d4", "d5", "d6", "d7", "d8", "d9", "d10", "d11", "d12", "d13", "d14","memory"
 	);
+#else
+	for (int i = 0; i < len; i++) {
+		ddPtr[i] = 0xff000000 | (src[i]) | (src[i] << 8) | (src[i] << 16);
+	}
+#endif
 	LOGI("unlocking pixels");
 	env->ReleaseByteArrayElements(bitmapData, src, JNI_ABORT);
 	AndroidBitmap_unlockPixels(env, bitmapgray);
