@@ -181,9 +181,9 @@ public class CarSnapshot extends Photo {
     	int imageWidthIteration = imageWidth / step;
     	int imageLength = imageWidthIteration * step;
     	
-    	Bitmap dest = NativeGraphics.convert565to8888(image); //Preprocessing for source image
-    	dest = verticalEdgeBi(dest); 
-    	Intelligence.console.consoleBitmap(dest);
+    	//Bitmap dest = NativeGraphics.convert565to8888(image); //Preprocessing for source image
+    	Bitmap dest = verticalEdgeBi(image); 
+    	Intelligence.console.consoleBitmap(image);
     	dest = NativeGraphics.treshold(dest, 80);
     	
     	/**

@@ -156,6 +156,7 @@ public class Intelligence {
         		//console.console("Band height : "+b.getHeight()+" px");
             }
             for (Plate plate : b.getPlates()) {//doporucene 3
+            	/*
             	if (enableReportGeneration) {
             		//console.console("Plate width : "+plate.getWidth()+" px");
             		//console.console("Plate height : "+plate.getHeight()+" px");
@@ -315,10 +316,10 @@ public class Intelligence {
                 	//console.console("_RECOGNIZED_ : " + parsedOutput);
                 }
                 plate.image.recycle();
-                plate.plateCopy.image.recycle();
+                plate.plateCopy.image.recycle();*/
             }
-            b.image.recycle();
-            System.gc();
+           // b.image.recycle();
+           // System.gc();
         }
         return parsedOutput;
     }

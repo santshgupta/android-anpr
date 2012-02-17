@@ -3,6 +3,7 @@ package com.intelligence;
 import intelligence.imageanalysis.CarSnapshot;
 import intelligence.intelligence.Intelligence;
 
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -23,7 +24,7 @@ import android.view.View.OnTouchListener;
 
 public class DrawCanvasView extends View implements OnTouchListener {
 	
-	private Bitmap 		 	b 					= Bitmap.createBitmap(960, 2500, Bitmap.Config.ARGB_8888);
+	public Bitmap 		 	b; 
 	private final String 	___FILE_NAME___  	= "./test/9.jpg";
 	private Paint 			paint 				= new Paint(Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG);
 	
@@ -43,7 +44,7 @@ public class DrawCanvasView extends View implements OnTouchListener {
 	public CarSnapshot c = null;
 	public Timer timer = new Timer();
 	
-	public class CommonThread extends TimerTask {
+	public class CommonThread extends Thread {
         public boolean _run = false;
      
         public CommonThread() {
@@ -51,61 +52,51 @@ public class DrawCanvasView extends View implements OnTouchListener {
      
         @Override
         public void run() {
-    		try {
-    			Log.d("intelligence_debug","!!!!!!ok!!1!!!");
-				//preview.makeSnapshot = true;
-				synchronized (preview.lock) {
+        	while(_run){
+        		synchronized (preview.lock) {
 					if (preview.previewBitmapData != null) {
-						Bitmap bbb = NativeGraphics.yuvToRGB(preview.previewBitmapData, preview.cs.width, preview.cs.height);
-						bbb.recycle();
-						bbb = null;
-						System.gc();
-					}
-						//	if (preview.previewBitmap == null) {
-				/////		preview.lock.wait();
-					Log.d("intelligence_debug","!!!!!!ok!!3!!!");
+						CarSnapshot c;
+						try {
+							c = new CarSnapshot (NativeGraphics.yuvToRGB(preview.previewBitmapData, preview.cs.width, preview.cs.height), 1);
+							HashSet<String> number          = systemLogic.recognize(c);
+	                        Log.d("intelligence_debug", "recognized: " + number);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}					
 				}
-				//	c = new CarSnapshot (preview.previewBitmap, 1);
-				//}
-					//	Bitmap bmpTmp = Preview.bmp.copy(Config.ARGB_8888, true);
-				
-				//HashSet<String> number 		= systemLogic.recognize(c);
-				//Intelligence.console.console("recognized: " + number);
-				//c = null;
-				//System.gc();
-			} catch (Exception e) {
-				Log.e("intelligence_error", e.toString());
-				e.printStackTrace();
-			}
+        		try {
+					Thread.sleep(5000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+        	}
         }
     }
 	
 	
 	public DrawCanvasView(Context context, Preview preview) {
 		super(context);
+		b = Bitmap.createBitmap(800, 1200, Bitmap.Config.ARGB_8888);
 		Canvas cnv = new Canvas(b);
 		DrawCanvasView.this.preview = preview;
-		
 		try {
 			systemLogic = new Intelligence (true, cnv, this);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
 		Activity a = (Activity)this.getContext();
 		Display d = a.getWindowManager().getDefaultDisplay();
 		displayWidth = d.getWidth();
 		displayHeight = d.getHeight();
-		
 		setFocusable(true);
 		setOnTouchListener(this);
 	}
 
 	public void refresh() {	
-		
 		this._cThread = new CommonThread();
         this._cThread._run = true;
-        timer.scheduleAtFixedRate(this._cThread, 0, 10000); 
+        this._cThread.start();
 	}
 	
 	@Override

@@ -58,7 +58,7 @@ public class Photo {
         	this.originalImage = bmp;
         }
         this.image = averageResizeBi(bmp, width_tmp, height_tmp);
-        //bmp.recycle();
+        bmp.recycle();
 	}
 
 	public Photo clone() {

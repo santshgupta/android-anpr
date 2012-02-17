@@ -1,7 +1,7 @@
-#Thu Aug 11 11:18:52 MSD 2011
+#Thu Feb 16 00:07:06 MSK 2012
 eclipse.preferences.version=1
 environment/project/0.1183507369/NDK/delimiter=\:
-environment/project/0.1183507369/NDK/operation=append
-environment/project/0.1183507369/NDK/value=/Users/azhdanov/work/android-ndk-r6
+environment/project/0.1183507369/NDK/operation=replace
+environment/project/0.1183507369/NDK/value=/Users/azhdanov/work/android-ndk-r7b
 environment/project/0.1183507369/append=true
 environment/project/0.1183507369/appendContributed=true
