@@ -28,7 +28,6 @@ public class intelligencyActivity extends Activity {
         
         mView = new Preview(this);                                                                                                                                                      
         view = new DrawCanvasView(this, mView);  
-       // view.refresh();
         setContentView(mView);                                                                                                                                
         addContentView(view, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
     }
@@ -38,15 +37,7 @@ public class intelligencyActivity extends Activity {
     protected void onPause() {
     	super.onPause();
     	view._cThread._run = false;
-		retry = true;
-		while (retry) {
-
-			Intelligence.console.console("ON STOP!!!!!!!!!!!");
-			try {
-				view._cThread.join();
-				retry = false;
-			} catch (InterruptedException e) {}
-		}
+		view._cThread.cancel();
 		view._cThread = null;
 		System.gc();
     }
