@@ -26,12 +26,12 @@ class Preview extends SurfaceView implements SurfaceHolder.Callback {
 	private static final String TAG = "Preview";
 	public boolean makeSnapshot = true;
 	private ExecutorService pool;
-	private Camera.Size cs = null;
+	public Camera.Size cs = null;
 	SurfaceHolder mHolder;
 	public Camera camera;
 	boolean retry = false;
 	protected Object lock = new Object();
-	public byte previewBitmapData[] = null;
+	public byte[] previewBitmapData;
 	
 	Preview(Context context) {
 		super(context);
@@ -49,37 +49,41 @@ class Preview extends SurfaceView implements SurfaceHolder.Callback {
 			camera.setPreviewCallback(new PreviewCallback() {
  
 				public void onPreviewFrame(final byte[] data, Camera arg1) {
-					
-					if (retry)
-	        			  return;
-					if (makeSnapshot == true) {
-						makeSnapshot = false;
-				
-						pool.submit(new Runnable() {
-							
-							@Override
-							public void run() {
-								Camera.Parameters parameters = camera.getParameters();
-								int format = parameters.getPreviewFormat();
-								if (format == ImageFormat.NV21)
-								{
-							    	int w = parameters.getPreviewSize().width;
-							    	int h = parameters.getPreviewSize().height;
-							    	Intelligence.console.consoleBitmap(NativeGraphics.yuvToRGB(data, w, h));
-							    	Intelligence.console.console("OK!");
-							    	/*
-							    	YuvImage yuv_image = new YuvImage(data, format, w, h, null);
-							    	Rect rect = new Rect(0, 0, w, h);
-									ByteArrayOutputStream pBmpStream = new ByteArrayOutputStream();
-									yuv_image.compressToJpeg(rect, 100, pBmpStream);
-									synchronized (lock) {
-										previewBitmap = BitmapFactory.decodeByteArray(pBmpStream.toByteArray(), 0, pBmpStream.size());
-										lock.notify();
-									}*/
-								}
-							}
-						});
+					synchronized (lock) {
+						previewBitmapData = data;
 					}
+					//if (retry)
+	        		//	  return;
+					//if (makeSnapshot == true) {
+					//	makeSnapshot = false;
+				
+						///pool.submit(new Runnable() {
+							
+						//	@Override
+						//	public void run() {
+						//		Camera.Parameters parameters = camera.getParameters();
+						//		int format = parameters.getPreviewFormat();
+						//		if (format == ImageFormat.NV21)
+						//		{
+						//	    	int w = parameters.getPreviewSize().width;
+						//	    	int h = parameters.getPreviewSize().height;
+							    	
+							    	//NativeGraphics.yuvToRGB(data, w, h);
+							    	//Intelligence.console.console("OK!");
+							    	
+							    	//YuvImage yuv_image = new YuvImage(data, format, w, h, null);
+							    	//Rect rect = new Rect(0, 0, w, h);
+									//ByteArrayOutputStream pBmpStream = new ByteArrayOutputStream();
+									//yuv_image.compressToJpeg(rect, 100, pBmpStream);
+									
+						//			synchronized (lock) {
+						//				NativeGraphics.yuvToRGB(data, w, h);//BitmapFactory.decodeByteArray(pBmpStream.toByteArray(), 0, pBmpStream.size());
+						//				lock.notify();
+						//			}
+						//		}
+						//	}
+						//});
+					//}
 				}
 			});
 		} catch (IOException exception) {

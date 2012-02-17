@@ -4,6 +4,7 @@
 package com.graphics;
 
 import android.graphics.Bitmap;
+import android.util.Log;
 
 public class NativeGraphics {
 
@@ -100,8 +101,12 @@ public class NativeGraphics {
 	}
 	
 	public static Bitmap yuvToRGB(byte[] source, int width, int height) {
+		Log.d("intelligence_debug","!!!!!!ok!!7!!!");
 		Bitmap destBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+		Log.d("intelligence_debug","!!!!!!ok!!8!!!");
 		nativeYuvToRGB(source, destBitmap);
+		Log.d("intelligence_debug","!!!!!!ok!!9!!!");
+		System.gc();
 		return destBitmap;
 	}
 	

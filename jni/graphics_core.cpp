@@ -139,81 +139,82 @@ void GraphicsCore :: fullEdgeDetector(JNIEnv* env, jclass javaThis, jobject bitm
 /////////////////////////////////////// YUV TO RGB CONVERTER ///////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void GraphicsCore :: yuvToRGB(JNIEnv* env, jclass javaThis, jbyteArray bitmapData, jobject bitmapgray) {
-
 	AndroidBitmapInfo infogray;
 	void* pixelsgray;
 	uint8_t redColor, greenColor, blueColor;
 	int ret, y, x;
-
 	LOGI("GraphicsCore::yuvToRGB");
+
 	#ifdef __ARM_NEON__
 		LOGI("Neon support - ok/ armv7: 2.6.29-g582a0f5 #38 / default: 2.6.29-00261-g0097074-dirty #20 / armv5: 2.6.29-g582a0f5 digit@lulu #37" );
 	#endif
-	/**
-	 * Get kernel
-	 */
-	uint8_t *src = (uint8_t*)env->GetByteArrayElements(bitmapData, NULL);
+
+	jbyte *src = env->GetByteArrayElements(bitmapData, NULL);
 
 	if ((ret = AndroidBitmap_getInfo(env, bitmapgray, &infogray)) < 0) {
 		LOGE("AndroidBitmap_getInfo() failed 2 ! error=%d", ret);
 		return;
 	}
-
 	LOGI("gray image :: width is %d; height is %d; stride is %d; format is %d;flags is%d",infogray.width,infogray.height,infogray.stride,infogray.format,infogray.flags);
 	if (infogray.format != ANDROID_BITMAP_FORMAT_RGBA_8888) {
 		LOGE("Bitmap output format is not RGBA_8888 4 ! format=%d", infogray.format);
 		return;
 	}
-
 	if ((ret = AndroidBitmap_lockPixels(env, bitmapgray, &pixelsgray)) < 0) {
 		LOGE("AndroidBitmap_lockPixels() failed ! error=%d", ret);
 	}
 
-	//uint32_t *ddPtr = (uint32_t *) pixelsgray;
-	uint32_t destData[123] = {};
-	uint32_t *ddPtr = destData;
-	int width = 8;
-	//for (y = 0; y < 3; y++) {
-		//uint8_t *line = (uint8_t*) pixelscolor;
+	uint32_t *ddPtr = (uint32_t *) pixelsgray;
+	int len = infogray.width * infogray.height;
+	typedef signed char __attribute__((vector_size(16))) vec8;
+	static const vec8 kUVToRB[8]  = { 255, 255, 255, 255, 255, 255, 255, 255 };
 
-		__asm__ __volatile__
-		(
-			// Clear memory
-			"mov r5, #0 								\n"
-			"mov r6, #0 								\n"
-			"1:											\n"
-			"vdup.i32 d0, r5  							\n"
-			"vdup.i32 d1, r5  							\n"
-			"vdup.i32 d2, r5  							\n"
-			"vdup.i32 d3, r5  							\n"
+	__asm__ __volatile__
+	(
+		// Clear memory
+		"mov r5, #0 								\n"
+		"mov r6, #0 								\n"
 
-			"vld1.8 {d0}, [%[x]] 						\n"
-			"vld1.8 {d1}, [%[x]] 						\n"
-			"vld1.8 {d2}, [%[x]]! 						\n"
+		// load in d3 RGB alpha-channel (a <- rgb)
+		"vld1.8 {d3}, [%[vec]]		 				\n"
 
-			"vst4.8    {d0[0], d1[0], d2[0], d3[0]}, [%[dest]]!    \n"
-			"vst4.8    {d0[1], d1[1], d2[1], d3[1]}, [%[dest]]!    \n"
-			"vst4.8    {d0[2], d1[2], d2[2], d3[2]}, [%[dest]]!    \n"
-			"vst4.8    {d0[3], d1[3], d2[3], d3[3]}, [%[dest]]!    \n"
-			"vst4.8    {d0[4], d1[4], d2[4], d3[4]}, [%[dest]]!    \n"
-			"vst4.8    {d0[5], d1[5], d2[5], d3[5]}, [%[dest]]!    \n"
-			"vst4.8    {d0[6], d1[6], d2[6], d3[6]}, [%[dest]]!    \n"
-			"vst4.8    {d0[7], d1[7], d2[7], d3[7]}, [%[dest]]!    \n"
-			"subs       %[wdth], %[wdth], #8                     	\n"
-			"bhi        1b											\n"
-			: [x] "+r" (src),
-			[dest] "+r" (ddPtr),
-			[wdth] "+r" (width)
-			:
-			// registers
-			: "cc", "d0", "d1", "d2", "d3", "d4", "d5", "d6", "d7", "d8", "d9", "d10", "d11", "d12", "d13", "d14","memory"
-		);
+		// main cicle
+		"1:											\n"
+		// clear memory
+		"vdup.i32 d0, r5  							\n"
+		"vdup.i32 d1, r5  							\n"
+		"vdup.i32 d2, r5  							\n"
 
-		//pixelscolor = (char *) pixelscolor + infoSource.stride;
-	//}
+		//load 8 pixels in every register
+		"vld1.8 {d0}, [%[x]] 						\n"
+		"vld1.8 {d1}, [%[x]] 						\n"
+		"vld1.8 {d2}, [%[x]]! 						\n"
 
+		// calculate and store to dest pointer
+		"vst4.8    {d0[0], d1[0], d2[0], d3[0]}, [%[dest]]!    \n"
+		"vst4.8    {d0[1], d1[1], d2[1], d3[1]}, [%[dest]]!    \n"
+		"vst4.8    {d0[2], d1[2], d2[2], d3[2]}, [%[dest]]!    \n"
+		"vst4.8    {d0[3], d1[3], d2[3], d3[3]}, [%[dest]]!    \n"
+		"vst4.8    {d0[4], d1[4], d2[4], d3[4]}, [%[dest]]!    \n"
+		"vst4.8    {d0[5], d1[5], d2[5], d3[5]}, [%[dest]]!    \n"
+		"vst4.8    {d0[6], d1[6], d2[6], d3[6]}, [%[dest]]!    \n"
+		"vst4.8    {d0[7], d1[7], d2[7], d3[7]}, [%[dest]]!    \n"
+
+		// substract counter while it don't attepted zero
+		"subs       %[l], %[l], #8     		                	\n"
+		"bhi        1b											\n"
+		:
+		[x] "+r" (src),
+		[dest] "+r" (ddPtr),
+		[l] "+r" (len)
+		:
+		[vec] "r"(kUVToRB)
+
+		// registers
+		: "cc", "d0", "d1", "d2", "d3", "d4", "d5", "d6", "d7", "d8", "d9", "d10", "d11", "d12", "d13", "d14","memory"
+	);
 	LOGI("unlocking pixels");
-	//AndroidBitmap_unlockPixels(env, bitmapcolor);
+	env->ReleaseByteArrayElements(bitmapData, src, JNI_ABORT);
 	AndroidBitmap_unlockPixels(env, bitmapgray);
 }
 
@@ -416,6 +417,8 @@ void GraphicsCore :: sobel(JNIEnv* env, jclass javaThis, jobject bitmapcolor, jo
 	this->processSobelArr(tmpl, infocolor.width, infocolor.height, rgbData, destData);
 
 	LOGI("unlocking pixels");
+
+	env->ReleaseIntArrayElements(krnl, carr, JNI_ABORT);
 	AndroidBitmap_unlockPixels(env, bitmapcolor);
 	AndroidBitmap_unlockPixels(env, bitmapgray);
 }
@@ -980,7 +983,7 @@ void GraphicsCore :: convolve (JNIEnv *env, jobject bitmapSource, jobject bitmap
 	LOGI("finish");
 	//	time_c = t1 - t0;
 	//LOGI("FIR Filter benchmark:C version: %g ms\n", time_c);
-
+	env->ReleaseIntArrayElements(krnl, carr, JNI_ABORT);
 	AndroidBitmap_unlockPixels(env, bitmapSource);
 	AndroidBitmap_unlockPixels(env, bitmapDestination);
 }

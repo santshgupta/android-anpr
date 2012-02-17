@@ -44,8 +44,11 @@ public class Console {
     }
     
     synchronized public void consoleBitmap(Bitmap bmp) {
+    	Log.d("intelligence_debug","!!!!!!ok!!4!!!");
 		this.canvas.drawBitmap(bmp, cWidth, cHeight, this.paint);
+		Log.d("intelligence_debug","!!!!!!ok!!5!!!");
     	cHeight += bmp.getHeight() + 10;
+    	Log.d("intelligence_debug","!!!!!!ok!!6!!!");
         redrawMainView();
 	}
     synchronized public void consoleBitmap(Bitmap bmp, Bitmap bmp2) {

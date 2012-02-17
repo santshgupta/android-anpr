@@ -4,6 +4,10 @@ import intelligence.imageanalysis.CarSnapshot;
 import intelligence.intelligence.Intelligence;
 
 import java.util.HashSet;
+import java.util.Timer;
+import java.util.TimerTask;
+
+import com.graphics.NativeGraphics;
 
 import android.app.Activity;
 import android.content.Context;
@@ -37,7 +41,9 @@ public class DrawCanvasView extends View implements OnTouchListener {
 	private Preview preview;
 	public CommonThread _cThread = null;
 	public CarSnapshot c = null;
-	public class CommonThread extends Thread {
+	public Timer timer = new Timer();
+	
+	public class CommonThread extends TimerTask {
         public boolean _run = false;
      
         public CommonThread() {
@@ -45,25 +51,31 @@ public class DrawCanvasView extends View implements OnTouchListener {
      
         @Override
         public void run() {
-        	while (_run) {
-        		try {
-					//preview.makeSnapshot = true;
-					//synchronized (preview.lock) {
-					//	if (preview.previewBitmap == null) {
-					/////		preview.lock.wait();
-					//	}
-					//	c = new CarSnapshot (preview.previewBitmap, 1);
-					//}
-						//	Bitmap bmpTmp = Preview.bmp.copy(Config.ARGB_8888, true);
-					
-					//HashSet<String> number 		= systemLogic.recognize(c);
-					//Intelligence.console.console("recognized: " + number);
-					//c = null;
-					//System.gc();
-				} catch (Exception e) {
-					Log.e("intelligence_error", e.toString());
-					e.printStackTrace();
+    		try {
+    			Log.d("intelligence_debug","!!!!!!ok!!1!!!");
+				//preview.makeSnapshot = true;
+				synchronized (preview.lock) {
+					if (preview.previewBitmapData != null) {
+						Bitmap bbb = NativeGraphics.yuvToRGB(preview.previewBitmapData, preview.cs.width, preview.cs.height);
+						bbb.recycle();
+						bbb = null;
+						System.gc();
+					}
+						//	if (preview.previewBitmap == null) {
+				/////		preview.lock.wait();
+					Log.d("intelligence_debug","!!!!!!ok!!3!!!");
 				}
+				//	c = new CarSnapshot (preview.previewBitmap, 1);
+				//}
+					//	Bitmap bmpTmp = Preview.bmp.copy(Config.ARGB_8888, true);
+				
+				//HashSet<String> number 		= systemLogic.recognize(c);
+				//Intelligence.console.console("recognized: " + number);
+				//c = null;
+				//System.gc();
+			} catch (Exception e) {
+				Log.e("intelligence_error", e.toString());
+				e.printStackTrace();
 			}
         }
     }
@@ -93,7 +105,7 @@ public class DrawCanvasView extends View implements OnTouchListener {
 		
 		this._cThread = new CommonThread();
         this._cThread._run = true;
-        this._cThread.start();
+        timer.scheduleAtFixedRate(this._cThread, 0, 10000); 
 	}
 	
 	@Override
