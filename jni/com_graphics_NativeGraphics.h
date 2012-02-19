@@ -82,6 +82,10 @@ void JNICALL Java_com_graphics_NativeGraphics_nativeWiener (JNIEnv* ,
 void JNICALL Java_com_graphics_NativeGraphics_nativeYuvToRGB (JNIEnv* ,
 		jclass , jbyteArray , jobject );
 
+void JNICALL Java_com_graphics_NativeGraphics_nativeGetCoefBrightness (JNIEnv* ,
+		jclass , jobject, jbyteArray);
+
+
 #ifdef __cplusplus
 }
 #endif

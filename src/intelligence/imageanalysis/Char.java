@@ -146,6 +146,7 @@ public class Char extends Photo {
         this.pieceHeight = super.getHeight();        
         this.normalizeResizeOnly();
         normalized=true;
+        //Intelligence.console.consoleBitmap(this.image);
     }
     
     private Bitmap getBestPieceInFullColor(Bitmap bi, PixelMap.Piece piece) {

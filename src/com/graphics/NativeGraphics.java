@@ -3,6 +3,7 @@
  */
 package com.graphics;
 
+import intelligence.imageanalysis.Photo;
 import android.graphics.Bitmap;
 import android.util.Log;
 
@@ -23,7 +24,7 @@ public class NativeGraphics {
 	private native static float nativeHoughTransform(Bitmap source);
 	private native static void nativeWiener(Bitmap source, Bitmap destBitmap);
 	private native static void nativeYuvToRGB(byte[] source, Bitmap destBitmap);
-	
+	private native static void nativeGetCoefBrightness(Bitmap source, byte[] arr);
 	/**
 	 * Sobel - http://en.wikipedia.org/wiki/Sobel_operator
 	 * @param src - source Bitmap
@@ -99,6 +100,11 @@ public class NativeGraphics {
 	
 	public static float houghTransform(Bitmap source) {
 		return nativeHoughTransform(source);
+	}
+	public static byte[] getCoefBrightness(Bitmap bi) {
+		byte arr[] = new byte[bi.getWidth() * bi.getHeight()]; 
+		nativeGetCoefBrightness(bi, arr);
+		return arr;
 	}
 }
 

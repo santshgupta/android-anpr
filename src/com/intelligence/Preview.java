@@ -6,6 +6,7 @@ import android.content.Context;
 import android.graphics.ImageFormat;
 import android.hardware.Camera;
 import android.hardware.Camera.PreviewCallback;
+import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
@@ -55,7 +56,12 @@ class Preview extends SurfaceView implements SurfaceHolder.Callback {
 		// the preview.
 		Camera.Parameters parameters = camera.getParameters();
 		List<Camera.Size> sizes = parameters.getSupportedPreviewSizes(); 
-		cs = sizes.get(0); 
+		cs = sizes.get(0);
+		for (Camera.Size s : sizes) {
+			if (s.width > cs.width) {
+				cs = s;
+			}
+		}
 		parameters.setPreviewFormat(ImageFormat.NV21);
 		parameters.setPreviewFrameRate(14);
 		parameters.setPreviewSize(cs.width,cs.height);

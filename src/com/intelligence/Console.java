@@ -23,7 +23,7 @@ public class Console {
 		this.canvas = cnv;
 		this.mainView = mv;
 		this.paint.setColor(Color.WHITE);
-		this.paint.setTextSize(14);
+		this.paint.setTextSize(24);
 		this.canvas.drawText("___Intelligence visual console___", cWidth, cHeight, paint);
 		cHeight += (SPACING + 10);
         redrawMainView();
