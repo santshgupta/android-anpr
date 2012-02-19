@@ -183,13 +183,13 @@ public class CarSnapshot extends Photo {
     	
     	//Bitmap dest = NativeGraphics.convert565to8888(image); //Preprocessing for source image
     	Bitmap dest = verticalEdgeBi(image); 
-    	Intelligence.console.consoleBitmap(image);
+    	//Intelligence.console.consoleBitmap(image);
     	dest = NativeGraphics.treshold(dest, 80);
     	
     	/**
     	 * Render processing - console
     	 */
-    	ConsoleGraph cGraph = Intelligence.console.createConsoleGraph(dest, step);
+    	//ConsoleGraph cGraph = Intelligence.console.createConsoleGraph(dest, step);
     	
 		for (int i = 0; i < imageLength - step; i += step) {
     		
@@ -200,7 +200,7 @@ public class CarSnapshot extends Photo {
             
             for (Peak p : graphHandle.findPeaks(numberOfCandidates, 6, .55f)) {
             	
-            	cGraph.drawLine(i, p.center);
+            	//cGraph.drawLine(i, p.center);
             	
             	boolean isValidPeak = false;
             	for (Challenger elm : out2) {
@@ -279,22 +279,28 @@ public class CarSnapshot extends Photo {
 				y = (int)(Math.max(0, elm.minY - amplify) * coefHeight);
 				w = (int)(Math.max(1,	elm.maxX - elm.minX + amplify) * coefWidth * power);
 				h = (int)(Math.max(1,	elm.maxY - elm.minY + amplify) * coefHeight * power);
-				bi = Bitmap.createBitmap(originalImage, x, y, w, h);
 			} else {
+				originalImage = image;
 				x = Math.max(0, elm.minX - amplify);
 				y = Math.max(0, elm.minY - amplify);
 				w = (int)(Math.max(1,	elm.maxX - elm.minX + amplify) * power);
 				h = (int)(Math.max(1,	elm.maxY - elm.minY + amplify) * power);
-				bi = Bitmap.createBitmap(image, x, y, w, h);
 			}
-			for (Graph.Peak p : computeGraph(NativeGraphics.convert565to8888(bi))) {
+			
+			if (x+w >= originalImage.getWidth())
+				continue;
+			if (y+h >= originalImage.getHeight())
+				continue;
+			bi = Bitmap.createBitmap(originalImage, x, y, w, h);
+			
+			for (Graph.Peak p : computeGraph(bi)) {
                 Bitmap bi2 = Bitmap.createBitmap(bi, 0, p.getLeft(), bi.getWidth(), p.getDiff());
                 out.add(new Band(bi2));
             }
         }
     	out2.clear();
     	out3.clear();
-        
+    	Intelligence.console.clear();
     	return out;
     }
     

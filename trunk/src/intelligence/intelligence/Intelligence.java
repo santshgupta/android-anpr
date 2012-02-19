@@ -137,7 +137,7 @@ public class Intelligence {
     
     public HashSet<String> recognize(CarSnapshot carSnapshot) throws Exception {
     	HashSet<String> parsedOutput = new HashSet<String>(); 
-    	console.clear();
+    	
     	Log.d("intelligence_debug", "recognize:");
 	    int syntaxAnalysisMode = Intelligence.configurator.getIntProperty("intelligence_syntaxanalysis");
         int skewDetectionMode = Intelligence.configurator.getIntProperty("intelligence_skewdetection");
@@ -150,13 +150,14 @@ public class Intelligence {
         int p = 0;
        // console.console("getBands");
         for (Band b : carSnapshot.getBands()) { //doporucene 3
-        	
+        	//console.consoleBitmap(b.image);
         	if (enableReportGeneration) {
         		//console.console("Band width : "+b.getWidth()+" px");
         		//console.console("Band height : "+b.getHeight()+" px");
             }
+            
             for (Plate plate : b.getPlates()) {//doporucene 3
-            	/*
+            	
             	if (enableReportGeneration) {
             		//console.console("Plate width : "+plate.getWidth()+" px");
             		//console.console("Plate height : "+plate.getHeight()+" px");
@@ -176,9 +177,10 @@ public class Intelligence {
                     source.recycle();
                 } 
             	
+            	plate.normalize();
             	//console.consoleBitmap(plate.image);
-                plate.normalize();
-                //console.consoleBitmap(plate.plateCopy.image);
+                
+            	//console.consoleBitmap(plate.plateCopy.image);
                 
                 float plateWHratio = (float)plate.getWidth() / (float)plate.getHeight();
                 //console.console("plate w: " + plate.getWidth() + " plate h: " + plate.getHeight() + " plateWHratio: " + plateWHratio);
@@ -203,19 +205,21 @@ public class Intelligence {
                 if (enableReportGeneration) {
                 	//console.console("Character segmentation");
                 }
+                Intelligence.console.console("normalize...");
                 for (Char chr : chars) {
                 	chr.normalize();
                 }
-                
+                Intelligence.console.console("recognize...");
                 float averageHeight = plate.getAveragePieceHeight(chars);
                 float averageContrast = plate.getAveragePieceContrast(chars);
                 float averageBrightness = plate.getAveragePieceBrightness(chars);
                 float averageHue = plate.getAveragePieceHue(chars);
                 float averageSaturation = plate.getAveragePieceSaturation(chars);
+                
                 for (Char chr : chars) {
                 	//chr.saveImage("./test/444" + chr.toString() + ".jpg");
-                	//Intelligence.console.consoleBitmap(chr.image);
-                    
+                	Intelligence.console.consoleBitmap(chr.image);
+                   
                 	boolean ok = true;
                     String errorFlags = "";
                     
@@ -293,6 +297,7 @@ public class Intelligence {
                     if (ok == true) {
                     	recognizedPlate.addChar(rc);
                     }
+                    /* 
                     if (enableReportGeneration) {
                     	
                     	//console.console("WHR = "+widthHeightRatio);
@@ -306,7 +311,7 @@ public class Intelligence {
                         if (errorFlags.length()!=0) {
                         	//console.console("errflags = "+errorFlags);
                         }
-                     }
+                     }*/
                 } 
                 if (recognizedPlate.chars.size() < Intelligence.configurator.getIntProperty("intelligence_minimumChars")) 
                 	continue;
@@ -316,9 +321,10 @@ public class Intelligence {
                 	//console.console("_RECOGNIZED_ : " + parsedOutput);
                 }
                 plate.image.recycle();
-                plate.plateCopy.image.recycle();*/
+                plate.plateCopy.image.recycle();
+                
             }
-           // b.image.recycle();
+            //b.image.recycle();
            // System.gc();
         }
         return parsedOutput;

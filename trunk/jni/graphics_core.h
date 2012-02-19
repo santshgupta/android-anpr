@@ -40,14 +40,7 @@ namespace GraphicsCoreNS {
 		public:
 			GraphicsCore();
 			void yuvToRGB 			(JNIEnv *, jclass,	jbyteArray, jobject				);
-			void SplitUV_NEON(const uint8_t*, uint8_t*, uint8_t*, int			);
-			void I420ToARGBRow(const uint8_t*, const uint8_t*, const uint8_t* ,uint8_t* , int );
-			void color_convert_common(
-			    unsigned char *, unsigned char *,
-			    int , int ,unsigned char *,
-			    int , /* buffer size in bytes */
-			    int ,
-			    int );
+			void getCoefBrightness	(JNIEnv*, jclass, jobject, jbyteArray	 			);
 			void wienerTransformation (JNIEnv *, jclass,	jobject, jobject			);
 			void openCVWienerFilter	(const void* srcArr, void* dstArr, int szWindowX = 3, int szWindowY = 3);
 			IplImage* loadPixels	(uint32_t* , int , int 								);

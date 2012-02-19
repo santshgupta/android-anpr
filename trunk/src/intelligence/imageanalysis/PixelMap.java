@@ -67,8 +67,13 @@ for more info about JavaANPR.
 
 package intelligence.imageanalysis;
 
+import intelligence.intelligence.Intelligence;
+
 import java.util.Stack;
 import java.util.Vector;
+
+import com.graphics.NativeGraphics;
+
 import android.graphics.Bitmap;
 import android.graphics.Color;
 
@@ -215,10 +220,9 @@ public class PixelMap {
         this.height = bi.getHeight();                
 
         this.matrix = new boolean[this.width][this.height];
-        
         for (int x=0; x<this.width; x++) {
-            for (int y=0; y<this.height; y++) {
-                this.matrix[x][y] = bi.getBrightness(x,y) < 0.5;
+    		for (int y=0; y<this.height; y++) {
+                this.matrix[x][y] =  bi.getBrightness(x,y) < 0.5;
             }
         }
     }
@@ -291,7 +295,6 @@ public class PixelMap {
        
     public PixelMap reduceOtherPieces() {
         if (this.bestPiece != null) return this;
-        
         PieceSet pieces = findPieces();
         int maxCost = 0;
         int maxIndex = 0;

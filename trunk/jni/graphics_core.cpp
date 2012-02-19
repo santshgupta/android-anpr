@@ -136,12 +136,11 @@ void GraphicsCore :: fullEdgeDetector(JNIEnv* env, jclass javaThis, jobject bitm
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////// YUV TO RGB CONVERTER ///////////////////////////////////////////////////////
+/////////////////////////////////////// YUV TO ARGB CONVERTER ///////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void GraphicsCore :: yuvToRGB(JNIEnv* env, jclass javaThis, jbyteArray bitmapData, jobject bitmapgray) {
 	AndroidBitmapInfo infogray;
 	void* pixelsgray;
-	uint8_t redColor, greenColor, blueColor;
 	int ret, y, x;
 	LOGI("GraphicsCore::yuvToRGB");
 
@@ -224,16 +223,6 @@ void GraphicsCore :: yuvToRGB(JNIEnv* env, jclass javaThis, jbyteArray bitmapDat
 	AndroidBitmap_unlockPixels(env, bitmapgray);
 }
 
-
-
-void GraphicsCore :: I420ToARGBRow(const uint8_t* y_buf,
-        const uint8_t* u_buf,
-        const uint8_t* v_buf,
-        uint8_t* rgb_buf,
-        int width)
-{
-
-}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////W I N E R     T R A N S F O R M A T I O N ///////////////////////////////////////
@@ -513,6 +502,68 @@ void GraphicsCore :: HSVBrightness (JNIEnv* env, jclass javaThis, jobject bitmap
 	AndroidBitmap_unlockPixels(env, bitmapSource);
 
 }
+
+void GraphicsCore :: getCoefBrightness(JNIEnv* env, jclass javaThis, jobject bitmapSource, jbyteArray arr) {
+	AndroidBitmapInfo infoSource;
+	void* pixelscolor;
+	int ret, y, x;
+	LOGI("GraphicsCore::getCoefBrightness");
+
+	#ifdef __ARM_NEON__
+		LOGI("Neon support - ok/ armv7: 2.6.29-g582a0f5 #38 / default: 2.6.29-00261-g0097074-dirty #20 / armv5: 2.6.29-g582a0f5 digit@lulu #37" );
+	#endif
+
+	uint8_t *intData = (uint8_t*)env->GetByteArrayElements(arr, NULL);
+
+	if ((ret = AndroidBitmap_getInfo(env, bitmapSource, &infoSource)) < 0) {
+		LOGE("AndroidBitmap_getInfo() failed 1 ! error=%d", ret);
+		return;
+	}
+
+	if ((ret = AndroidBitmap_lockPixels(env, bitmapSource, &pixelscolor)) < 0) {
+		LOGE("AndroidBitmap_lockPixels() failed ! error=%d", ret);
+	}
+
+	uint32_t *src = (uint32_t*) pixelscolor;
+	int len = infoSource.width * infoSource.height;
+
+	__asm__ __volatile__
+	(
+		// Clear memory
+		"mov r5, #0 								\n"
+		// main cicle
+		"1:											\n"
+		// clear memory
+		"vdup.i32 d0, r5  							\n"
+		"vdup.i32 d1, r5  							\n"
+		"vdup.i32 d2, r5  							\n"
+		"vdup.i32 d3, r5  							\n"
+		"vdup.i32 d4, r5  							\n"
+		"vdup.i32 d5, r5  							\n"
+		"vld4.8 {d0, d1, d2, d3}, [%[x]]! 			\n"
+		"vmax.u8 d4, d0, d1							\n"
+		"vmax.u8 d5, d4, d2							\n"
+
+		// calculate and store to dest pointer
+		"vst1.8    d5, [%[dest]]!    \n"
+
+		// Subtract counter while it don't attempted zero
+		"subs       %[l], %[l], #8     		                	\n"
+		"bhi        1b											\n"
+		:
+		[x] "+r" (src),
+		[dest] "+r" (intData),
+		[l] "+r" (len)
+		:
+		// registers
+		: "cc", "d0", "d1", "d2", "d3", "d4", "d5", "d6", "d7", "d8", "d9", "d10", "d11", "d12", "d13", "d14","memory"
+	);
+
+	LOGI("unlocking pixels");
+	AndroidBitmap_unlockPixels(env, bitmapSource);
+}
+
+
 
 
 void GraphicsCore :: adaptiveTreshold (JNIEnv *env, jclass javaThis, jobject bitmapcolor, jobject bitmapgray) { //

@@ -93,5 +93,11 @@ void JNICALL Java_com_graphics_NativeGraphics_nativeYuvToRGB (JNIEnv* env,
 	core.yuvToRGB(env, javaThis, krnl, bitmapDest);
 }
 
+void JNICALL Java_com_graphics_NativeGraphics_nativeGetCoefBrightness (JNIEnv* env,
+		jclass javaThis, jobject bitmapSource, jbyteArray result)
+{
+	GraphicsCoreNS :: GraphicsCore core;
+	core.getCoefBrightness(env, javaThis, bitmapSource, result);
+}
 
 

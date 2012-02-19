@@ -16,6 +16,7 @@ import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.os.PowerManager;
 import android.util.Log;
 import android.view.Display;
 import android.view.MotionEvent;
@@ -43,7 +44,7 @@ public class DrawCanvasView extends View implements OnTouchListener {
 	public CommonThread _cThread = null;
 	public CarSnapshot c = null;
 	public Timer timer = new Timer();
-	
+	public PowerManager.WakeLock wl;
 	public class CommonThread extends Thread {
         public boolean _run = false;
      
@@ -52,25 +53,32 @@ public class DrawCanvasView extends View implements OnTouchListener {
      
         @Override
         public void run() {
+        	wl.acquire();
         	while(_run){
+        		byte[] data = null;
         		synchronized (preview.lock) {
-					if (preview.previewBitmapData != null) {
-						CarSnapshot c;
-						try {
-							c = new CarSnapshot (NativeGraphics.yuvToRGB(preview.previewBitmapData, preview.cs.width, preview.cs.height), 1);
-							HashSet<String> number          = systemLogic.recognize(c);
-	                        Log.d("intelligence_debug", "recognized: " + number);
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-					}					
+        			if (preview.previewBitmapData != null) {
+        				data = preview.previewBitmapData.clone();
+        			}
+        		}
+				if (data != null) {
+					CarSnapshot c;
+					try {
+						Intelligence.console.console("w:: " + preview.cs.width + "  h:: " + preview.cs.height);
+						c = new CarSnapshot (NativeGraphics.yuvToRGB(data, preview.cs.width, preview.cs.height), 1);
+						HashSet<String> number          = systemLogic.recognize(c);
+						Intelligence.console.console("recognized: " + number);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
 				}
         		try {
-					Thread.sleep(5000);
+					Thread.sleep(1000);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
         	}
+        	wl.release();
         }
     }
 	
@@ -78,6 +86,10 @@ public class DrawCanvasView extends View implements OnTouchListener {
 	public DrawCanvasView(Context context, Preview preview) {
 		super(context);
 		b = Bitmap.createBitmap(800, 1200, Bitmap.Config.ARGB_8888);
+		
+		PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+		wl = pm.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK, "long_wake_work");
+		
 		Canvas cnv = new Canvas(b);
 		DrawCanvasView.this.preview = preview;
 		try {
